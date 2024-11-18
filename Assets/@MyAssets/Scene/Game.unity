@@ -4379,7 +4379,7 @@ Transform:
   m_GameObject: {fileID: 1184221034}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.0006999989, y: -0.008900002, z: -0.0061000013}
+  m_LocalPosition: {x: -0.0006999989, y: -0.008900002, z: -0.004100001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7775,7 +7775,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1909656664}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: AttachBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7789,13 +7789,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1909656663}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.551, y: 1.085, z: 0.339}
+  m_LocalRotation: {x: -0.70710677, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.5509999, y: 1.0850002, z: 0.33899975}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1874338196}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &1943290178
 GameObject:
   m_ObjectHideFlags: 0
@@ -9393,6 +9393,11 @@ MonoBehaviour:
   attachClothes: {fileID: 1184221036}
   attachLid: {fileID: 1704642609}
   externalSocket: {fileID: 0}
+  grabInteractable: {fileID: 0}
+  isClothesAttached: 0
+  isLidAttached: 0
+  isBoxInExternalSocket: 0
+  rb: {fileID: 0}
 --- !u!65 &1458732416965420128
 BoxCollider:
   m_ObjectHideFlags: 0
