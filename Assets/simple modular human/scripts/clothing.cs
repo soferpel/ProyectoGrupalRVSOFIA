@@ -7,7 +7,7 @@ public class clothing : MonoBehaviour
 
 
     public GameObject skin_head;
-    public GameObject skin_body;
+    public GameObject[] skin_body;
   
 
     public GameObject cigarette;
@@ -145,9 +145,6 @@ public class clothing : MonoBehaviour
     public Texture[] tank_top_textures;
     public Texture[] trousers_textures;
 
-    public Animator ani;
-
-
     public bool show_run;
    
 
@@ -260,7 +257,10 @@ public class clothing : MonoBehaviour
         int skin_color = UnityEngine.Random.Range(0, 6);
 
         skin_head.GetComponent<Renderer>().materials[0].mainTexture = skin_textures[skin_color];
-        skin_body.GetComponent<Renderer>().materials[0].mainTexture = skin_textures[skin_color];
+        foreach(GameObject skin_body_part in skin_body)
+        {
+            skin_body_part.GetComponent<MeshRenderer>().materials[0].mainTexture = skin_textures[skin_color];
+        }
 
 
 

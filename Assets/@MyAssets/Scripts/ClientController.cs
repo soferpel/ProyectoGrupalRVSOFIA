@@ -5,9 +5,12 @@ using UnityEngine;
 public class ClientController : MonoBehaviour
 {
     private int lives;
-
+    private Animator animator;
+    public GameObject[] sliceableParts;
+    public LayerMask sliceLayer;
     void Start()
     {
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -17,18 +20,19 @@ public class ClientController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Client: OnTriggerEnter");
         if(other.gameObject.GetComponent<WeaponController>())
         {
-            Debug.Log("Client: OnTriggerEnter cuchillo");
-
             StartCoroutine(Die());
         }
     }
 
     private IEnumerator Die()
     {
+        animator.SetTrigger("isDead");
         yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
+        foreach(GameObject part in sliceableParts)
+        {
+            part.layer = LayerMask.NameToLayer("Sliceable");
+        }
     }
 }
