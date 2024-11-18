@@ -8,7 +8,8 @@ public class ClientController : MonoBehaviour
     public List<Transform> patrolPoints;  
     public Transform buyPoint;            
     public List<Transform> finalPoints;   
-    public float waitTime = 2f;           
+    public float waitTime = 2f;
+    public float distanceThreshold = 1f;
 
     private NavMeshAgent agent;
     private Transform currentTarget;
@@ -50,6 +51,7 @@ public class ClientController : MonoBehaviour
             if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
             {
                 currentTarget = buyPoint;
+                waitTime = 50f; //editar
                 isGoingToBuy = true;
                 pointsVisited++;
             }
@@ -104,5 +106,22 @@ public class ClientController : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
+    }
+
+    public bool isOnBuyPoint()
+    {
+        float distance = Vector3.Distance(transform.position, buyPoint.position);
+        bool isCloseToBuyPoint = distance <= distanceThreshold;
+        if (isCloseToBuyPoint)
+        {
+            Debug.Log("Cliente cerca del Buy Point.");
+        }
+        return isCloseToBuyPoint;
+
+        /*
+        Debug.Log("Cliente esta en BuyPoint");
+        Debug.Log(transform.position == buyPoint.position);
+        return transform.position == buyPoint.position;
+        */
     }
 }
