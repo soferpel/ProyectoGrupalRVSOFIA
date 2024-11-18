@@ -5,6 +5,11 @@ using UnityEngine.AI;
 
 public class ClientController : MonoBehaviour
 {
+    private int lives;
+    private Animator animator;
+    public GameObject[] sliceableParts;
+    public LayerMask sliceLayer;
+     
     public List<Transform> patrolPoints;  
     public Transform buyPoint;            
     public List<Transform> finalPoints;   
@@ -18,14 +23,11 @@ public class ClientController : MonoBehaviour
     private int pointsVisited = 0;        
     private int pointsToVisit = 0;
 
-    //private Animator animator;
-
-
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
-        //animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         StartCoroutine(MoveToPoints());
     }
         IEnumerator MoveToPoints()
@@ -72,11 +74,11 @@ public class ClientController : MonoBehaviour
 
             while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
             {
-                //animator.SetBool("walk", true);
+                animator.SetBool("walk", true);
                 yield return null;
             }
 
-            //animator.SetBool("walk", false);
+            animator.SetBool("walk", false);
             yield return new WaitForSeconds(waitTime);
 
             if (pointsVisited >= pointsToVisit || isGoingToBuy)
@@ -94,18 +96,20 @@ public class ClientController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Client: OnTriggerEnter");
-        if (other.gameObject.GetComponent<WeaponController>())
+        if(other.gameObject.GetComponent<WeaponController>())
         {
-            Debug.Log("Client: OnTriggerEnter cuchillo");
             StartCoroutine(Die());
         }
     }
 
     private IEnumerator Die()
     {
+        animator.SetTrigger("isDead");
         yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
+        foreach(GameObject part in sliceableParts)
+        {
+            part.layer = LayerMask.NameToLayer("Sliceable");
+        }
     }
 
     public bool isOnBuyPoint()
@@ -118,10 +122,5 @@ public class ClientController : MonoBehaviour
         }
         return isCloseToBuyPoint;
 
-        /*
-        Debug.Log("Cliente esta en BuyPoint");
-        Debug.Log(transform.position == buyPoint.position);
-        return transform.position == buyPoint.position;
-        */
     }
 }
