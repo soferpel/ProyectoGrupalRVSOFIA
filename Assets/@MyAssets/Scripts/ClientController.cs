@@ -22,6 +22,7 @@ public class ClientController : MonoBehaviour
     private bool isFinalMove = false;     
     private int pointsVisited = 0;        
     private int pointsToVisit = 0;
+    private bool isAlive = true;
 
     void Start()
     {
@@ -30,57 +31,80 @@ public class ClientController : MonoBehaviour
         animator = GetComponent<Animator>();
         StartCoroutine(MoveToPoints());
     }
-        IEnumerator MoveToPoints()
+    IEnumerator MoveToPoints()
     {
         List<Transform> visitedPoints = new List<Transform>();
 
-        while (true)
+        while (isAlive)
         {
             if (isFinalMove)
             {
+                // Elegir punto final
                 currentTarget = finalPoints[Random.Range(0, finalPoints.Count)];
                 agent.SetDestination(currentTarget.position);
 
                 while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
                 {
+                    animator.SetBool("lookAround", false);
+                    animator.SetBool("walk", true);
+
+                    if (agent.velocity.sqrMagnitude > 0.01f) // Verificar que hay movimiento
+                    {
+                        Vector3 direction = agent.velocity.normalized; // Dirección del movimiento
+                        Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
+                        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Ajustar suavemente la rotación
+                    }
                     yield return null;
                 }
 
+                animator.SetBool("walk", false);
                 StopMovement();
                 yield break;
             }
 
+            // Decidir siguiente destino
             if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
             {
                 currentTarget = buyPoint;
-                waitTime = 50f; //editar
+                waitTime = 5f;
                 isGoingToBuy = true;
                 pointsVisited++;
             }
             else
             {
-                currentTarget = patrolPoints[Random.Range(0, patrolPoints.Count)];
-
-                while (visitedPoints.Contains(currentTarget))
+                do
                 {
                     currentTarget = patrolPoints[Random.Range(0, patrolPoints.Count)];
-                }
+                } while (visitedPoints.Contains(currentTarget));
 
-                visitedPoints.Add(currentTarget); 
+                visitedPoints.Add(currentTarget);
                 pointsVisited++;
             }
 
+            // Mover al destino
             agent.SetDestination(currentTarget.position);
 
             while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
             {
+                animator.SetBool("lookAround", false);
                 animator.SetBool("walk", true);
+
+                    if (agent.velocity.sqrMagnitude > 0.01f) // Verificar que hay movimiento
+                {
+                    Vector3 direction = agent.velocity.normalized; // Dirección del movimiento
+                    Quaternion lookRotation = Quaternion.LookRotation(direction*-1);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Ajustar suavemente la rotación
+                }
                 yield return null;
             }
 
             animator.SetBool("walk", false);
-            yield return new WaitForSeconds(waitTime);
 
+            // Animación de mirar alrededor
+            agent.updateRotation = true;
+            animator.SetBool("lookAround",true);
+            yield return new WaitForSeconds(waitTime);
+            // Decidir si es el movimiento final
             if (pointsVisited >= pointsToVisit || isGoingToBuy)
             {
                 isFinalMove = true;
@@ -104,11 +128,19 @@ public class ClientController : MonoBehaviour
 
     private IEnumerator Die()
     {
-        animator.SetTrigger("isDead");
-        yield return new WaitForSeconds(1f);
-        foreach(GameObject part in sliceableParts)
+        if (isAlive)
         {
-            part.layer = LayerMask.NameToLayer("Sliceable");
+
+            isAlive = false; // Marcar como muerto
+            agent.isStopped = true; // Detener el movimiento del NavMeshAgent
+            StopCoroutine(MoveToPoints()); // Detener la rutina de movimiento
+            gameObject.GetComponent<NavMeshAgent>().enabled = false;
+            animator.SetTrigger("isDead");
+            yield return new WaitForSeconds(1f);
+            foreach(GameObject part in sliceableParts)
+            {
+                part.layer = LayerMask.NameToLayer("Sliceable");
+            }
         }
     }
 
