@@ -22,22 +22,19 @@ public class Borrar : MonoBehaviour
     }
     public Bounds[] ConvertCollidersToBounds()
     {
-        // Validar si la lista de colliders es nula o vacía
         if (boundsColliders == null || boundsColliders.Length == 0)
         {
             Debug.LogWarning("No hay colliders en la lista para convertir.");
-            return new Bounds[0]; // Retornar un array vacío si no hay colliders
+            return new Bounds[0]; 
         }
 
-        // Crear una lista para almacenar los Bounds
         List<Bounds> boundsList = new List<Bounds>();
 
-        // Iterar sobre los colliders y extraer los Bounds
         foreach (var collider in boundsColliders)
         {
             if (collider != null)
             {
-                boundsList.Add(collider.bounds); // Añadir el Bounds del collider
+                boundsList.Add(collider.bounds);
             }
             else
             {
@@ -45,7 +42,6 @@ public class Borrar : MonoBehaviour
             }
         }
 
-        // Convertir la lista de Bounds a un array y retornarla
         return boundsList.ToArray();
     }
 
