@@ -17,7 +17,6 @@ public class SliceObject : MonoBehaviour
     void Update()
     {
         bool hasHit = Physics.Linecast(startSlicePoint.position, endSlicePoint.position, out RaycastHit hit, sliceableLayer);
-        Debug.Log(hasHit);
         if (hasHit)
         {
             collisionCut = hit.collider.gameObject;

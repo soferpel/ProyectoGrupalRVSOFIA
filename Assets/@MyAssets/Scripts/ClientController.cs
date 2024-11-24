@@ -5,24 +5,25 @@ using UnityEngine.AI;
 
 public class ClientController : MonoBehaviour
 {
-    private int lives;
+    
     private Animator animator;
     public GameObject[] sliceableParts;
+    public List<Collider> bodyPartsCollider;
     public LayerMask sliceLayer;
-     
-    public List<Transform> patrolPoints;  
-    public Transform buyPoint;            
-    public List<Transform> finalPoints;   
+
+    public List<Transform> patrolPoints;
+    public Transform buyPoint;
+    public List<Transform> finalPoints;
     public float waitTime = 2f;
     public float distanceThreshold = 1f;
 
     private NavMeshAgent agent;
     private Transform currentTarget;
-    private bool isGoingToBuy = false;   
-    private bool isFinalMove = false;     
-    private int pointsVisited = 0;        
+    private bool isGoingToBuy = false;
+    private bool isFinalMove = false;
+    private int pointsVisited = 0;
     private int pointsToVisit = 0;
-    private bool isAlive = true;
+    public bool isAlive = true;
 
     void Start()
     {
@@ -30,7 +31,12 @@ public class ClientController : MonoBehaviour
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
         StartCoroutine(MoveToPoints());
+        foreach (Collider collider in bodyPartsCollider)
+        {
+            collider.enabled = false;
+        }
     }
+
     IEnumerator MoveToPoints()
     {
         List<Transform> visitedPoints = new List<Transform>();
@@ -39,26 +45,7 @@ public class ClientController : MonoBehaviour
         {
             if (isFinalMove)
             {
-                // Elegir punto final
-                currentTarget = finalPoints[Random.Range(0, finalPoints.Count)];
-                agent.SetDestination(currentTarget.position);
-
-                while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
-                {
-                    animator.SetBool("lookAround", false);
-                    animator.SetBool("walk", true);
-
-                    if (agent.velocity.sqrMagnitude > 0.01f) // Verificar que hay movimiento
-                    {
-                        Vector3 direction = agent.velocity.normalized; // Dirección del movimiento
-                        Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
-                        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Ajustar suavemente la rotación
-                    }
-                    yield return null;
-                }
-
-                animator.SetBool("walk", false);
-                StopMovement();
+                MoveToFinalPoint();
                 yield break;
             }
 
@@ -89,27 +76,55 @@ public class ClientController : MonoBehaviour
                 animator.SetBool("lookAround", false);
                 animator.SetBool("walk", true);
 
-                    if (agent.velocity.sqrMagnitude > 0.01f) // Verificar que hay movimiento
+                if (agent.velocity.sqrMagnitude > 0.01f)
                 {
-                    Vector3 direction = agent.velocity.normalized; // Dirección del movimiento
-                    Quaternion lookRotation = Quaternion.LookRotation(direction*-1);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); // Ajustar suavemente la rotación
+                    Vector3 direction = agent.velocity.normalized;
+                    Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
                 }
                 yield return null;
             }
 
             animator.SetBool("walk", false);
 
-            // Animación de mirar alrededor
             agent.updateRotation = true;
-            animator.SetBool("lookAround",true);
+            animator.SetBool("lookAround", true);
             yield return new WaitForSeconds(waitTime);
-            // Decidir si es el movimiento final
+
             if (pointsVisited >= pointsToVisit || isGoingToBuy)
             {
                 isFinalMove = true;
             }
         }
+    }
+
+    private void MoveToFinalPoint()
+    {
+        if (finalPoints.Count == 0) return;
+
+        currentTarget = finalPoints[Random.Range(0, finalPoints.Count)];
+        agent.SetDestination(currentTarget.position);
+
+        StartCoroutine(MoveToFinalDestination());
+    }
+
+    private IEnumerator MoveToFinalDestination()
+    {
+        while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+        {
+            animator.SetBool("walk", true);
+
+            if (agent.velocity.sqrMagnitude > 0.01f)
+            {
+                Vector3 direction = agent.velocity.normalized;
+                Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+            }
+            yield return null;
+        }
+
+        animator.SetBool("walk", false);
+        StopMovement();
     }
 
     private void StopMovement()
@@ -118,9 +133,21 @@ public class ClientController : MonoBehaviour
         Debug.Log("El NPC ha terminado su recorrido.");
     }
 
+    public void ReportDeath()
+    {
+        if (!isAlive) return;
+
+        Debug.Log("ReportDeath llamado. Cambiando a movimiento final.");
+        isFinalMove = true;
+
+        // Reiniciar la lógica de movimiento para dirigirse al punto final
+        StopCoroutine(MoveToPoints());
+        MoveToFinalPoint();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.GetComponent<WeaponController>())
+        if (other.gameObject.GetComponent<WeaponController>())
         {
             StartCoroutine(Die());
         }
@@ -130,16 +157,18 @@ public class ClientController : MonoBehaviour
     {
         if (isAlive)
         {
-
             isAlive = false; // Marcar como muerto
-            agent.isStopped = true; // Detener el movimiento del NavMeshAgent
             StopCoroutine(MoveToPoints()); // Detener la rutina de movimiento
-            gameObject.GetComponent<NavMeshAgent>().enabled = false;
+            agent.isStopped = true; // Detener el movimiento del NavMeshAgent
             animator.SetTrigger("isDead");
             yield return new WaitForSeconds(1f);
-            foreach(GameObject part in sliceableParts)
+            foreach (GameObject part in sliceableParts)
             {
                 part.layer = LayerMask.NameToLayer("Sliceable");
+            }
+            foreach (Collider collider in bodyPartsCollider)
+            {
+                collider.enabled = true;
             }
         }
     }
@@ -153,6 +182,9 @@ public class ClientController : MonoBehaviour
             Debug.Log("Cliente cerca del Buy Point.");
         }
         return isCloseToBuyPoint;
-
     }
+    
 }
+
+
+
