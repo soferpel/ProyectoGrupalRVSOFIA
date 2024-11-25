@@ -49,7 +49,6 @@ public class ClientController : MonoBehaviour
                 yield break;
             }
 
-            // Decidir siguiente destino
             if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
             {
                 currentTarget = buyPoint;
@@ -140,7 +139,6 @@ public class ClientController : MonoBehaviour
         Debug.Log("ReportDeath llamado. Cambiando a movimiento final.");
         isFinalMove = true;
 
-        // Reiniciar la lógica de movimiento para dirigirse al punto final
         StopCoroutine(MoveToPoints());
         MoveToFinalPoint();
     }
@@ -166,10 +164,12 @@ public class ClientController : MonoBehaviour
             {
                 part.layer = LayerMask.NameToLayer("Sliceable");
             }
+            Destroy(GetComponent<Rigidbody>());
             foreach (Collider collider in bodyPartsCollider)
             {
                 collider.enabled = true;
             }
+
         }
     }
 

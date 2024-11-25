@@ -23,7 +23,7 @@ public class SliceObject : MonoBehaviour
             if (collisionCut.TryGetComponent<Borrar>(out Borrar borrar) && borrar.target!=null )
             {
                 collisionCutComponents = borrar;
-            Debug.Log(borrar.target);
+                Debug.Log(borrar.target);
                 Slice(borrar.target);
             }
             collisionCutComponents = null;

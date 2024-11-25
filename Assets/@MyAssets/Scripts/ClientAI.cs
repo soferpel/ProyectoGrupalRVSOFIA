@@ -60,7 +60,6 @@ public class ClientAI : MonoBehaviour
     {
         Debug.Log("I see you " + target.gameObject.name);
         ClientController clientController = GetComponent<ClientController>();
-
         if (clientController != null)
         {
             clientController.ReportDeath(); // Llamar a la función

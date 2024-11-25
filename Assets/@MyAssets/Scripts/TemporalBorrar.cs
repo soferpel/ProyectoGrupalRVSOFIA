@@ -33,7 +33,6 @@ public class TemporalBorrar : MonoBehaviour
 
     IEnumerator MoveToPoints()
     {
-        List<Transform> visitedPoints = new List<Transform>();
 
         while (isAlive)
         {
@@ -42,7 +41,7 @@ public class TemporalBorrar : MonoBehaviour
                 MoveToFinalPoint();
                 yield break;
             }
-
+            yield return null;
         }
     }
 
