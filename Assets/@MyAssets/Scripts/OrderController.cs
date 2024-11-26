@@ -7,14 +7,15 @@ public class OrderController : MonoBehaviour
 {
     private XRSocketInteractor socketBox;
     private ClientController client;
+    private BoxController boxController;
     public string boxTag = "Box";
-    //private bool isBoxOnSocket;
+    public GameObject counterPosition; //posicion en la que esperan los clientes (buypoint)
 
     void Start()
     {
         socketBox = GetComponent<XRSocketInteractor>();
-        client = FindObjectOfType<ClientController>();
         socketBox.selectEntered.AddListener(OnBoxOnSocket);
+        client = FindObjectOfType<ClientController>();
     }
 
     void Update()
@@ -25,12 +26,24 @@ public class OrderController : MonoBehaviour
     {
         if (args.interactableObject.transform.CompareTag(boxTag))
         {
-            //isBoxOnSocket = true;
-            if (client.isOnBuyPoint())
+            Debug.Log("Caja en socket");
+
+
+            if (args.interactableObject.transform.CompareTag(boxTag))
             {
-                Debug.Log("Objecto se ha destruido");
-                Destroy(args.interactableObject.transform.gameObject);
+                boxController = args.interactableObject.transform.GetComponent<BoxController>();
+                Debug.Log(boxController.IsReadyForDelivery());
+                if (client.isOnBuyPoint() && boxController.IsReadyForDelivery())
+                {
+                    Debug.Log("Objecto se ha destruido");
+                    var lidSocket = boxController.socketLid.transform.gameObject;
+                    var contentSocket = boxController.socketContent.transform.gameObject;
+                    Destroy(args.interactableObject.transform.gameObject);
+                    Destroy(lidSocket);
+                    Destroy(contentSocket);
+                }
             }
+
         }
     }
 }

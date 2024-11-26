@@ -9,6 +9,8 @@ TagManager:
   - sittingpoint
   - pickuppoint
   - waypoint
+  - Clothes
+  - Lid
   layers:
   - Default
   - TransparentFX
