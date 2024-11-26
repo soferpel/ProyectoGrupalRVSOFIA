@@ -40,15 +40,12 @@ public class SliceObject : MonoBehaviour
         DrawDebugPlane(endSlicePoint.position, planeNormal, 0.5f);
         //Debug.Log("1");
 
-        // Check if the target has a SkinnedMeshRenderer
         SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
         if (skinnedMeshRenderer != null)
         {
-            // Extract the current state of the SkinnedMeshRenderer
             Mesh bakedMesh = new Mesh();
             skinnedMeshRenderer.BakeMesh(bakedMesh);
 
-            // Create a temporary GameObject with a MeshFilter and MeshRenderer
             GameObject tempObject = new GameObject("TempSlicingObject");
             tempObject.transform.position = target.transform.position;
             tempObject.transform.rotation = target.transform.rotation;
@@ -59,7 +56,6 @@ public class SliceObject : MonoBehaviour
             MeshRenderer tempMeshRenderer = tempObject.AddComponent<MeshRenderer>();
             tempMeshRenderer.materials = skinnedMeshRenderer.sharedMaterials;
 
-            // Slice the temporary object
             SlicedHull hull = tempObject.Slice(endSlicePoint.position, planeNormal);
             //Debug.Log("2");
             if (hull != null)
@@ -85,7 +81,6 @@ public class SliceObject : MonoBehaviour
                 Destroy(target);
             }
 
-            // Cleanup the temporary object
             Destroy(tempObject);
         }
         else
@@ -116,7 +111,6 @@ public class SliceObject : MonoBehaviour
                     if (upperDistance < lowerDistance)
                     {
                         detachPart = lowerHull;
-                        // Upper hull is closer to the body
                         SetupSlicedComponent(lowerHull);
                         AttachToBody(upperHull);
                         DetachPart(lowerHull);
@@ -124,7 +118,6 @@ public class SliceObject : MonoBehaviour
                     else
                     {
                         detachPart = upperHull;
-                        // Lower hull is closer to the body
                         SetupSlicedComponent(upperHull);
                         AttachToBody(lowerHull);
                         DetachPart(upperHull);
@@ -174,7 +167,6 @@ public class SliceObject : MonoBehaviour
             MeshRenderer tempMeshRenderer1 = tempObject.AddComponent<MeshRenderer>();
             tempMeshRenderer1.materials = skinnedMeshRenderer.sharedMaterials;
 
-            // Obtener los Bounds del brazo para la ropa
             Bounds armBounds = GetArmBounds(collisionCut);
             if (armBounds == new Bounds())
             {
@@ -182,15 +174,13 @@ public class SliceObject : MonoBehaviour
                 return;
             }
 
-            // Filtrar la submalla de la manga
             Mesh mangaMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform,tempMeshFilter1);
             if (mangaMesh == null || mangaMesh.vertexCount == 0)
             {
-                //Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
+                //Debug.LogWarning("No se encontraron vï¿½rtices en los Bounds especificados para la ropa.");
                 return;
             }
             Destroy(tempObject);
-            // resto
             
             Mesh clothMesh = GetSubMeshOutOfBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform, tempMeshFilter1);
             GameObject clothObject = new GameObject($"Temp_{child.name}_Manga_hola");
@@ -206,9 +196,7 @@ public class SliceObject : MonoBehaviour
 
             clothObject.transform.SetParent(collisionCutComponents.cuttedClothes.transform);
             child.SetActive(false);
-            //child.GetComponent<SkinnedMeshRenderer>().sharedMesh=(GetSubMeshOutOfBounds(tempMeshFilter1.sharedMesh, armBounds, child.transform, tempMeshFilter1, child.GetComponent<SkinnedMeshRenderer>().sharedMesh));
 
-            // Crear un objeto temporal para cortar solo la manga de la ropa
             GameObject tempMangaObject = new GameObject($"Temp_{child.name}_Manga");
             tempMangaObject.transform.position = child.transform.position;
             tempMangaObject.transform.rotation = child.transform.rotation;
@@ -220,7 +208,6 @@ public class SliceObject : MonoBehaviour
             MeshRenderer tempMeshRenderer = tempMangaObject.AddComponent<MeshRenderer>();
             tempMeshRenderer.materials = skinnedMeshRenderer.sharedMaterials;
 
-            // Realizar el corte solo en la manga de la ropa
             SlicedHull hull = tempMangaObject.Slice(endSlicePoint.position, planeNormal);
             if (hull != null)
             {
@@ -245,7 +232,6 @@ public class SliceObject : MonoBehaviour
                 tempMangaObject.transform.SetParent(detachPart.transform);
             }
 
-            // Limpia el objeto temporal
         }
         else
         {
@@ -264,11 +250,10 @@ public class SliceObject : MonoBehaviour
             tempMeshRenderer1.materials = child.GetComponent<MeshRenderer>().materials;
 
             
-            // Filtrar la submalla de la manga
             Mesh mangaMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform, tempMeshFilter1);
             if (mangaMesh == null || mangaMesh.vertexCount == 0)
             {
-                //Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
+                //Debug.LogWarning("No se encontraron vï¿½rtices en los Bounds especificados para la ropa.");
                 Destroy(tempObject);
                 return;
             }
@@ -330,7 +315,6 @@ public class SliceObject : MonoBehaviour
     }
     void DrawDebugPlane(Vector3 pointOnPlane, Vector3 planeNormal, float size)
     {
-        // Calculate two perpendicular vectors on the plane
         Vector3 right = Vector3.Cross(planeNormal, Vector3.up).normalized * size;
         if (right == Vector3.zero)
         {
@@ -338,13 +322,17 @@ public class SliceObject : MonoBehaviour
         }
         Vector3 forward = Vector3.Cross(planeNormal, right).normalized * size;
 
-        // Define the four corners of the plane
         Vector3 topLeft = pointOnPlane + forward - right;
         Vector3 topRight = pointOnPlane + forward + right;
         Vector3 bottomLeft = pointOnPlane - forward - right;
         Vector3 bottomRight = pointOnPlane - forward + right;
 
-       
+        Debug.DrawLine(topLeft, topRight, Color.green, 0.1f);
+        Debug.DrawLine(topRight, bottomRight, Color.green, 0.1f);
+        Debug.DrawLine(bottomRight, bottomLeft, Color.green, 0.1f);
+        Debug.DrawLine(bottomLeft, topLeft, Color.green, 0.1f);
+
+        Debug.DrawRay(pointOnPlane, planeNormal * size, Color.red, 0.1f);
     }
 
 
@@ -368,7 +356,7 @@ public class SliceObject : MonoBehaviour
 
     private void AttachToBody(GameObject part)
     {
-        part.transform.SetParent(collisionCut.transform); // Optional: Attach to a specific "body" object
+        part.transform.SetParent(collisionCut.transform);
     }
 
     private void DetachPart(GameObject part)
@@ -432,7 +420,6 @@ public class SliceObject : MonoBehaviour
 
 public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTransform, MeshFilter originalMeshFilter, bool inBound)
 {
-    // Validar los Bounds
     if (bounds == null || bounds.Length == 0)
     {
         return null;
@@ -441,41 +428,36 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
         {
             DrawBounds(bound);
         }
-            // Obtener los datos del mesh original
             Vector3[] vertices = originalMesh.vertices;
     int[] triangles = originalMesh.triangles;
     Vector3[] normals = originalMesh.normals;
-    BoneWeight[] boneWeights = originalMesh.boneWeights; // Bone weights para skinned meshes
-    Matrix4x4[] bindPoses = originalMesh.bindposes;      // Bind poses para skinned meshes
+    BoneWeight[] boneWeights = originalMesh.boneWeights;
+    Matrix4x4[] bindPoses = originalMesh.bindposes;     
 
-    // Convertir vértices al espacio mundial
     Vector3[] worldVertices = new Vector3[vertices.Length];
     for (int i = 0; i < vertices.Length; i++)
     {
         worldVertices[i] = originalMeshFilter.transform.TransformPoint(vertices[i]);
     }
 
-    // Filtrar vértices
     List<Vector3> filteredVertices = new List<Vector3>();
     List<int> filteredTriangles = new List<int>();
     List<Vector3> filteredNormals = new List<Vector3>();
     List<BoneWeight> filteredBoneWeights = new List<BoneWeight>();
     Dictionary<int, int> vertexMap = new Dictionary<int, int>();
 
-    // Función para verificar si un vértice está en al menos uno de los Bounds
     bool IsVertexIncluded(Vector3 worldVertex)
     {
         foreach (var bound in bounds)
         {
             if (bound.Contains(worldVertex))
             {
-                return inBound; // Si está dentro, retornamos el valor de `inBound`
+                return inBound; 
             }
         }
-        return !inBound; // Si no está en ninguno, retornamos lo contrario a `inBound`
+        return !inBound; 
     }
 
-    // Filtrar vértices según los Bounds
     for (int i = 0; i < worldVertices.Length; i++)
     {
         if (IsVertexIncluded(worldVertices[i]))
@@ -485,12 +467,12 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
             filteredNormals.Add(normals[i]);
             if (boneWeights.Length > i)
             {
-                filteredBoneWeights.Add(boneWeights[i]); // Añadir boneWeights si están presentes
+                filteredBoneWeights.Add(boneWeights[i]);
             }
         }
     }
 
-    // Filtrar triángulos
+    
     for (int i = 0; i < triangles.Length; i += 3)
     {
         int idx1 = triangles[i];
@@ -503,14 +485,12 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
 
         if (inBound && idx1InMap && idx2InMap && idx3InMap)
         {
-            // Añadir triángulo si todos los vértices están dentro de los Bounds
             filteredTriangles.Add(vertexMap[idx1]);
             filteredTriangles.Add(vertexMap[idx2]);
             filteredTriangles.Add(vertexMap[idx3]);
         }
         else if (!inBound)
         {
-            // Añadir triángulo si al menos uno de los vértices está fuera de los Bounds
             List<int> validIndices = new List<int>();
             if (idx1InMap) validIndices.Add(vertexMap[idx1]);
             if (idx2InMap) validIndices.Add(vertexMap[idx2]);
@@ -523,26 +503,22 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
         }
     }
 
-    // Validar la cantidad de triángulos
     if (filteredTriangles.Count % 3 != 0)
     {
         return null;
     }
 
-    // Crear el nuevo Mesh
     Mesh newMesh = new Mesh();
     newMesh.vertices = filteredVertices.ToArray();
     newMesh.triangles = filteredTriangles.ToArray();
     newMesh.normals = filteredNormals.ToArray();
 
-    // Asignar los BoneWeights y BindPoses si están presentes
     if (boneWeights.Length > 0)
     {
         newMesh.boneWeights = filteredBoneWeights.ToArray();
         newMesh.bindposes = bindPoses;
     }
 
-    // Recalcular propiedades del mesh
     newMesh.RecalculateBounds();
     newMesh.RecalculateNormals();
     newMesh.RecalculateTangents();
@@ -556,7 +532,6 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
 
 void DrawBounds(Bounds b, float delay = 10)
     {
-        // bottom
         var p1 = new Vector3(b.min.x, b.min.y, b.min.z);
         var p2 = new Vector3(b.max.x, b.min.y, b.min.z);
         var p3 = new Vector3(b.max.x, b.min.y, b.max.z);
@@ -567,7 +542,6 @@ void DrawBounds(Bounds b, float delay = 10)
         Debug.DrawLine(p3, p4, Color.yellow, delay);
         Debug.DrawLine(p4, p1, Color.magenta, delay);
 
-        // top
         var p5 = new Vector3(b.min.x, b.max.y, b.min.z);
         var p6 = new Vector3(b.max.x, b.max.y, b.min.z);
         var p7 = new Vector3(b.max.x, b.max.y, b.max.z);
@@ -578,7 +552,6 @@ void DrawBounds(Bounds b, float delay = 10)
         Debug.DrawLine(p7, p8, Color.yellow, delay);
         Debug.DrawLine(p8, p5, Color.magenta, delay);
 
-        // sides
         Debug.DrawLine(p1, p5, Color.white, delay);
         Debug.DrawLine(p2, p6, Color.gray, delay);
         Debug.DrawLine(p3, p7, Color.green, delay);
@@ -590,7 +563,6 @@ void DrawBounds(Bounds b, float delay = 10)
         return GetSubMesh(originalMesh, bounds, parentTransform, originalMeshFilter, true);
     }
 
-    // Función que obtiene el submesh fuera de los bounds
     public Mesh GetSubMeshOutOfBounds(Mesh originalMesh, Bounds[] bounds, Transform parentTransform, MeshFilter originalMeshFilter)
     {
         return GetSubMesh(originalMesh, bounds, parentTransform, originalMeshFilter, false);

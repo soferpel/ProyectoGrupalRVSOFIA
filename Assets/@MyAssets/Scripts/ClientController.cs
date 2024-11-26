@@ -27,10 +27,10 @@ public class ClientController : MonoBehaviour
 
     void Start()
     {
-        //agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
-        //StartCoroutine(MoveToPoints());
+        StartCoroutine(MoveToPoints());
         foreach (Collider collider in bodyPartsCollider)
         {
             collider.enabled = false;
@@ -67,7 +67,6 @@ public class ClientController : MonoBehaviour
                 pointsVisited++;
             }
 
-            // Mover al destino
             agent.SetDestination(currentTarget.position);
 
             while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
@@ -89,7 +88,6 @@ public class ClientController : MonoBehaviour
             agent.updateRotation = true;
             animator.SetBool("lookAround", true);
             yield return new WaitForSeconds(waitTime);
-
             if (pointsVisited >= pointsToVisit || isGoingToBuy)
             {
                 isFinalMove = true;
@@ -139,8 +137,8 @@ public class ClientController : MonoBehaviour
         Debug.Log("ReportDeath llamado. Cambiando a movimiento final.");
         isFinalMove = true;
 
-        //StopCoroutine(MoveToPoints());
-        //MoveToFinalPoint();
+        StopCoroutine(MoveToPoints());
+        MoveToFinalPoint();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -155,9 +153,11 @@ public class ClientController : MonoBehaviour
     {
         if (isAlive)
         {
-            isAlive = false; // Marcar como muerto
-            //StopCoroutine(MoveToPoints()); // Detener la rutina de movimiento
-            //agent.isStopped = true; // Detener el movimiento del NavMeshAgent
+
+            isAlive = false; 
+            agent.isStopped = true; 
+            StopCoroutine(MoveToPoints());
+            gameObject.GetComponent<NavMeshAgent>().enabled = false;
             animator.SetTrigger("isDead");
             yield return new WaitForSeconds(1f);
             foreach (GameObject part in sliceableParts)
