@@ -43,23 +43,17 @@ public class VisionSensor : MonoBehaviour
                 continue;
             }
 
-
             // raycast to target passes?
             RaycastHit hitResult;
             if (Physics.Raycast(LinkedAI.EyeLocation, vectorToTarget, out hitResult,
                                 LinkedAI.VisionConeRange, DetectionMask, QueryTriggerInteraction.Collide))
             {
+                string layerName = LayerMask.LayerToName(candidateTarget.gameObject.layer);
+                if (candidateTarget.gameObject.TryGetComponent<ClientController>(out ClientController client) && !(client.isAlive) || layerName.Contains("BodyParts"))
+                {
+                    LinkedAI.ReportCanSee(candidateTarget);
+                }
 
-                //LinkedAI.ReportCanSee(candidateTarget);
-                if(candidateTarget.gameObject.TryGetComponent<ClientController>(out ClientController client) && !(client.isAlive))
-                {
-                    LinkedAI.ReportCanSee(candidateTarget);
-                }
-                /*if (hitResult.collider.GetComponentInParent<DetectableTarget>() == candidateTarget)
-                {
-                    LinkedAI.ReportCanSee(candidateTarget);
-                }
-                */
             }
         }
     }

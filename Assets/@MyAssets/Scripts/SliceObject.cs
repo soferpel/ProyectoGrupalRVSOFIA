@@ -23,7 +23,7 @@ public class SliceObject : MonoBehaviour
             if (collisionCut.TryGetComponent<Borrar>(out Borrar borrar) && borrar.target!=null )
             {
                 collisionCutComponents = borrar;
-                Debug.Log(borrar.target);
+                //Debug.Log(borrar.target);
                 Slice(borrar.target);
             }
             collisionCutComponents = null;
@@ -38,7 +38,7 @@ public class SliceObject : MonoBehaviour
         Vector3 planeNormal = Vector3.Cross(endSlicePoint.position - startSlicePoint.position, velocity);
         planeNormal.Normalize();
         DrawDebugPlane(endSlicePoint.position, planeNormal, 0.5f);
-        Debug.Log("1");
+        //Debug.Log("1");
 
         // Check if the target has a SkinnedMeshRenderer
         SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
@@ -61,10 +61,10 @@ public class SliceObject : MonoBehaviour
 
             // Slice the temporary object
             SlicedHull hull = tempObject.Slice(endSlicePoint.position, planeNormal);
-            Debug.Log("2");
+            //Debug.Log("2");
             if (hull != null)
             {
-                Debug.Log("3");
+                //Debug.Log("3");
 
                 GameObject upperHull = hull.CreateUpperHull(tempObject, bloodMaterial);
                 SetupSlicedComponent(upperHull);
@@ -91,12 +91,12 @@ public class SliceObject : MonoBehaviour
         else
         {
 
-            Debug.LogWarning("The target does not have a SkinnedMeshRenderer!");
+            //Debug.LogWarning("The target does not have a SkinnedMeshRenderer!");
             SlicedHull hull = target.Slice(endSlicePoint.position, planeNormal);
-            Debug.Log("2");
+            //Debug.Log("2");
             if (hull != null)
             {
-                Debug.Log("3");
+                //Debug.Log("3");
 
                 GameObject upperHull = hull.CreateUpperHull(target, bloodMaterial);
                 upperHull.transform.position = target.transform.position;
@@ -156,7 +156,7 @@ public class SliceObject : MonoBehaviour
     }
     public void SliceChild(GameObject child, GameObject upperHullParent, GameObject lowerHullParent, Vector3 planeNormal, GameObject detachPart)
     {
-        Debug.Log($"Intentando cortar el hijo: {child.name}");
+        //Debug.Log($"Intentando cortar el hijo: {child.name}");
 
         SkinnedMeshRenderer skinnedMeshRenderer = child.GetComponent<SkinnedMeshRenderer>();
         if (skinnedMeshRenderer != null)
@@ -178,7 +178,7 @@ public class SliceObject : MonoBehaviour
             Bounds armBounds = GetArmBounds(collisionCut);
             if (armBounds == new Bounds())
             {
-                Debug.LogWarning("No se pudo obtener los Bounds del brazo para la ropa.");
+                //Debug.LogWarning("No se pudo obtener los Bounds del brazo para la ropa.");
                 return;
             }
 
@@ -186,7 +186,7 @@ public class SliceObject : MonoBehaviour
             Mesh mangaMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform,tempMeshFilter1);
             if (mangaMesh == null || mangaMesh.vertexCount == 0)
             {
-                Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
+                //Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
                 return;
             }
             Destroy(tempObject);
@@ -224,7 +224,7 @@ public class SliceObject : MonoBehaviour
             SlicedHull hull = tempMangaObject.Slice(endSlicePoint.position, planeNormal);
             if (hull != null)
             {
-                Debug.Log($"Corte exitoso para: {child.name}");
+                //Debug.Log($"Corte exitoso para: {child.name}");
 
                 GameObject upperHull = hull.CreateUpperHull(tempMangaObject, bloodMaterial);
                 if (upperHull != null)
@@ -241,7 +241,7 @@ public class SliceObject : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"No se pudo cortar la manga del objeto dasd: {child.name}");
+                //Debug.LogWarning($"No se pudo cortar la manga del objeto dasd: {child.name}");
                 tempMangaObject.transform.SetParent(detachPart.transform);
             }
 
@@ -250,8 +250,8 @@ public class SliceObject : MonoBehaviour
         else
         {
 
-            Debug.LogWarning($"El objeto {child.name} no tiene un SkinnedMeshRenderer. Saltando corte.");
-            Debug.LogWarning("The target does not have a SkinnedMeshRenderer!");
+            //Debug.LogWarning($"El objeto {child.name} no tiene un SkinnedMeshRenderer. Saltando corte.");
+            //Debug.LogWarning("The target does not have a SkinnedMeshRenderer!");
 
             GameObject tempObject = new GameObject("TempSlicingObjectdwedwed");
             tempObject.transform.position = child.transform.position;
@@ -268,7 +268,7 @@ public class SliceObject : MonoBehaviour
             Mesh mangaMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform, tempMeshFilter1);
             if (mangaMesh == null || mangaMesh.vertexCount == 0)
             {
-                Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
+                //Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
                 Destroy(tempObject);
                 return;
             }
@@ -300,10 +300,10 @@ public class SliceObject : MonoBehaviour
             MeshRenderer tempMeshRenderer = tempMangaObject.AddComponent<MeshRenderer>();
             tempMeshRenderer.materials = child.GetComponent<MeshRenderer>().materials;
             SlicedHull hull = tempMangaObject.Slice(endSlicePoint.position, planeNormal);
-            Debug.Log("2");
+            //Debug.Log("2");
             if (hull != null)
             {
-                Debug.Log($"Corte exitoso para: {child.name}");
+                //Debug.Log($"Corte exitoso para: {child.name}");
 
                 GameObject upperHull = hull.CreateUpperHull(tempMangaObject, bloodMaterial);
                 if (upperHull != null)
@@ -316,14 +316,14 @@ public class SliceObject : MonoBehaviour
                 {
                     lowerHull.transform.SetParent(lowerHullParent.transform, true);
                 }
-                Debug.Log("3");
+                //Debug.Log("3");
 
                 Destroy(child);
                 Destroy(tempMangaObject);
             }
             else
             {
-                Debug.LogWarning($"No se pudo cortar el hijo: {child.name}");
+                //Debug.LogWarning($"No se pudo cortar el hijo: {child.name}");
                 tempMangaObject.transform.SetParent(detachPart.transform);
             }
         }
@@ -344,14 +344,7 @@ public class SliceObject : MonoBehaviour
         Vector3 bottomLeft = pointOnPlane - forward - right;
         Vector3 bottomRight = pointOnPlane - forward + right;
 
-        // Draw lines connecting the corners
-        Debug.DrawLine(topLeft, topRight, Color.green, 0.1f);
-        Debug.DrawLine(topRight, bottomRight, Color.green, 0.1f);
-        Debug.DrawLine(bottomRight, bottomLeft, Color.green, 0.1f);
-        Debug.DrawLine(bottomLeft, topLeft, Color.green, 0.1f);
-
-        // Draw the normal vector
-        Debug.DrawRay(pointOnPlane, planeNormal * size, Color.red, 0.1f);
+       
     }
 
 
@@ -431,7 +424,6 @@ public class SliceObject : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"El objeto {armObject.name} no tiene un Collider asignado.");
             return new Bounds();
         }
     }
@@ -443,7 +435,6 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
     // Validar los Bounds
     if (bounds == null || bounds.Length == 0)
     {
-        Debug.LogWarning("No se proporcionaron Bounds válidos.");
         return null;
     }
         foreach (var bound in bounds)
@@ -535,7 +526,6 @@ public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTrans
     // Validar la cantidad de triángulos
     if (filteredTriangles.Count % 3 != 0)
     {
-        Debug.LogError($"Error en los triángulos: se encontraron {filteredTriangles.Count}, pero no son múltiplos de 3.");
         return null;
     }
 

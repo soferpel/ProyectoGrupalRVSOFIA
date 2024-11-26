@@ -27,10 +27,10 @@ public class ClientController : MonoBehaviour
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        //agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
-        StartCoroutine(MoveToPoints());
+        //StartCoroutine(MoveToPoints());
         foreach (Collider collider in bodyPartsCollider)
         {
             collider.enabled = false;
@@ -139,8 +139,8 @@ public class ClientController : MonoBehaviour
         Debug.Log("ReportDeath llamado. Cambiando a movimiento final.");
         isFinalMove = true;
 
-        StopCoroutine(MoveToPoints());
-        MoveToFinalPoint();
+        //StopCoroutine(MoveToPoints());
+        //MoveToFinalPoint();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -156,8 +156,8 @@ public class ClientController : MonoBehaviour
         if (isAlive)
         {
             isAlive = false; // Marcar como muerto
-            StopCoroutine(MoveToPoints()); // Detener la rutina de movimiento
-            agent.isStopped = true; // Detener el movimiento del NavMeshAgent
+            //StopCoroutine(MoveToPoints()); // Detener la rutina de movimiento
+            //agent.isStopped = true; // Detener el movimiento del NavMeshAgent
             animator.SetTrigger("isDead");
             yield return new WaitForSeconds(1f);
             foreach (GameObject part in sliceableParts)
