@@ -49,7 +49,7 @@ public class VisionSensor : MonoBehaviour
                                 LinkedAI.VisionConeRange, DetectionMask, QueryTriggerInteraction.Collide))
             {
                 string layerName = LayerMask.LayerToName(candidateTarget.gameObject.layer);
-                if (candidateTarget.gameObject.TryGetComponent<ClientController>(out ClientController client) && !(client.isAlive) || layerName.Contains("BodyParts"))
+                if ((candidateTarget.gameObject.TryGetComponent<ClientController>(out ClientController client) && !(client.isAlive)) || layerName.Contains("BodyParts"))
                 {
                     LinkedAI.ReportCanSee(candidateTarget);
                 }

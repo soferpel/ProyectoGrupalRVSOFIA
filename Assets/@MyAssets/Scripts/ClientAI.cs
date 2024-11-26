@@ -19,7 +19,7 @@ public class ClientAI : MonoBehaviour
     [SerializeField] Color _ProximityRangeColour = new Color(1f, 1f, 1f, 0.25f);
 
     public Vector3 EyeLocation => transform.position;
-    public Vector3 EyeDirection => -transform.right;
+    public Vector3 EyeDirection => -transform.forward;
 
     public float VisionConeAngle => _VisionConeAngle;
     public float VisionConeRange => _VisionConeRange;
@@ -106,7 +106,7 @@ public class ClientAIEditor : Editor
         Handles.DrawSolidDisc(ai.transform.position, Vector3.up, ai.ProximityDetectionRange);
 
         // work out the start point of the vision cone
-        Vector3 startPoint = Mathf.Cos(-ai.VisionConeAngle * Mathf.Deg2Rad) * -ai.transform.right +
+        Vector3 startPoint = Mathf.Cos(-ai.VisionConeAngle * Mathf.Deg2Rad) * ai.transform.right +
                              Mathf.Sin(-ai.VisionConeAngle * Mathf.Deg2Rad) * ai.transform.forward;
 
         // draw the vision cone
