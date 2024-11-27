@@ -15,8 +15,8 @@ public class ClientAI : MonoBehaviour
     [SerializeField] float _VisionConeRange = 30f;
     [SerializeField] Color _VisionConeColour = new Color(1f, 0f, 0f, 0.25f);
 
-    [SerializeField] float _ProximityDetectionRange = 3f;
-    [SerializeField] Color _ProximityRangeColour = new Color(1f, 1f, 1f, 0.25f);
+    //[SerializeField] float _ProximityDetectionRange = 3f;
+    //[SerializeField] Color _ProximityRangeColour = new Color(1f, 1f, 1f, 0.25f);
 
     public Vector3 EyeLocation => transform.position;
     public Vector3 EyeDirection => -transform.forward;
