@@ -25,8 +25,8 @@ public class ClientAI : MonoBehaviour
     public float VisionConeRange => _VisionConeRange;
     public Color VisionConeColour => _VisionConeColour;
 
-    public float ProximityDetectionRange => _ProximityDetectionRange;
-    public Color ProximityDetectionColour => _ProximityRangeColour;
+    //public float ProximityDetectionRange => _ProximityDetectionRange;
+    //public Color ProximityDetectionColour => _ProximityRangeColour;
     public float CosVisionConeAngle { get; private set; } = 0f;
 
     AwarenessSystem Awareness;
@@ -46,51 +46,26 @@ public class ClientAI : MonoBehaviour
     }
 
 
-    public void ReportInProximity(DetectableTarget target)
-    {
-        Awareness.ReportInProximity(target);
-    }
-    /*
-    public void OnSuspicious()
-    {
-        Debug.Log("I hear you");
-    }
-    */
+    //public void ReportInProximity(DetectableTarget target)
+    //{
+    //    Awareness.ReportInProximity(target);
+    //}
+    
     public void OnDetected(GameObject target)
     {
-        Debug.Log("I see you " + target.gameObject.name);
         ClientController clientController = GetComponent<ClientController>();
         if (clientController != null)
         {
-            clientController.ReportDeath(); // Llamar a la función
+            if (!clientController.isAlive)
+            {
+                clientController.ReportDeath(); 
+            } 
         }
-        else
+        if(target.gameObject.layer == LayerMask.NameToLayer("BodyParts"))
         {
-            Debug.LogError("No se encontró un ClientController en este objeto.");
+            clientController.ReportDeath();
         }
     }
-    /*
-    public void OnFullyDetected(GameObject target)
-    {
-        Debug.Log("Charge! " + target.gameObject.name);
-    }
-    */
-    public void OnLostDetect(GameObject target)
-    {
-        Debug.Log("Where are you " + target.gameObject.name);
-    }
-
-    public void OnLostSuspicion()
-    {
-        Debug.Log("Where did you go");
-    }
-
-    public void OnFullyLost()
-    {
-        Debug.Log("Must be nothing");
-    }
-
-
 }
 
 #if UNITY_EDITOR
@@ -102,8 +77,8 @@ public class ClientAIEditor : Editor
         var ai = target as ClientAI;
 
         // draw the detectopm range
-        Handles.color = ai.ProximityDetectionColour;
-        Handles.DrawSolidDisc(ai.transform.position, Vector3.up, ai.ProximityDetectionRange);
+        //Handles.color = ai.ProximityDetectionColour;
+        //Handles.DrawSolidDisc(ai.transform.position, Vector3.up, ai.ProximityDetectionRange);
 
         // work out the start point of the vision cone
         Vector3 startPoint = Mathf.Cos(-ai.VisionConeAngle * Mathf.Deg2Rad) * ai.transform.right +

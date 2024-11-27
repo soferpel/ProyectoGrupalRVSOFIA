@@ -58,8 +58,8 @@ public class AwarenessSystem : MonoBehaviour
     [SerializeField] float VisionMinimumAwareness = 1f;
     [SerializeField] float VisionAwarenessBuildRate = 10f;
 
-    [SerializeField] float ProximityMinimumAwareness = 0f;
-    [SerializeField] float ProximityAwarenessBuildRate = 1f;
+    //[SerializeField] float ProximityMinimumAwareness = 0f;
+    //[SerializeField] float ProximityAwarenessBuildRate = 1f;
 
     [SerializeField] float AwarenessDecayDelay = 0.1f;
     [SerializeField] float AwarenessDecayRate = 0.1f;
@@ -83,7 +83,7 @@ public class AwarenessSystem : MonoBehaviour
             {
                 if (Targets[targetGO].Awareness <= 0f)
                 {
-                    LinkedAI.OnFullyLost();
+                    //LinkedAI.OnFullyLost();
                     toCleanup.Add(targetGO);
                 }/*
                 else
@@ -132,10 +132,10 @@ public class AwarenessSystem : MonoBehaviour
         UpdateAwareness(seen.gameObject, seen, seen.transform.position, awareness, VisionMinimumAwareness);
     }
 
-    public void ReportInProximity(DetectableTarget target)
-    {
-        var awareness = ProximityAwarenessBuildRate * Time.deltaTime;
+    //public void ReportInProximity(DetectableTarget target)
+    //{
+    //    var awareness = ProximityAwarenessBuildRate * Time.deltaTime;
 
-        UpdateAwareness(target.gameObject, target, target.transform.position, awareness, ProximityMinimumAwareness);
-    }
+    //    UpdateAwareness(target.gameObject, target, target.transform.position, awareness, ProximityMinimumAwareness);
+    //}
 }

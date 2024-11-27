@@ -24,8 +24,8 @@ public class ProximitySensor : MonoBehaviour
             if (candidateTarget.gameObject == gameObject)
                 continue;
 
-            if (Vector3.Distance(LinkedAI.EyeLocation, candidateTarget.transform.position) <= LinkedAI.ProximityDetectionRange)
-                LinkedAI.ReportInProximity(candidateTarget);
+            //if (Vector3.Distance(LinkedAI.EyeLocation, candidateTarget.transform.position) <= LinkedAI.ProximityDetectionRange)
+            //    LinkedAI.ReportInProximity(candidateTarget);
         }
     }
 }
