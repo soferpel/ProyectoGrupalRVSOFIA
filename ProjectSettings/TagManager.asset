@@ -11,6 +11,7 @@ TagManager:
   - waypoint
   - Clothes
   - Lid
+  - Leg
   layers:
   - Default
   - TransparentFX
