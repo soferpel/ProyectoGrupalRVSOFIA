@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class clothing : MonoBehaviour
 {
-
-
     public GameObject skin_head;
     public GameObject[] skin_body;
   
-
     public GameObject cigarette;
     public GameObject crowbar;
     public GameObject fireaxe;
     public GameObject glock;
     public GameObject phone;
     
-
     public GameObject beard_a;
     public GameObject beard_b;
     public GameObject beard_c;
@@ -80,9 +76,6 @@ public class clothing : MonoBehaviour
     public GameObject tank_top;
     public GameObject trousers;
 
-
-  
-    
     public Texture[] skin_textures;
 
     public Texture[] beard_textures;
@@ -146,21 +139,14 @@ public class clothing : MonoBehaviour
     public Texture[] trousers_textures;
 
     public bool show_run;
-   
-
-   
-
+ 
     bool hat;
 
-
-
-
-
-
-
-   
-
-
+    public static List<string> existingClientDescriptions = new List<string>();
+    private int male_female;
+    private MafiaController mafiaController;
+    public delegate void AppearanceGenerated(string description);
+    public static event AppearanceGenerated OnMafiaAppearanceGenerated;
 
     Coroutine coroutine_random_clothing;
 
@@ -243,15 +229,6 @@ public class clothing : MonoBehaviour
 
         trousers.SetActive(false);
 
-
-
-
-
-
-
-
-      
-
         // determining skin color
 
         int skin_color = UnityEngine.Random.Range(0, 6);
@@ -262,16 +239,10 @@ public class clothing : MonoBehaviour
             skin_body_part.GetComponent<MeshRenderer>().materials[0].mainTexture = skin_textures[skin_color];
         }
 
-
-
         // determining male or female
-        int male_female = UnityEngine.Random.Range(0, 2);
+        male_female = UnityEngine.Random.Range(0, 2);
 
-   
-        
-       
         // does a hat fit for the hair
-        
 
         // determining haircolor
         int hairColor = UnityEngine.Random.Range(0, 4);    // 0 = dark  1 = brown  2 = blonde
@@ -280,21 +251,15 @@ public class clothing : MonoBehaviour
         if(male_female == 0)
         {
          
-
             hat = true;
-
             // choose hair type   hair_a , hair_b  , hair_e
             int hair = UnityEngine.Random.Range(0, 3);
-
             if (hair == 0)
             {
                 hair_a.SetActive(true);
-
                 // 0 = full hair    1 = under cut
                 int hair_cut = UnityEngine.Random.Range(0, 2);
                 hat = true;
-            
-
                 if (hairColor == 0)
                 {
                     if (hair_cut == 0)
@@ -328,22 +293,15 @@ public class clothing : MonoBehaviour
                     {
                         hair_a.GetComponent<Renderer>().materials[0].mainTexture = hair_a_textures[5];
                     }
-
                 }
-
-
             }
 
             if (hair == 1)
             {
                 hair_b.SetActive(true);
                 hat = false;
-
                 // 0 = full hair    1 = under cut
                 int hair_cut = UnityEngine.Random.Range(0, 2);
-
-
-
                 if (hairColor == 0)
                 {
                     if (hair_cut == 0)
@@ -377,58 +335,33 @@ public class clothing : MonoBehaviour
                     {
                         hair_b.GetComponent<Renderer>().materials[0].mainTexture = hair_b_textures[4];
                     }
-
                 }
-
-
-
             }
 
             if (hair == 2)
             {
                 hair_e.SetActive(true);
                 hat = false;
-               
-
-
-
                 if (hairColor == 0)
                 {
-                    
                         hair_e.GetComponent<Renderer>().materials[0].mainTexture = hair_e_textures[0];
-                    
-                   
                 }
                 if (hairColor == 1)
                 {
-                   
                         hair_e.GetComponent<Renderer>().materials[0].mainTexture = hair_e_textures[1];
-                    
-                   
-
                 }
                 if (hairColor == 2)
                 {
-                   
                         hair_e.GetComponent<Renderer>().materials[0].mainTexture = hair_e_textures[2];
-                    
-                   
-
                 }
-
-
             }
-
         }
         // female
         if(male_female == 1)
         {
-            
             hat = false;
-
             // choose hair type   hair_c , hair_d
             int hair = UnityEngine.Random.Range(0, 2);
-
 
             if(hair == 0)
             {
@@ -472,7 +405,6 @@ public class clothing : MonoBehaviour
         if(male_female == 0)
         {
             int percent = UnityEngine.Random.Range(0, 100);
-
             if(percent > 0 && percent < 50)
             {
                 // none beard
@@ -481,7 +413,6 @@ public class clothing : MonoBehaviour
             {
                 // beard a
                 beard_a.SetActive(true);
-
                 if(hairColor == 0)
                 {
                     beard_a.GetComponent<Renderer>().materials[0].mainTexture = beard_textures[0];
@@ -498,9 +429,7 @@ public class clothing : MonoBehaviour
             if (percent > 70 && percent < 80)
             {
                 // beard b
-
                 beard_b.SetActive(true);
-
                 if (hairColor == 0)
                 {
                     beard_b.GetComponent<Renderer>().materials[0].mainTexture = beard_textures[0];
@@ -517,9 +446,7 @@ public class clothing : MonoBehaviour
             if (percent > 80 && percent < 90)
             {
                 // beard c
-
                 beard_c.SetActive(true);
-
                 if (hairColor == 0)
                 {
                     beard_c.GetComponent<Renderer>().materials[0].mainTexture = beard_textures[0];
@@ -536,9 +463,7 @@ public class clothing : MonoBehaviour
             if (percent > 90 && percent < 100)
             {
                 // beard d
-
                 beard_d.SetActive(true);
-
                 if (hairColor == 0)
                 {
                     beard_d.GetComponent<Renderer>().materials[0].mainTexture = beard_textures[0];
@@ -554,21 +479,13 @@ public class clothing : MonoBehaviour
             }
         }
 
-
         // determining complet suits or normal cloth
         int suit_or_cloth = UnityEngine.Random.Range(0, 2);
-
         // determing      suit/ normal cloth to wear
-
-
         if (suit_or_cloth == 0)
         {
             // suits
-
             int which_suit = UnityEngine.Random.Range(0,11);
-
-
-
 
             // bankersuit    0
             // cocksuit      1
@@ -582,25 +499,18 @@ public class clothing : MonoBehaviour
             // sellersuit    9
             // workersuit    10
 
-
             // banker suit
             if (which_suit == 0)
             {
                 banker_suit.SetActive(true);
-
                 int which_texture = UnityEngine.Random.Range(0, 7);
-
-               
                 banker_suit.GetComponent<Renderer>().materials[0].mainTexture = banker_suit_texture[which_texture];
-                
             }
             // cock suit
             if(which_suit == 1)
             {
                 cock_suit.SetActive(true);
-
                 cock_suit.GetComponent<Renderer>().materials[0].mainTexture = cock_suit_texture;
-
                 if(hat)
                 {
                     cock_suit_hat.SetActive(true);
@@ -611,9 +521,7 @@ public class clothing : MonoBehaviour
             if (which_suit == 2)
             {
                 farmer_suit.SetActive(true);
-
                 farmer_suit.GetComponent<Renderer>().materials[0].mainTexture = farmer_suit_texture;
-
                 if (hat)
                 {
                     farmer_suit_hat.SetActive(true);
@@ -731,56 +639,37 @@ public class clothing : MonoBehaviour
                     worker_suit_hat.GetComponent<Renderer>().materials[0].mainTexture = worker_suit_texture;
                 }
             }
-
-
-
-
         }
         if (suit_or_cloth == 1)
         {
             // normal cloth
-
             int shoes = UnityEngine.Random.Range(0, 3);
-
             if(shoes == 0)
             {
                 shoes1.SetActive(true);
-
                 int shoes1_texture = UnityEngine.Random.Range(0, 8);
-
                 shoes1.GetComponent<Renderer>().materials[0].mainTexture = shoes1_textures[shoes1_texture];
-
             }
 
             if (shoes == 1)
             {
                 shoes2.SetActive(true);
-
                 int shoes2_texture = UnityEngine.Random.Range(0, 7);
-
                 shoes2.GetComponent<Renderer>().materials[0].mainTexture = shoes2_textures[shoes2_texture];
-
             }
 
             if (shoes == 2)
             {
                 shoes3.SetActive(true);
-
                 int shoes3_texture = UnityEngine.Random.Range(0, 6);
-
                 shoes3.GetComponent<Renderer>().materials[0].mainTexture = shoes3_textures[shoes3_texture];
-
             }
 
-
             int glasses_percentage = UnityEngine.Random.Range(0, 100);
-
             if(glasses_percentage < 20)
             {
                 glasses.SetActive(true);
-
                 int texture_choose = UnityEngine.Random.Range(0, 6);
-
                 glasses.GetComponent<Renderer>().materials[0].mainTexture = glasses_texture[texture_choose];
             }
 
@@ -789,29 +678,21 @@ public class clothing : MonoBehaviour
             if(chain == 0)
             {
                 chain1.SetActive(true);
-
                 int textures = UnityEngine.Random.Range(0, 4);
-
                 chain1.GetComponent<Renderer>().materials[0].mainTexture = chain1_textures[textures];
-
             }
             if(chain == 1)
             {
                 chain2.SetActive(true);
-
                 int textures = UnityEngine.Random.Range(0, 3);
-
                 chain2.GetComponent<Renderer>().materials[0].mainTexture = chain2_textures[textures];
 
             }
             if(chain == 2)
             {
                 chain3.SetActive(true);
-
                 int textures = UnityEngine.Random.Range(0, 3);
-
                 chain3.GetComponent<Renderer>().materials[0].mainTexture = chain3_textures[textures];
-
             }
 
             int scarfPercentage = UnityEngine.Random.Range(0, 100);
@@ -819,9 +700,7 @@ public class clothing : MonoBehaviour
             if(scarfPercentage < 20)
             {
                 scarf.SetActive(true);
-
                 int textures = UnityEngine.Random.Range(0, 11);
-
                 scarf.GetComponent<Renderer>().materials[0].mainTexture = scarf_textures[textures];
             }
 
@@ -831,9 +710,7 @@ public class clothing : MonoBehaviour
             if(which_trouser == 0)
             {
                 trousers.SetActive(true);
-
                 int texture = UnityEngine.Random.Range(0, 15);
-
                 trousers.GetComponent<Renderer>().materials[0].mainTexture = trousers_textures[texture];
                 
             }
@@ -841,51 +718,37 @@ public class clothing : MonoBehaviour
             if (which_trouser == 1)
             {
                 shortpants.SetActive(true);
-
-
                 int texture = UnityEngine.Random.Range(0, 11);
-
                 shortpants.GetComponent<Renderer>().materials[0].mainTexture = shortpants_textures[texture];
 
-
             }
-
 
             // upper bosy cloth :   0 = pullover  1 = shirt    2 = t_shirt    3 = tanktop
             int upper_cloth = UnityEngine.Random.Range(0, 4);
 
-            
             if(upper_cloth == 0)
             {
                 pullover.SetActive(true);
-
                 int texture = UnityEngine.Random.Range(0, 17);
-
                 pullover.GetComponent<Renderer>().materials[0].mainTexture = pullover_textures[texture];
             }
 
             if (upper_cloth == 1)
             {
                 shirt.SetActive(true);
-
                 int texture = UnityEngine.Random.Range(0, 14);
-
                 shirt.GetComponent<Renderer>().materials[0].mainTexture = shirt_textures[texture];
             }
             if (upper_cloth == 2)
             {
                 t_shirt.SetActive(true);
-
                 int texture = UnityEngine.Random.Range(0, 21);
-
                 t_shirt.GetComponent<Renderer>().materials[0].mainTexture = t_shirt_textures[texture];
             }
             if (upper_cloth == 3)
             {
                 tank_top.SetActive(true);
-
                 int texture = UnityEngine.Random.Range(0, 11);
-
                 tank_top.GetComponent<Renderer>().materials[0].mainTexture = tank_top_textures[texture];
             }
 
@@ -893,9 +756,95 @@ public class clothing : MonoBehaviour
         
     }
 
+    private void EnsureUniqueAppearanceForMafia()
+    {
+        string description;
+        do
+        {
+            start_random_clothing(); 
+            description = GenerateAppearanceDescription();  
+        }
+        while (existingClientDescriptions.Contains(description));  
+
+        mafiaController = GetComponent<MafiaController>();
+        if (mafiaController != null)
+        {
+            mafiaController.AppearanceDescription = description;  
+            existingClientDescriptions.Add(description);
+            OnMafiaAppearanceGenerated?.Invoke(description);
+        }
+    }
 
     private void Start()
     {
-        start_random_clothing();
+        if (GetComponent<MafiaController>() != null)
+        {
+            EnsureUniqueAppearanceForMafia();
+        }
+        else
+        {
+            start_random_clothing();
+            string clientDescription = GenerateAppearanceDescription();
+            existingClientDescriptions.Add(clientDescription);
+        }
     }
+
+    public string GenerateAppearanceDescription()
+    {
+        string description = "";
+
+        GameObject[] clothes = {
+        hair_a, hair_b, hair_c, hair_d, hair_e,
+        beard_a, beard_b, beard_c, beard_d,
+        cap, cap2, cap3,
+        chain1, chain2, chain3,
+        banker_suit,
+        cock_suit, cock_suit_hat,
+        farmer_suit, farmer_suit_hat,
+        fireman_suit, fireman_suit_hat,
+        mechanic_suit, mechanic_suit_hat,
+        nurse_suit,
+        police_suit, police_suit_hat,
+        roober_suit, roober_suit_hat,
+        security_guard_suit, security_guard_suit_hat,
+        seller_suit,
+        worker_suit, worker_suit_hat,
+        glasses,
+        jacket,
+        pullover,
+        scarf,
+        shirt,
+        shoes1, shoes2, shoes3,
+        shortpants,
+        t_shirt,
+        tank_top,
+        trousers
+    };
+        description += (male_female == 0) ? "Gender: Male | " : "Gender: Female | ";
+        if (skin_head.GetComponent<Renderer>() != null && skin_head.GetComponent<Renderer>().materials[0].mainTexture != null)
+        {
+            description += $"Skin Color: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
+        }
+
+        foreach (GameObject item in clothes)
+        {
+            if (item.activeSelf) 
+            {
+                Renderer renderer = item.GetComponent<Renderer>();
+                string textureName = (renderer != null && renderer.material.mainTexture != null)
+                    ? renderer.material.mainTexture.name
+                    : "No Texture";
+
+                description += $"{item.name} (Texture: {textureName}) | ";
+            }
+        }
+
+        return description.TrimEnd(' ', '|');
+    }
+
+
+    //private void Start()
+    //{
+    //    start_random_clothing();
+    //}
 }
