@@ -759,18 +759,17 @@ public class clothing : MonoBehaviour
     private void EnsureUniqueAppearanceForMafia()
     {
         string description;
-
         do
         {
-            start_random_clothing();
-            description = GenerateAppearanceDescription();
+            start_random_clothing(); 
+            description = GenerateAppearanceDescription();  
         }
-        while (existingClientDescriptions.Contains(description));
+        while (existingClientDescriptions.Contains(description));  
 
         mafiaController = GetComponent<MafiaController>();
         if (mafiaController != null)
         {
-            mafiaController.AppearanceDescription = description;
+            mafiaController.AppearanceDescription = description;  
             Debug.Log("Apariencia generada para mafioso: " + description);
             existingClientDescriptions.Add(description);
             OnMafiaAppearanceGenerated?.Invoke(description);
@@ -786,7 +785,6 @@ public class clothing : MonoBehaviour
         else
         {
             start_random_clothing();
-
             string clientDescription = GenerateAppearanceDescription();
             existingClientDescriptions.Add(clientDescription);
             Debug.Log("Apariencia generada para cliente: " + clientDescription);
@@ -797,6 +795,7 @@ public class clothing : MonoBehaviour
     {
         string description = "";
 
+        // Definir los elementos de ropa
         GameObject[] clothes = {
         hair_a, hair_b, hair_c, hair_d, hair_e,
         beard_a, beard_b, beard_c, beard_d,
@@ -823,26 +822,36 @@ public class clothing : MonoBehaviour
         t_shirt,
         tank_top,
         trousers
-        };
+    };
 
+        // Agregar el género
         description += (male_female == 0) ? "Gender: Male | " : "Gender: Female | ";
+        Debug.Log(male_female);
+        // Agregar el color de piel
         if (skin_head.GetComponent<Renderer>() != null && skin_head.GetComponent<Renderer>().materials[0].mainTexture != null)
         {
             description += $"Skin Color: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
         }
-        // Recorrer cada elemento
+
+        // Recorrer las partes del cuerpo visibles
         foreach (GameObject item in clothes)
         {
-            if (item.activeSelf) 
+            if (item.activeSelf)  // Solo si el objeto está activo
             {
                 Renderer renderer = item.GetComponent<Renderer>();
-                string textureName = (renderer != null && renderer.material.mainTexture != null)? renderer.material.mainTexture.name: "No Texture";
+                string textureName = (renderer != null && renderer.material.mainTexture != null)
+                    ? renderer.material.mainTexture.name
+                    : "No Texture";
+
+                // Agregar al string la descripción del nombre del objeto y su textura
                 description += $"{item.name} (Texture: {textureName}) | ";
             }
         }
 
+        // Eliminar el último separador " | " si lo hay
         return description.TrimEnd(' ', '|');
     }
+
 
     //private void Start()
     //{
