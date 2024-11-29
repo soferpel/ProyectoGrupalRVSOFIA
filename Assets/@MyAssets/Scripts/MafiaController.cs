@@ -29,17 +29,6 @@ public class MafiaController : MonoBehaviour
         animator = GetComponent<Animator>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         GenerateOrder();
-        if (string.IsNullOrEmpty(AppearanceDescription))
-        {
-            Debug.LogWarning("La descripción de apariencia no estaba asignada en Start. Generándola ahora...");
-            clothing clothing = GetComponent<clothing>();
-            if (clothing != null)
-            {
-                AppearanceDescription = clothing.GenerateAppearanceDescription();
-                Debug.Log("2.   " + clothing.GenerateAppearanceDescription());
-                Debug.Log("1.   " + appearanceDescription);
-            }
-        }
         StartCoroutine(MoveToPoints());
     }
 
@@ -192,6 +181,5 @@ public class MafiaController : MonoBehaviour
     private void HandleAppearanceGenerated(string description)
     {
         AppearanceDescription = description;
-        Debug.Log("Apariencia recibida a través del evento: " + description);
     }
 }
