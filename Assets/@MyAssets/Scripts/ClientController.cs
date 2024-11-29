@@ -5,11 +5,8 @@ using UnityEngine.AI;
 
 public class ClientController : MonoBehaviour
 {
-    
+
     private Animator animator;
-    public GameObject[] sliceableParts;
-    public List<Collider> bodyPartsCollider;
-    public LayerMask sliceLayer;
 
     public List<Transform> patrolPoints;
     public Transform buyPoint;
@@ -31,10 +28,6 @@ public class ClientController : MonoBehaviour
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
         StartCoroutine(MoveToPoints());
-        foreach (Collider collider in bodyPartsCollider)
-        {
-            collider.enabled = false;
-        }
     }
 
     IEnumerator MoveToPoints()
@@ -52,7 +45,7 @@ public class ClientController : MonoBehaviour
             if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
             {
                 currentTarget = buyPoint;
-                waitTime = 5f;
+                waitTime = 50f;
                 isGoingToBuy = true;
                 pointsVisited++;
             }
@@ -67,6 +60,7 @@ public class ClientController : MonoBehaviour
                 pointsVisited++;
             }
 
+            // Mover al destino
             agent.SetDestination(currentTarget.position);
 
             while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
@@ -88,6 +82,7 @@ public class ClientController : MonoBehaviour
             agent.updateRotation = true;
             animator.SetBool("lookAround", true);
             yield return new WaitForSeconds(waitTime);
+
             if (pointsVisited >= pointsToVisit || isGoingToBuy)
             {
                 isFinalMove = true;
@@ -153,22 +148,11 @@ public class ClientController : MonoBehaviour
     {
         if (isAlive)
         {
-
             isAlive = false; 
+            StopCoroutine(MoveToPoints()); 
             agent.isStopped = true; 
-            StopCoroutine(MoveToPoints());
-            gameObject.GetComponent<NavMeshAgent>().enabled = false;
             animator.SetTrigger("isDead");
             yield return new WaitForSeconds(1f);
-            foreach (GameObject part in sliceableParts)
-            {
-                part.layer = LayerMask.NameToLayer("Sliceable");
-            }
-            Destroy(GetComponent<Rigidbody>());
-            foreach (Collider collider in bodyPartsCollider)
-            {
-                collider.enabled = true;
-            }
 
         }
     }
@@ -183,8 +167,6 @@ public class ClientController : MonoBehaviour
         }
         return isCloseToBuyPoint;
     }
-    
+
 }
-
-
 
