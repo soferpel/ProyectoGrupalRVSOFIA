@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Borrar : MonoBehaviour
+using UnityEngine.XR.Interaction.Toolkit;
+public class SliceablePartController : MonoBehaviour
 {
     public GameObject target;
     public GameObject attachPoint;
@@ -11,15 +11,10 @@ public class Borrar : MonoBehaviour
     public GameObject[] clothesChild;
     public GameObject cuttedClothes;
     public Collider[] boundsColliders;
-    void Start()
-    {
-    }
+    public string gameObjectTag;
+    public XRGrabInteractable bodyGrab;
+    public DragPerson dragController;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public Bounds[] ConvertCollidersToBounds()
     {
         if (boundsColliders == null || boundsColliders.Length == 0)

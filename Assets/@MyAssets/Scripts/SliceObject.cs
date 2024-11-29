@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EzySlice;
 using UnityEngine.XR.Interaction.Toolkit;
+
 public class SliceObject : MonoBehaviour
 {
     public Transform startSlicePoint;
@@ -13,132 +14,176 @@ public class SliceObject : MonoBehaviour
     public Material bloodMaterial;
 
     private GameObject collisionCut;
-    private Borrar collisionCutComponents;
+    private SliceablePartController collisionCutComponents;
+
+    private List<GameObject> temporalcuttedClothes = new List<GameObject>();
     void Update()
     {
-        bool hasHit = Physics.Linecast(startSlicePoint.position, endSlicePoint.position, out RaycastHit hit, sliceableLayer);
-        Debug.Log(hasHit);
-        if (hasHit)
+        if (Physics.Linecast(startSlicePoint.position, endSlicePoint.position, out RaycastHit hit, sliceableLayer))
         {
             collisionCut = hit.collider.gameObject;
-            if (collisionCut.TryGetComponent<Borrar>(out Borrar borrar) && borrar.target!=null )
+            if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target!=null )
             {
-                collisionCutComponents = borrar;
-            Debug.Log(borrar.target);
-                Slice(borrar.target);
+                collisionCutComponents = partController;
+                Slice(partController.target);
+                Destroy(partController);
             }
             collisionCutComponents = null;
             collisionCut = null;
             
         }
     }
-
     public void Slice(GameObject target)
     {
         Vector3 velocity = velocityEstimator.GetVelocityEstimate();
         Vector3 planeNormal = Vector3.Cross(endSlicePoint.position - startSlicePoint.position, velocity);
         planeNormal.Normalize();
-        DrawDebugPlane(endSlicePoint.position, planeNormal, 0.5f);
-        Debug.Log("1");
 
         SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
+        GameObject tempObject = new GameObject("TempSlicingObject");
+        tempObject.transform.position = target.transform.position;
+        tempObject.transform.rotation = target.transform.rotation;
+        tempObject.transform.localScale = new Vector3(1, 1, 1);
+
+        MeshFilter tempMeshFilter = tempObject.AddComponent<MeshFilter>();
+        MeshRenderer tempMeshRenderer = tempObject.AddComponent<MeshRenderer>();
+
+        Mesh bakedMesh = new Mesh();
         if (skinnedMeshRenderer != null)
         {
-            Mesh bakedMesh = new Mesh();
             skinnedMeshRenderer.BakeMesh(bakedMesh);
-
-            GameObject tempObject = new GameObject("TempSlicingObject");
-            tempObject.transform.position = target.transform.position;
-            tempObject.transform.rotation = target.transform.rotation;
-            tempObject.transform.localScale = new Vector3(1,1,1);
-
-            MeshFilter tempMeshFilter = tempObject.AddComponent<MeshFilter>();
             tempMeshFilter.mesh = bakedMesh;
-            MeshRenderer tempMeshRenderer = tempObject.AddComponent<MeshRenderer>();
             tempMeshRenderer.materials = skinnedMeshRenderer.sharedMaterials;
-
-            SlicedHull hull = tempObject.Slice(endSlicePoint.position, planeNormal);
-            Debug.Log("2");
-            if (hull != null)
-            {
-                Debug.Log("3");
-
-                GameObject upperHull = hull.CreateUpperHull(tempObject, bloodMaterial);
-                SetupSlicedComponent(upperHull);
-
-                GameObject lowerHull = hull.CreateLowerHull(tempObject, bloodMaterial);
-                SetupSlicedComponent(lowerHull);
-                foreach (Transform child in target.transform)
-                {
-                    foreach (Transform child2 in child.transform)
-                    {
-                        if (child2.gameObject.activeSelf)
-                        {
-
-                            SliceChild(child2.gameObject, upperHull, lowerHull, planeNormal, upperHull);
-                        }
-                    }
-                }
-                Destroy(target);
-            }
-
-            Destroy(tempObject);
         }
         else
         {
+            tempMeshFilter.mesh = target.GetComponent<MeshFilter>().mesh;
+            tempMeshRenderer.materials = target.GetComponent<MeshRenderer>().materials;
+        }
 
-            Debug.LogWarning("The target does not have a SkinnedMeshRenderer!");
-            SlicedHull hull = target.Slice(endSlicePoint.position, planeNormal);
-            Debug.Log("2");
-            if (hull != null)
+        GameObject outBoundPart = GetSkinnedSubMesh(tempMeshFilter.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), skinnedMeshRenderer, false, tempMeshFilter);
+
+        GameObject inBoundMesh = GetSkinnedSubMesh(tempMeshFilter.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), skinnedMeshRenderer, true, tempMeshFilter);
+        
+        if (inBoundMesh == null)
+        {
+            return;
+        }
+
+        // Asignamos el SkinnedMeshRenderer de outBoundPart al target
+        if (outBoundPart != null)
+        {
+            SkinnedMeshRenderer outBoundSkinnedMeshRenderer = outBoundPart.GetComponent<SkinnedMeshRenderer>();
+            if (outBoundSkinnedMeshRenderer != null && skinnedMeshRenderer != null)
             {
-                Debug.Log("3");
-
-                GameObject upperHull = hull.CreateUpperHull(target, bloodMaterial);
-                upperHull.transform.position = target.transform.position;
-                upperHull.transform.rotation = target.transform.rotation;
-                upperHull.transform.localScale = new Vector3(100, 100, 100);
-                GameObject lowerHull = hull.CreateLowerHull(target, bloodMaterial);
-                lowerHull.transform.position = target.transform.position;
-                lowerHull.transform.rotation = target.transform.rotation;
-                lowerHull.transform.localScale = new Vector3(100, 100, 100);
-
-                if (upperHull != null && lowerHull != null)
-                {
-                    float upperDistance = CalculateAverageDistance(upperHull, collisionCutComponents.attachPoint.transform.position);
-                    float lowerDistance = CalculateAverageDistance(lowerHull, collisionCutComponents.attachPoint.transform.position);
-
-                    GameObject detachPart = null;
-                    if (upperDistance < lowerDistance)
-                    {
-                        detachPart = lowerHull;
-                        SetupSlicedComponent(lowerHull);
-                        AttachToBody(upperHull);
-                        DetachPart(lowerHull);
-                    }
-                    else
-                    {
-                        detachPart = upperHull;
-                        SetupSlicedComponent(upperHull);
-                        AttachToBody(lowerHull);
-                        DetachPart(upperHull);
-                    }
-                    foreach (GameObject clothes in collisionCutComponents.clothes)
-                    {
-                        foreach (Transform child in clothes.transform)
-                        {
-                            if (child.gameObject.activeSelf)
-                            {
-
-                                SliceChild(child.gameObject, upperHull, lowerHull, planeNormal, detachPart);
-                            }
-                        }
-                    }
-                    
-                }
-                Destroy(target);
+                // Asignamos el skinned mesh renderer de outBoundPart al target
+                skinnedMeshRenderer.sharedMesh = outBoundSkinnedMeshRenderer.sharedMesh;
+                skinnedMeshRenderer.sharedMaterials = outBoundSkinnedMeshRenderer.sharedMaterials;
             }
         }
+
+        // Destruir el outBoundPart después de asignar el SkinnedMeshRenderer
+        if (outBoundPart != null)
+        {
+            Destroy(outBoundPart);
+        }
+
+        // Creamos el objeto temporal para las submallas
+        SkinnedMeshRenderer skinnedMeshRenderer2 = inBoundMesh.GetComponent<SkinnedMeshRenderer>();
+        GameObject tempObject2 = new GameObject("TempSlicingObject2");
+        tempObject2.transform.position = inBoundMesh.transform.position;
+        tempObject2.transform.rotation = inBoundMesh.transform.rotation;
+        tempObject2.transform.localScale = new Vector3(1, 1, 1);
+
+        MeshFilter tempMeshFilter2 = tempObject2.AddComponent<MeshFilter>();
+        MeshRenderer tempMeshRenderer2 = tempObject2.AddComponent<MeshRenderer>();
+        Mesh bakedMesh2 = new Mesh();
+
+        skinnedMeshRenderer2.BakeMesh(bakedMesh2);
+        tempMeshFilter2.mesh = bakedMesh2;
+        tempMeshRenderer2.materials = skinnedMeshRenderer2.sharedMaterials;
+
+        // Cortamos el objeto en dos partes (upperHull y lowerHull)
+        SlicedHull hull = tempObject2.Slice(endSlicePoint.position, planeNormal);
+        if (hull != null)
+        {
+            GameObject upperHull = hull.CreateUpperHull(tempObject2, bloodMaterial);
+            GameObject lowerHull = hull.CreateLowerHull(tempObject2, bloodMaterial);
+            if (upperHull != null && lowerHull != null)
+            {
+                foreach(Collider collider in collisionCutComponents.boundsColliders)
+                {
+                    Destroy(collider);
+                }
+                float upperDistance = CalculateAverageDistance(upperHull, collisionCutComponents.attachPoint.transform.position);
+                float lowerDistance = CalculateAverageDistance(lowerHull, collisionCutComponents.attachPoint.transform.position);
+
+                GameObject detachPart = (upperDistance < lowerDistance) ? lowerHull : upperHull;
+                SetupSlicedComponent(detachPart);
+                DetachPart(detachPart);
+
+                GameObject connectedPart = (detachPart == lowerHull) ? upperHull : lowerHull;
+                AttachToBody(connectedPart);
+
+                /*
+                collisionCutComponents.bodyGrab.enabled = false;
+                foreach (Collider collider in collisionCutComponents.boundsColliders)
+                {
+                    collisionCutComponents.bodyGrab.colliders.Remove(collider);
+                }
+                collisionCutComponents.bodyGrab.enabled = true;
+                */
+                /*
+                foreach (GameObject clothes in collisionCutComponents.clothes)
+                {
+                    ProcessClothChildren(clothes.transform, upperHull, lowerHull, planeNormal, detachPart);
+                }
+                UpdateClothesHierarchy();*/
+            }
+            // Destruir objetos temporales
+            Destroy(tempObject2);
+            Destroy(inBoundMesh);
+        }
+
+        Destroy(tempObject);
+        collisionCutComponents.dragController.countBodyParts--;
+        if (collisionCutComponents.dragController.countBodyParts <= 0)
+        {
+            collisionCutComponents.bodyGrab.trackPosition = true;
+            collisionCutComponents.bodyGrab.trackRotation = true;
+            collisionCutComponents.dragController.enabled = false;
+        }
+    }
+
+
+    private void ApplyHullTransform(GameObject hull, Vector3 position, Quaternion rotation)
+    {
+        if (hull != null)
+        {
+            hull.transform.position = position;
+            hull.transform.rotation = rotation;
+            hull.transform.localScale = new Vector3(100, 100, 100);
+        }
+    }
+
+    private void ProcessClothChildren(Transform clothesTransform, GameObject upperHull, GameObject lowerHull, Vector3 planeNormal, GameObject detachPart)
+    {
+        foreach (Transform child in clothesTransform)
+        {
+            if (child.gameObject.activeSelf)
+            {
+                SliceChild(child.gameObject, upperHull, lowerHull, planeNormal, detachPart);
+            }
+        }
+    }
+
+    private void UpdateClothesHierarchy()
+    {
+        foreach (GameObject cloth in temporalcuttedClothes)
+        {
+            cloth.transform.SetParent(collisionCutComponents.cuttedClothes.transform);
+        }
+        temporalcuttedClothes.Clear();
     }
 
     public void SetupSlicedComponent(GameObject slicedObject)
@@ -150,193 +195,68 @@ public class SliceObject : MonoBehaviour
     }
     public void SliceChild(GameObject child, GameObject upperHullParent, GameObject lowerHullParent, Vector3 planeNormal, GameObject detachPart)
     {
-        Debug.Log($"Intentando cortar el hijo: {child.name}");
-
         SkinnedMeshRenderer skinnedMeshRenderer = child.GetComponent<SkinnedMeshRenderer>();
+        GameObject tempObject = new GameObject("TempSlicingObject");
+        tempObject.transform.position = child.transform.position;
+        tempObject.transform.rotation = child.transform.rotation;
+        tempObject.transform.localScale = new Vector3(1, 1, 1);
+
+        MeshFilter tempMeshFilter1 = tempObject.AddComponent<MeshFilter>();
+        
+        MeshRenderer tempMeshRenderer1 = tempObject.AddComponent<MeshRenderer>();
+        
+
+        Mesh bakedMesh = new Mesh();
         if (skinnedMeshRenderer != null)
         {
-            Mesh bakedMesh = new Mesh();
             skinnedMeshRenderer.BakeMesh(bakedMesh);
-
-            GameObject tempObject = new GameObject("TempSlicingObject");
-            tempObject.transform.position = child.transform.position;
-            tempObject.transform.rotation = child.transform.rotation;
-            tempObject.transform.localScale = new Vector3(1, 1, 1);
-
-            MeshFilter tempMeshFilter1 = tempObject.AddComponent<MeshFilter>();
             tempMeshFilter1.mesh = bakedMesh;
-            MeshRenderer tempMeshRenderer1 = tempObject.AddComponent<MeshRenderer>();
             tempMeshRenderer1.materials = skinnedMeshRenderer.sharedMaterials;
-
-            Bounds armBounds = GetArmBounds(collisionCut);
-            if (armBounds == new Bounds())
-            {
-                Debug.LogWarning("No se pudo obtener los Bounds del brazo para la ropa.");
-                return;
-            }
-
-            Mesh mangaMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform,tempMeshFilter1);
-            if (mangaMesh == null || mangaMesh.vertexCount == 0)
-            {
-                Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
-                return;
-            }
-            Destroy(tempObject);
-            
-            Mesh clothMesh = GetSubMeshOutOfBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform, tempMeshFilter1);
-            GameObject clothObject = new GameObject($"Temp_{child.name}_Manga_hola");
-            clothObject.transform.position = child.transform.position;
-            clothObject.transform.rotation = child.transform.rotation;
-            clothObject.transform.localScale = new Vector3(1, 1, 1);
-
-            MeshFilter clothMeshFilter = clothObject.AddComponent<MeshFilter>();
-            clothMeshFilter.mesh = clothMesh;
-
-            MeshRenderer clothMeshRenderer = clothObject.AddComponent<MeshRenderer>();
-            clothMeshRenderer.materials = skinnedMeshRenderer.sharedMaterials;
-
-            clothObject.transform.SetParent(collisionCutComponents.cuttedClothes.transform);
-            child.SetActive(false);
-
-            GameObject tempMangaObject = new GameObject($"Temp_{child.name}_Manga");
-            tempMangaObject.transform.position = child.transform.position;
-            tempMangaObject.transform.rotation = child.transform.rotation;
-            tempMangaObject.transform.localScale = new Vector3(1,1,1);
-
-            MeshFilter tempMeshFilter = tempMangaObject.AddComponent<MeshFilter>();
-            tempMeshFilter.mesh = mangaMesh;
-
-            MeshRenderer tempMeshRenderer = tempMangaObject.AddComponent<MeshRenderer>();
-            tempMeshRenderer.materials = skinnedMeshRenderer.sharedMaterials;
-
-            SlicedHull hull = tempMangaObject.Slice(endSlicePoint.position, planeNormal);
-            if (hull != null)
-            {
-                Debug.Log($"Corte exitoso para: {child.name}");
-
-                GameObject upperHull = hull.CreateUpperHull(tempMangaObject, bloodMaterial);
-                if (upperHull != null)
-                {
-                    upperHull.transform.SetParent(upperHullParent.transform, true);
-                }
-
-                GameObject lowerHull = hull.CreateLowerHull(tempMangaObject, bloodMaterial);
-                if (lowerHull != null)
-                {
-                    lowerHull.transform.SetParent(lowerHullParent.transform, true);
-                }
-            Destroy(tempMangaObject);
-            }
-            else
-            {
-                Debug.LogWarning($"No se pudo cortar la manga del objeto dasd: {child.name}");
-                tempMangaObject.transform.SetParent(detachPart.transform);
-            }
-
         }
         else
         {
-
-            Debug.LogWarning($"El objeto {child.name} no tiene un SkinnedMeshRenderer. Saltando corte.");
-            Debug.LogWarning("The target does not have a SkinnedMeshRenderer!");
-
-            GameObject tempObject = new GameObject("TempSlicingObjectdwedwed");
-            tempObject.transform.position = child.transform.position;
-            tempObject.transform.rotation = child.transform.rotation;
-            tempObject.transform.localScale = new Vector3(1, 1, 1);
-
-            MeshFilter tempMeshFilter1 = tempObject.AddComponent<MeshFilter>();
             tempMeshFilter1.mesh = child.GetComponent<MeshFilter>().mesh;
-            MeshRenderer tempMeshRenderer1 = tempObject.AddComponent<MeshRenderer>();
             tempMeshRenderer1.materials = child.GetComponent<MeshRenderer>().materials;
+        }
+            GameObject outBoundPart = GetSubMeshOutOfBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), tempMeshFilter1);
+            outBoundPart.transform.position = child.transform.position;
+            outBoundPart.transform.rotation = child.transform.rotation;
+            outBoundPart.transform.localScale = Vector3.one;
 
-            
-            Mesh mangaMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform, tempMeshFilter1);
-            if (mangaMesh == null || mangaMesh.vertexCount == 0)
-            {
-                Debug.LogWarning("No se encontraron vértices en los Bounds especificados para la ropa.");
-                Destroy(tempObject);
-                return;
-            }
-
-            Mesh clothMesh = GetSubMeshOutOfBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), child.transform, tempMeshFilter1);
-            Destroy(tempObject);
-            GameObject clothObject = new GameObject($"Temp_{child.name}_Manga_hola");
-            clothObject.transform.position = child.transform.position;
-            clothObject.transform.rotation = child.transform.rotation;
-            clothObject.transform.localScale = new Vector3(1, 1, 1);
-
-            MeshFilter clothMeshFilter = clothObject.AddComponent<MeshFilter>();
-            clothMeshFilter.mesh = clothMesh;
-
-            MeshRenderer clothMeshRenderer = clothObject.AddComponent<MeshRenderer>();
-            clothMeshRenderer.materials = child.GetComponent<MeshRenderer>().materials;
-
-            clothObject.transform.SetParent(collisionCutComponents.cuttedClothes.transform);
+            temporalcuttedClothes.Add(outBoundPart);
             child.SetActive(false);
 
-            GameObject tempMangaObject = new GameObject($"Temp_{child.name}_Manga");
-            tempMangaObject.transform.position = child.transform.position;
-            tempMangaObject.transform.rotation = child.transform.rotation;
-            tempMangaObject.transform.localScale = new Vector3(1, 1, 1);
+            GameObject inBoundMesh = GetSubMeshInBounds(tempMeshFilter1.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), tempMeshFilter1);
+            if (inBoundMesh == null)
+            {
+                return;
+            }
+            inBoundMesh.transform.position = child.transform.position;
+            inBoundMesh.transform.rotation = child.transform.rotation;
+            inBoundMesh.transform.localScale = Vector3.one;
 
-            MeshFilter tempMeshFilter = tempMangaObject.AddComponent<MeshFilter>();
-            tempMeshFilter.mesh = mangaMesh;
-
-            MeshRenderer tempMeshRenderer = tempMangaObject.AddComponent<MeshRenderer>();
-            tempMeshRenderer.materials = child.GetComponent<MeshRenderer>().materials;
-            SlicedHull hull = tempMangaObject.Slice(endSlicePoint.position, planeNormal);
-            Debug.Log("2");
+            SlicedHull hull = inBoundMesh.Slice(endSlicePoint.position, planeNormal);
             if (hull != null)
             {
-                Debug.Log($"Corte exitoso para: {child.name}");
-
-                GameObject upperHull = hull.CreateUpperHull(tempMangaObject, bloodMaterial);
+                GameObject upperHull = hull.CreateUpperHull(inBoundMesh, bloodMaterial);
                 if (upperHull != null)
                 {
                     upperHull.transform.SetParent(upperHullParent.transform, true);
                 }
 
-                GameObject lowerHull = hull.CreateLowerHull(tempMangaObject, bloodMaterial);
+                GameObject lowerHull = hull.CreateLowerHull(inBoundMesh, bloodMaterial);
                 if (lowerHull != null)
                 {
                     lowerHull.transform.SetParent(lowerHullParent.transform, true);
                 }
-                Debug.Log("3");
-
-                Destroy(child);
-                Destroy(tempMangaObject);
+                Destroy(inBoundMesh);
             }
             else
             {
-                Debug.LogWarning($"No se pudo cortar el hijo: {child.name}");
-                tempMangaObject.transform.SetParent(detachPart.transform);
+                inBoundMesh.transform.SetParent(detachPart.transform);
             }
-        }
+        Destroy(tempObject);
     }
-    void DrawDebugPlane(Vector3 pointOnPlane, Vector3 planeNormal, float size)
-    {
-        Vector3 right = Vector3.Cross(planeNormal, Vector3.up).normalized * size;
-        if (right == Vector3.zero)
-        {
-            right = Vector3.Cross(planeNormal, Vector3.forward).normalized * size;
-        }
-        Vector3 forward = Vector3.Cross(planeNormal, right).normalized * size;
-
-        Vector3 topLeft = pointOnPlane + forward - right;
-        Vector3 topRight = pointOnPlane + forward + right;
-        Vector3 bottomLeft = pointOnPlane - forward - right;
-        Vector3 bottomRight = pointOnPlane - forward + right;
-
-        Debug.DrawLine(topLeft, topRight, Color.green, 0.1f);
-        Debug.DrawLine(topRight, bottomRight, Color.green, 0.1f);
-        Debug.DrawLine(bottomRight, bottomLeft, Color.green, 0.1f);
-        Debug.DrawLine(bottomLeft, topLeft, Color.green, 0.1f);
-
-        Debug.DrawRay(pointOnPlane, planeNormal * size, Color.red, 0.1f);
-    }
-
-
 
     private float CalculateAverageDistance(GameObject part, Vector3 referencePoint)
     {
@@ -362,13 +282,17 @@ public class SliceObject : MonoBehaviour
 
     private void DetachPart(GameObject part)
     {
-
+        part.tag = collisionCutComponents.gameObjectTag;
         XRGrabInteractable grabInteractable = part.AddComponent<XRGrabInteractable>();
-        GameObject attachPoint = new GameObject("AttachPoint");
-        attachPoint.transform.SetParent(part.transform);
-        attachPoint.transform.localPosition = part.GetComponent<MeshFilter>().sharedMesh.bounds.center;
-        grabInteractable.attachTransform = attachPoint.transform;
-
+        grabInteractable.useDynamicAttach = true;
+        /*
+        grabInteractable.enabled = false;
+        foreach (Collider collider in collisionCutComponents.boundsColliders)
+        {
+            grabInteractable.colliders.Add(collider);
+        }
+        grabInteractable.enabled = true;*/
+        /*
         foreach (GameObject child in collisionCutComponents.children)
         {
             child.transform.SetParent(part.transform);
@@ -402,173 +326,327 @@ public class SliceObject : MonoBehaviour
                 }
             }
 
-        }
+        }*/
     }
-    private Bounds GetArmBounds(GameObject armObject)
+
+    public GameObject GetSubMesh(Mesh originalMesh, Bounds[] bounds, MeshFilter originalMeshFilter, bool inBound)
     {
-        Collider armCollider = armObject.GetComponent<Collider>();
-        if (armCollider != null)
+        if (bounds == null || bounds.Length == 0)
         {
-            return armCollider.bounds;
+            return null;
         }
-        else
+
+        Vector3[] vertices = originalMesh.vertices;
+        int[] triangles = originalMesh.triangles;
+        Vector3[] normals = originalMesh.normals;
+        Vector2[] uvs = originalMesh.uv;
+
+        List<int> addedVertices = new List<int>();
+        List<Vector3> filteredVertices = new List<Vector3>();
+        List<int> filteredTriangles = new List<int>();
+        List<Vector3> filteredNormals = new List<Vector3>();
+        List<Vector2> filteredUVs = new List<Vector2>();
+
+        bool IsVertexIncluded(Vector3 worldVertex)
         {
-            Debug.LogWarning($"El objeto {armObject.name} no tiene un Collider asignado.");
-            return new Bounds();
+            foreach (var bound in bounds)
+            {
+                if (bound.Contains(worldVertex))
+                {
+                    return inBound;
+                }
+            }
+            return !inBound;
         }
+
+        Vector3[] worldVertices = new Vector3[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            worldVertices[i] = originalMeshFilter.transform.TransformPoint(vertices[i]);
+        }
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            if (IsVertexIncluded(worldVertices[i]) && !addedVertices.Contains(i))
+            {
+                addedVertices.Add(i);
+                filteredVertices.Add(vertices[i]);
+                filteredNormals.Add(normals[i]);
+                filteredUVs.Add(uvs[i]);
+            }
+        }
+
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            int idx1 = triangles[i];
+            int idx2 = triangles[i + 1];
+            int idx3 = triangles[i + 2];
+
+            bool idx1InList = addedVertices.Contains(idx1);
+            bool idx2InList = addedVertices.Contains(idx2);
+            bool idx3InList = addedVertices.Contains(idx3);
+
+            if (inBound && idx1InList && idx2InList && idx3InList)
+            {
+                filteredTriangles.Add(addedVertices.IndexOf(idx1));
+                filteredTriangles.Add(addedVertices.IndexOf(idx2));
+                filteredTriangles.Add(addedVertices.IndexOf(idx3));
+            }
+            else if (!inBound)
+            {
+                if (idx1InList || idx2InList || idx3InList)
+                {
+                    List<int> validIndices = new List<int>();
+
+                    if (idx1InList) validIndices.Add(addedVertices.IndexOf(idx1));
+                    else if (!IsVertexIncluded(worldVertices[idx1]))
+                    {
+                        validIndices.Add(filteredVertices.Count);
+                        filteredVertices.Add(vertices[idx1]);
+                        filteredNormals.Add(normals[idx1]);
+                        filteredUVs.Add(uvs[idx1]);
+                    }
+
+                    if (idx2InList) validIndices.Add(addedVertices.IndexOf(idx2));
+                    else if (!IsVertexIncluded(worldVertices[idx2]))
+                    {
+                        validIndices.Add(filteredVertices.Count);
+                        filteredVertices.Add(vertices[idx2]);
+                        filteredNormals.Add(normals[idx2]);
+                        filteredUVs.Add(uvs[idx2]);
+                    }
+
+                    if (idx3InList) validIndices.Add(addedVertices.IndexOf(idx3));
+                    else if (!IsVertexIncluded(worldVertices[idx3]))
+                    {
+                        validIndices.Add(filteredVertices.Count);
+                        filteredVertices.Add(vertices[idx3]);
+                        filteredNormals.Add(normals[idx3]);
+                        filteredUVs.Add(uvs[idx3]);
+                    }
+
+                    if (validIndices.Count >= 3)
+                    {
+                        filteredTriangles.AddRange(validIndices);
+                    }
+                }
+            }
+        }
+
+        if (filteredTriangles.Count % 3 != 0)
+        {
+            return null;
+        }
+
+        Mesh newMesh = new Mesh();
+        newMesh.vertices = filteredVertices.ToArray();
+        newMesh.triangles = filteredTriangles.ToArray();
+        newMesh.normals = filteredNormals.ToArray();
+        newMesh.uv = filteredUVs.ToArray();
+
+        newMesh.RecalculateBounds();
+        newMesh.RecalculateNormals();
+
+        GameObject newObject = new GameObject("SubMesh");
+        MeshFilter meshFilter = newObject.AddComponent<MeshFilter>();
+        meshFilter.mesh = newMesh;
+
+        MeshRenderer meshRenderer = newObject.AddComponent<MeshRenderer>();
+        meshRenderer.material = originalMeshFilter.GetComponent<MeshRenderer>().material;
+
+        return newObject;
     }
 
-
-
-public Mesh GetSubMesh(Mesh originalMesh, Bounds[] bounds, Transform parentTransform, MeshFilter originalMeshFilter, bool inBound)
+    public GameObject GetSkinnedSubMesh(Mesh originalMesh, Bounds[] bounds, SkinnedMeshRenderer originalSkinnedRenderer, bool inBound, MeshFilter originalMeshFilter)
 {
     if (bounds == null || bounds.Length == 0)
     {
-        Debug.LogWarning("No se proporcionaron Bounds válidos.");
         return null;
     }
-        foreach (var bound in bounds)
-        {
-            DrawBounds(bound);
-        }
-            Vector3[] vertices = originalMesh.vertices;
-    int[] triangles = originalMesh.triangles;
-    Vector3[] normals = originalMesh.normals;
-    BoneWeight[] boneWeights = originalMesh.boneWeights;
-    Matrix4x4[] bindPoses = originalMesh.bindposes;     
 
-    Vector3[] worldVertices = new Vector3[vertices.Length];
-    for (int i = 0; i < vertices.Length; i++)
-    {
-        worldVertices[i] = originalMeshFilter.transform.TransformPoint(vertices[i]);
-    }
+    // Usar el mesh asociado al SkinnedMeshRenderer en lugar del originalMesh
+    Mesh originalSkinnedMesh = originalSkinnedRenderer.sharedMesh;
 
+        // Obtener los datos del mesh original
+        Vector3[] notvertices = originalMesh.vertices;
+
+        Vector3[] vertices = originalSkinnedMesh.vertices;
+    int[] triangles = originalSkinnedMesh.triangles;
+    Vector3[] normals = originalSkinnedMesh.normals;
+    Vector2[] uvs = originalSkinnedMesh.uv;
+    BoneWeight[] boneWeights = originalSkinnedMesh.boneWeights;
+    Matrix4x4[] bindPoses = originalSkinnedMesh.bindposes;
+
+    List<int> addedVertices = new List<int>();
     List<Vector3> filteredVertices = new List<Vector3>();
     List<int> filteredTriangles = new List<int>();
     List<Vector3> filteredNormals = new List<Vector3>();
+    List<Vector2> filteredUVs = new List<Vector2>();
     List<BoneWeight> filteredBoneWeights = new List<BoneWeight>();
-    Dictionary<int, int> vertexMap = new Dictionary<int, int>();
 
+    // Función para saber si el vértice está dentro de la zona delimitada por los bounds
     bool IsVertexIncluded(Vector3 worldVertex)
     {
         foreach (var bound in bounds)
         {
             if (bound.Contains(worldVertex))
             {
-                return inBound; 
+                return inBound;
             }
         }
-        return !inBound; 
+        return !inBound;
     }
 
-    for (int i = 0; i < worldVertices.Length; i++)
+    // Transformar los vértices del mesh original al espacio mundial
+    Vector3[] worldVertices = new Vector3[vertices.Length];
+    for (int i = 0; i < vertices.Length; i++)
     {
-        if (IsVertexIncluded(worldVertices[i]))
+        worldVertices[i] = originalMeshFilter.transform.TransformPoint(notvertices[i]);
+    }
+
+    // Filtrar los vértices según si están dentro de los bounds
+    for (int i = 0; i < vertices.Length; i++)
+    {
+        if (IsVertexIncluded(worldVertices[i]) && !addedVertices.Contains(i))
         {
-            vertexMap[i] = filteredVertices.Count;
+            addedVertices.Add(i);
             filteredVertices.Add(vertices[i]);
             filteredNormals.Add(normals[i]);
-            if (boneWeights.Length > i)
+            filteredUVs.Add(uvs[i]);
+
+            // Validar índice dentro de boneWeights
+            if (i < boneWeights.Length)
             {
                 filteredBoneWeights.Add(boneWeights[i]);
             }
+            else
+            {
+                // Agregar un BoneWeight por defecto si no existe
+                filteredBoneWeights.Add(new BoneWeight());
+            }
         }
     }
 
-    
+    // Filtrar los triángulos que contienen los vértices filtrados
     for (int i = 0; i < triangles.Length; i += 3)
     {
         int idx1 = triangles[i];
         int idx2 = triangles[i + 1];
         int idx3 = triangles[i + 2];
 
-        bool idx1InMap = vertexMap.ContainsKey(idx1);
-        bool idx2InMap = vertexMap.ContainsKey(idx2);
-        bool idx3InMap = vertexMap.ContainsKey(idx3);
+        bool idx1InList = addedVertices.Contains(idx1);
+        bool idx2InList = addedVertices.Contains(idx2);
+        bool idx3InList = addedVertices.Contains(idx3);
 
-        if (inBound && idx1InMap && idx2InMap && idx3InMap)
+        if (inBound && idx1InList && idx2InList && idx3InList)
         {
-            filteredTriangles.Add(vertexMap[idx1]);
-            filteredTriangles.Add(vertexMap[idx2]);
-            filteredTriangles.Add(vertexMap[idx3]);
+            filteredTriangles.Add(addedVertices.IndexOf(idx1));
+            filteredTriangles.Add(addedVertices.IndexOf(idx2));
+            filteredTriangles.Add(addedVertices.IndexOf(idx3));
         }
         else if (!inBound)
         {
-            List<int> validIndices = new List<int>();
-            if (idx1InMap) validIndices.Add(vertexMap[idx1]);
-            if (idx2InMap) validIndices.Add(vertexMap[idx2]);
-            if (idx3InMap) validIndices.Add(vertexMap[idx3]);
-
-            if (validIndices.Count == 3)
+            if (idx1InList || idx2InList || idx3InList)
             {
-                filteredTriangles.AddRange(validIndices);
+                List<int> validIndices = new List<int>();
+
+                if (idx1InList) validIndices.Add(addedVertices.IndexOf(idx1));
+                else if (!IsVertexIncluded(worldVertices[idx1]))
+                {
+                    validIndices.Add(filteredVertices.Count);
+                    filteredVertices.Add(vertices[idx1]);
+                    filteredNormals.Add(normals[idx1]);
+                    filteredUVs.Add(uvs[idx1]);
+                    if (idx1 < boneWeights.Length)
+                    {
+                        filteredBoneWeights.Add(boneWeights[idx1]);
+                    }
+                    else
+                    {
+                        filteredBoneWeights.Add(new BoneWeight());
+                    }
+                }
+
+                if (idx2InList) validIndices.Add(addedVertices.IndexOf(idx2));
+                else if (!IsVertexIncluded(worldVertices[idx2]))
+                {
+                    validIndices.Add(filteredVertices.Count);
+                    filteredVertices.Add(vertices[idx2]);
+                    filteredNormals.Add(normals[idx2]);
+                    filteredUVs.Add(uvs[idx2]);
+                    if (idx2 < boneWeights.Length)
+                    {
+                        filteredBoneWeights.Add(boneWeights[idx2]);
+                    }
+                    else
+                    {
+                        filteredBoneWeights.Add(new BoneWeight());
+                    }
+                }
+
+                if (idx3InList) validIndices.Add(addedVertices.IndexOf(idx3));
+                else if (!IsVertexIncluded(worldVertices[idx3]))
+                {
+                    validIndices.Add(filteredVertices.Count);
+                    filteredVertices.Add(vertices[idx3]);
+                    filteredNormals.Add(normals[idx3]);
+                    filteredUVs.Add(uvs[idx3]);
+                    if (idx3 < boneWeights.Length)
+                    {
+                        filteredBoneWeights.Add(boneWeights[idx3]);
+                    }
+                    else
+                    {
+                        filteredBoneWeights.Add(new BoneWeight());
+                    }
+                }
+
+                if (validIndices.Count >= 3)
+                {
+                    filteredTriangles.AddRange(validIndices);
+                }
             }
         }
     }
 
     if (filteredTriangles.Count % 3 != 0)
     {
-        Debug.LogError($"Error en los triángulos: se encontraron {filteredTriangles.Count}, pero no son múltiplos de 3.");
         return null;
     }
 
+    // Crear un nuevo mesh con los vértices filtrados
     Mesh newMesh = new Mesh();
     newMesh.vertices = filteredVertices.ToArray();
     newMesh.triangles = filteredTriangles.ToArray();
     newMesh.normals = filteredNormals.ToArray();
+    newMesh.uv = filteredUVs.ToArray();
+    newMesh.boneWeights = filteredBoneWeights.ToArray();
+    newMesh.bindposes = bindPoses;
 
-    if (boneWeights.Length > 0)
-    {
-        newMesh.boneWeights = filteredBoneWeights.ToArray();
-        newMesh.bindposes = bindPoses;
-    }
-
+    // Recalcular las propiedades del nuevo mesh
     newMesh.RecalculateBounds();
     newMesh.RecalculateNormals();
-    newMesh.RecalculateTangents();
 
-    return newMesh;
+    // Crear el GameObject con un SkinnedMeshRenderer para el nuevo submesh
+    GameObject newObject = new GameObject("SubSkinnedMesh");
+    SkinnedMeshRenderer newSkinnedRenderer = newObject.AddComponent<SkinnedMeshRenderer>();
+    newSkinnedRenderer.sharedMesh = newMesh;
+    newSkinnedRenderer.materials = originalSkinnedRenderer.materials;
+    newSkinnedRenderer.bones = originalSkinnedRenderer.bones;
+    newSkinnedRenderer.rootBone = originalSkinnedRenderer.rootBone;
+
+    return newObject;
 }
 
 
 
-
-
-void DrawBounds(Bounds b, float delay = 10)
+    public GameObject GetSubMeshInBounds(Mesh originalMesh, Bounds[] bounds, MeshFilter originalMeshFilter)
     {
-        var p1 = new Vector3(b.min.x, b.min.y, b.min.z);
-        var p2 = new Vector3(b.max.x, b.min.y, b.min.z);
-        var p3 = new Vector3(b.max.x, b.min.y, b.max.z);
-        var p4 = new Vector3(b.min.x, b.min.y, b.max.z);
-
-        Debug.DrawLine(p1, p2, Color.blue, delay);
-        Debug.DrawLine(p2, p3, Color.red, delay);
-        Debug.DrawLine(p3, p4, Color.yellow, delay);
-        Debug.DrawLine(p4, p1, Color.magenta, delay);
-
-        var p5 = new Vector3(b.min.x, b.max.y, b.min.z);
-        var p6 = new Vector3(b.max.x, b.max.y, b.min.z);
-        var p7 = new Vector3(b.max.x, b.max.y, b.max.z);
-        var p8 = new Vector3(b.min.x, b.max.y, b.max.z);
-
-        Debug.DrawLine(p5, p6, Color.blue, delay);
-        Debug.DrawLine(p6, p7, Color.red, delay);
-        Debug.DrawLine(p7, p8, Color.yellow, delay);
-        Debug.DrawLine(p8, p5, Color.magenta, delay);
-
-        Debug.DrawLine(p1, p5, Color.white, delay);
-        Debug.DrawLine(p2, p6, Color.gray, delay);
-        Debug.DrawLine(p3, p7, Color.green, delay);
-        Debug.DrawLine(p4, p8, Color.cyan, delay);
+        return GetSubMesh(originalMesh, bounds, originalMeshFilter, true);
     }
 
-    public Mesh GetSubMeshInBounds(Mesh originalMesh, Bounds[] bounds, Transform parentTransform, MeshFilter originalMeshFilter)
+    public GameObject GetSubMeshOutOfBounds(Mesh originalMesh, Bounds[] bounds, MeshFilter originalMeshFilter)
     {
-        return GetSubMesh(originalMesh, bounds, parentTransform, originalMeshFilter, true);
-    }
-
-    public Mesh GetSubMeshOutOfBounds(Mesh originalMesh, Bounds[] bounds, Transform parentTransform, MeshFilter originalMeshFilter)
-    {
-        return GetSubMesh(originalMesh, bounds, parentTransform, originalMeshFilter, false);
+        return GetSubMesh(originalMesh, bounds, originalMeshFilter, false);
     }
 }

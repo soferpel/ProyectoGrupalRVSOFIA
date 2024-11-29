@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.XR.Interaction.Toolkit;
 public class ClientController : MonoBehaviour
 {
     private int lives;
@@ -24,12 +24,22 @@ public class ClientController : MonoBehaviour
     private int pointsToVisit = 0;
     private bool isAlive = true;
 
+    public Rigidbody[] deadRigidbodies;
+    public Collider[] deadColliders;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
-        StartCoroutine(MoveToPoints());
+        //StartCoroutine(MoveToPoints());
+        foreach(Rigidbody rg in deadRigidbodies)
+        {
+            rg.isKinematic = true;
+        }
+        foreach (Collider collider in deadColliders)
+        {
+            collider.enabled = false;
+        }
     }
     IEnumerator MoveToPoints()
     {
@@ -117,28 +127,56 @@ public class ClientController : MonoBehaviour
     {
         if(other.gameObject.GetComponent<WeaponController>())
         {
-            StartCoroutine(Die());
+            StartCoroutine(Die(other));
         }
     }
 
-    private IEnumerator Die()
+    private IEnumerator Die(Collider other)
     {
         if (isAlive)
         {
+            isAlive = false;
+            //agent.isStopped = true; 
+            //StopCoroutine(MoveToPoints());
+            //gameObject.GetComponent<NavMeshAgent>().enabled = false;
 
-            isAlive = false; 
-            agent.isStopped = true; 
-            StopCoroutine(MoveToPoints());
-            gameObject.GetComponent<NavMeshAgent>().enabled = false;
-            animator.SetTrigger("isDead");
-            yield return new WaitForSeconds(1f);
-            foreach(GameObject part in sliceableParts)
+            yield return new WaitForSeconds(0.001f);
+
+            // 2. Apagar el Animator
+            animator.enabled = false;
+
+            foreach (GameObject part in sliceableParts)
             {
                 part.layer = LayerMask.NameToLayer("Sliceable");
             }
+
+
+
+            // 5. Desactivar isKinematic y resetear fuerzas
+            foreach (Rigidbody rb in deadRigidbodies)
+            {
+                rb.isKinematic = false; // Activar física
+            }
+
+            // 6. Activar colliders
+            foreach (Collider col in deadColliders)
+            {
+                col.enabled = true;
+            }
+
+
+
+            Vector3 forceDirection = -(other.transform.position - transform.position).normalized; // Dirección hacia el punto de impacto
+            float forceStrength = 4f; // Puedes ajustar esta fuerza
+            Vector3 force = forceDirection * forceStrength;
+
+            // 5. Aplicar fuerza a cada Rigidbody
+            foreach (Rigidbody rb in deadRigidbodies)
+            {
+                rb.AddForce(force, ForceMode.Impulse); // Aplica la fuerza en forma de impulso
+            }
         }
     }
-
     public bool isOnBuyPoint()
     {
         float distance = Vector3.Distance(transform.position, buyPoint.position);
