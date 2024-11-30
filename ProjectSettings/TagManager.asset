@@ -9,11 +9,17 @@ TagManager:
   - Leg
   - Head
   - Body
+  - stealingpoint
+  - sittingpoint
+  - pickuppoint
+  - waypoint
+  - Clothes
+  - Lid
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - BodyParts
   - Water
   - UI
   - Sliceable

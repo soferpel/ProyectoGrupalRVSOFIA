@@ -5,24 +5,22 @@ using UnityEngine.AI;
 using UnityEngine.XR.Interaction.Toolkit;
 public class ClientController : MonoBehaviour
 {
-    private int lives;
+
     private Animator animator;
-    public GameObject[] sliceableParts;
-    public LayerMask sliceLayer;
-     
-    public List<Transform> patrolPoints;  
-    public Transform buyPoint;            
-    public List<Transform> finalPoints;   
+
+    public List<Transform> patrolPoints;
+    public Transform buyPoint;
+    public List<Transform> finalPoints;
     public float waitTime = 2f;
     public float distanceThreshold = 1f;
 
     private NavMeshAgent agent;
     private Transform currentTarget;
-    private bool isGoingToBuy = false;   
-    private bool isFinalMove = false;     
-    private int pointsVisited = 0;        
+    private bool isGoingToBuy = false;
+    private bool isFinalMove = false;
+    private int pointsVisited = 0;
     private int pointsToVisit = 0;
-    private bool isAlive = true;
+    public bool isAlive = true;
 
     public Rigidbody[] deadRigidbodies;
     public Collider[] deadColliders;
@@ -43,6 +41,7 @@ public class ClientController : MonoBehaviour
             collider.enabled = false;
         }
     }
+
     IEnumerator MoveToPoints()
     {
         List<Transform> visitedPoints = new List<Transform>();
@@ -51,32 +50,14 @@ public class ClientController : MonoBehaviour
         {
             if (isFinalMove)
             {
-                currentTarget = finalPoints[Random.Range(0, finalPoints.Count)];
-                agent.SetDestination(currentTarget.position);
-
-                while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
-                {
-                    animator.SetBool("lookAround", false);
-                    animator.SetBool("walk", true);
-
-                    if (agent.velocity.sqrMagnitude > 0.01f)
-                    {
-                        Vector3 direction = agent.velocity.normalized; 
-                        Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
-                        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f); 
-                    }
-                    yield return null;
-                }
-
-                animator.SetBool("walk", false);
-                StopMovement();
+                MoveToFinalPoint();
                 yield break;
             }
 
             if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
             {
                 currentTarget = buyPoint;
-                waitTime = 5f;
+                waitTime = 50f;
                 isGoingToBuy = true;
                 pointsVisited++;
             }
@@ -91,6 +72,7 @@ public class ClientController : MonoBehaviour
                 pointsVisited++;
             }
 
+            // Mover al destino
             agent.SetDestination(currentTarget.position);
 
             while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
@@ -98,10 +80,10 @@ public class ClientController : MonoBehaviour
                 animator.SetBool("lookAround", false);
                 animator.SetBool("walk", true);
 
-                    if (agent.velocity.sqrMagnitude > 0.01f) 
+                if (agent.velocity.sqrMagnitude > 0.01f)
                 {
                     Vector3 direction = agent.velocity.normalized;
-                    Quaternion lookRotation = Quaternion.LookRotation(direction*-1);
+                    Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
                 }
                 yield return null;
@@ -110,13 +92,43 @@ public class ClientController : MonoBehaviour
             animator.SetBool("walk", false);
 
             agent.updateRotation = true;
-            animator.SetBool("lookAround",true);
+            animator.SetBool("lookAround", true);
             yield return new WaitForSeconds(waitTime);
+
             if (pointsVisited >= pointsToVisit || isGoingToBuy)
             {
                 isFinalMove = true;
             }
         }
+    }
+
+    private void MoveToFinalPoint()
+    {
+        if (finalPoints.Count == 0) return;
+
+        currentTarget = finalPoints[Random.Range(0, finalPoints.Count)];
+        agent.SetDestination(currentTarget.position);
+
+        StartCoroutine(MoveToFinalDestination());
+    }
+
+    private IEnumerator MoveToFinalDestination()
+    {
+        while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+        {
+            animator.SetBool("walk", true);
+
+            if (agent.velocity.sqrMagnitude > 0.01f)
+            {
+                Vector3 direction = agent.velocity.normalized;
+                Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+            }
+            yield return null;
+        }
+
+        animator.SetBool("walk", false);
+        StopMovement();
     }
 
     private void StopMovement()
@@ -125,9 +137,20 @@ public class ClientController : MonoBehaviour
         Debug.Log("El NPC ha terminado su recorrido.");
     }
 
+    public void ReportDeath()
+    {
+        if (!isAlive) return;
+
+        Debug.Log("ReportDeath llamado. Cambiando a movimiento final.");
+        isFinalMove = true;
+
+        StopCoroutine(MoveToPoints());
+        MoveToFinalPoint();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.GetComponent<WeaponController>())
+        if (other.gameObject.GetComponent<WeaponController>())
         {
             StartCoroutine(Die(other));
         }
@@ -138,40 +161,27 @@ public class ClientController : MonoBehaviour
         if (isAlive)
         {
             isAlive = false;
-            //agent.isStopped = true; 
-            //StopCoroutine(MoveToPoints());
-            //gameObject.GetComponent<NavMeshAgent>().enabled = false;
-
-
-            // 2. Apagar el Animator
+            agent.isStopped = true; 
+            StopCoroutine(MoveToPoints());
+            gameObject.GetComponent<NavMeshAgent>().enabled = false;
             animator.enabled = false;
-
-            
-
-
-
-            // 5. Desactivar isKinematic y resetear fuerzas
             foreach (Rigidbody rb in deadRigidbodies)
             {
-                rb.isKinematic = false; // Activar física
+                rb.isKinematic = false;
             }
 
-            // 6. Activar colliders
             foreach (Collider col in deadColliders)
             {
                 col.enabled = true;
             }
 
-
-
-            Vector3 forceDirection = -(other.transform.position - transform.position).normalized; // Dirección hacia el punto de impacto
-            float forceStrength = 4f; // Puedes ajustar esta fuerza
+            Vector3 forceDirection = -(other.transform.position - transform.position).normalized; 
+            float forceStrength = 4f;
             Vector3 force = forceDirection * forceStrength;
 
-            // 5. Aplicar fuerza a cada Rigidbody
             foreach (Rigidbody rb in deadRigidbodies)
             {
-                rb.AddForce(force, ForceMode.Impulse); // Aplica la fuerza en forma de impulso
+                rb.AddForce(force, ForceMode.Impulse);
             }
 
             yield return new WaitForSeconds(2f);
@@ -191,6 +201,7 @@ public class ClientController : MonoBehaviour
             Debug.Log("Cliente cerca del Buy Point.");
         }
         return isCloseToBuyPoint;
-
     }
+
 }
+
