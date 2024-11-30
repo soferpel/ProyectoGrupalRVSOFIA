@@ -26,6 +26,8 @@ public class ClientController : MonoBehaviour
 
     public Rigidbody[] deadRigidbodies;
     public Collider[] deadColliders;
+    public int countBodyParts = 5;
+    public GameObject body;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -140,15 +142,11 @@ public class ClientController : MonoBehaviour
             //StopCoroutine(MoveToPoints());
             //gameObject.GetComponent<NavMeshAgent>().enabled = false;
 
-            yield return new WaitForSeconds(0.001f);
 
             // 2. Apagar el Animator
             animator.enabled = false;
 
-            foreach (GameObject part in sliceableParts)
-            {
-                part.layer = LayerMask.NameToLayer("Sliceable");
-            }
+            
 
 
 
@@ -174,6 +172,13 @@ public class ClientController : MonoBehaviour
             foreach (Rigidbody rb in deadRigidbodies)
             {
                 rb.AddForce(force, ForceMode.Impulse); // Aplica la fuerza en forma de impulso
+            }
+
+            yield return new WaitForSeconds(2f);
+
+            foreach (GameObject part in sliceableParts)
+            {
+                part.layer = LayerMask.NameToLayer("Sliceable");
             }
         }
     }
