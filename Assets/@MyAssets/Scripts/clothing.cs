@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class clothing : MonoBehaviour
+public class Clothing : MonoBehaviour
 {
     public GameObject skin_head;
     public GameObject[] skin_body;
@@ -233,10 +233,10 @@ public class clothing : MonoBehaviour
 
         int skin_color = UnityEngine.Random.Range(0, 6);
         
-        skin_head.GetComponent<SkinnedMeshRenderer>().material.mainTexture = skin_textures[skin_color];
+        skin_head.GetComponent<Renderer>().materials[0].mainTexture = skin_textures[skin_color];
         foreach(GameObject skin_body_part in skin_body)
         {
-            skin_body_part.GetComponent<SkinnedMeshRenderer>().material.mainTexture = skin_textures[skin_color];
+            skin_body_part.GetComponent<Renderer>().materials[0].mainTexture = skin_textures[skin_color];
         }
 
         // determining male or female

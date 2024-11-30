@@ -26,12 +26,13 @@ public class ClientController : MonoBehaviour
     public Collider[] deadColliders;
     public int countBodyParts = 5;
     public GameObject body;
+    public GameObject[] sliceableParts;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
-        //StartCoroutine(MoveToPoints());
+        StartCoroutine(MoveToPoints());
         foreach(Rigidbody rg in deadRigidbodies)
         {
             rg.isKinematic = true;
@@ -46,7 +47,7 @@ public class ClientController : MonoBehaviour
     {
         List<Transform> visitedPoints = new List<Transform>();
 
-        while (isAlive)
+        while (isAlive && agent.enabled)
         {
             if (isFinalMove)
             {
@@ -72,10 +73,9 @@ public class ClientController : MonoBehaviour
                 pointsVisited++;
             }
 
-            // Mover al destino
             agent.SetDestination(currentTarget.position);
 
-            while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+            while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
             {
                 animator.SetBool("lookAround", false);
                 animator.SetBool("walk", true);
@@ -114,7 +114,7 @@ public class ClientController : MonoBehaviour
 
     private IEnumerator MoveToFinalDestination()
     {
-        while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+        while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
         {
             animator.SetBool("walk", true);
 
@@ -133,8 +133,11 @@ public class ClientController : MonoBehaviour
 
     private void StopMovement()
     {
-        agent.isStopped = true;
-        Debug.Log("El NPC ha terminado su recorrido.");
+        if (agent.enabled)
+        {
+            agent.isStopped = true;
+            Debug.Log("El NPC ha terminado su recorrido.");
+        }
     }
 
     public void ReportDeath()
@@ -160,10 +163,14 @@ public class ClientController : MonoBehaviour
     {
         if (isAlive)
         {
-            isAlive = false;
-            agent.isStopped = true; 
             StopCoroutine(MoveToPoints());
-            gameObject.GetComponent<NavMeshAgent>().enabled = false;
+            StopCoroutine(MoveToFinalDestination());
+            Destroy(gameObject.GetComponent<Collider>());
+            Destroy(gameObject.GetComponent<Rigidbody>());
+            Destroy(gameObject.GetComponent<VisionSensor>());
+            isAlive = false;
+            agent.isStopped = true;
+            agent.enabled = false;
             animator.enabled = false;
             foreach (Rigidbody rb in deadRigidbodies)
             {
@@ -173,6 +180,8 @@ public class ClientController : MonoBehaviour
             foreach (Collider col in deadColliders)
             {
                 col.enabled = true;
+                col.gameObject.AddComponent<DetectableTarget>();
+                col.gameObject.layer = LayerMask.NameToLayer("BodyParts");
             }
 
             Vector3 forceDirection = -(other.transform.position - transform.position).normalized; 
@@ -190,6 +199,7 @@ public class ClientController : MonoBehaviour
             {
                 part.layer = LayerMask.NameToLayer("Sliceable");
             }
+            
         }
     }
     public bool isOnBuyPoint()

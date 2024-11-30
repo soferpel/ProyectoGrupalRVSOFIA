@@ -12770,6 +12770,74 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d04de8606bcd360429e6130432482c91, type: 3}
+--- !u!1001 &2146908967
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4790398964494140072, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_Name
+      value: Custom simple human_prefab (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.7998966
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.764052
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.71
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6881368696299886792, guid: 6e3c6dbe3e830de409d9246aeabe7788,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e3c6dbe3e830de409d9246aeabe7788, type: 3}
 --- !u!1 &11301084843623912
 GameObject:
   m_ObjectHideFlags: 0
@@ -18890,7 +18958,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -2.76, y: -0.9, z: 252.7}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -1.0892802e-10, y: 0.0010049399, z: -2.1827873e-11}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -19136,7 +19204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &5417172708939442577
 GameObject:
   m_ObjectHideFlags: 0
@@ -23170,20 +23238,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aa671b4c2b23d5439e56844af177556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sliceableParts:
-  - {fileID: 6449966681035650443}
-  - {fileID: 8605831464239830694}
-  - {fileID: 7337795320338521758}
-  - {fileID: 8781420894785005022}
-  - {fileID: 5516266437191986515}
-  sliceLayer:
-    serializedVersion: 2
-    m_Bits: 64
   patrolPoints: []
   buyPoint: {fileID: 0}
   finalPoints: []
   waitTime: 2
   distanceThreshold: 1
+  isAlive: 1
   deadRigidbodies:
   - {fileID: 463895971}
   - {fileID: 604936167}
@@ -23218,6 +23278,12 @@ MonoBehaviour:
   - {fileID: 5210944548312905820}
   countBodyParts: 5
   body: {fileID: 8600626778771179159}
+  sliceableParts:
+  - {fileID: 6449966681035650443}
+  - {fileID: 8605831464239830694}
+  - {fileID: 7337795320338521758}
+  - {fileID: 8781420894785005022}
+  - {fileID: 5516266437191986515}
 --- !u!95 &9139639620586204441
 Animator:
   serializedVersion: 5
@@ -23391,3 +23457,4 @@ SceneRoots:
   - {fileID: 1104554221}
   - {fileID: 587919868}
   - {fileID: 7524121720368174360}
+  - {fileID: 2146908967}
