@@ -325,6 +325,8 @@ public class SliceObject : MonoBehaviour
         part.tag = collisionCutComponents.gameObjectTag;
         XRGrabInteractable grabInteractable = part.AddComponent<XRGrabInteractable>();
         grabInteractable.useDynamicAttach = true;
+        part.layer = LayerMask.NameToLayer("BodyParts");
+        part.AddComponent<TriggerActivator>();
     }
 
 
