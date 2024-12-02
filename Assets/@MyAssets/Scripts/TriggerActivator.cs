@@ -24,21 +24,36 @@ public class TriggerActivator : MonoBehaviour
 
     private void OnGrab(SelectEnterEventArgs args)
     {
-        SetColliderTrigger(true);  
-        rb.isKinematic = true;     
+        HashSet<Transform> visited = new HashSet<Transform>();
+        SetColliderTrigger(transform, true, visited);
+        rb.isKinematic = true;
     }
 
     private void OnRelease(SelectExitEventArgs args)
     {
-        SetColliderTrigger(false); 
+        HashSet<Transform> visited = new HashSet<Transform>();
+        SetColliderTrigger(transform, false, visited);
         rb.isKinematic = false;
     }
 
-    private void SetColliderTrigger(bool isTrigger)
+    private void SetColliderTrigger(Transform parent, bool isTrigger, HashSet<Transform> visited)
+
     {
-        if (objCollider != null)
+        if (visited.Contains(parent)) return;
+        visited.Add(parent);
+
+        Collider parentCollider = parent.GetComponent<Collider>();
+        if (parentCollider != null)
         {
-            objCollider.isTrigger = isTrigger;
+            parentCollider.isTrigger = isTrigger;
+            Debug.Log($"Se ha puesto el trigger del collider a {isTrigger} del obj: {parent.name}");
+        }
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            // llamada recursiva para los hijos de hijos
+            SetColliderTrigger(child, isTrigger, visited);
         }
     }
 }

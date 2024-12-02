@@ -4973,36 +4973,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aa671b4c2b23d5439e56844af177556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sliceableParts:
-  - {fileID: 7736961005831870461}
-  - {fileID: 67726106078497856}
-  - {fileID: 7280353034692770044}
-  - {fileID: 6023631303851115032}
-  - {fileID: 4697932533503183971}
-  bodyPartsCollider:
-  - {fileID: 2504806851816616085}
-  - {fileID: 1816820422985062806}
-  - {fileID: 3226922921205254448}
-  - {fileID: 8485948477443544296}
-  - {fileID: 5364807173070227722}
-  - {fileID: 1272133037075264297}
-  - {fileID: 2851559573640595454}
-  - {fileID: 6982874187415339266}
-  - {fileID: 1326756559961431889}
-  - {fileID: 8367711266283112496}
-  - {fileID: 5597645123368521603}
-  - {fileID: 3283943085562798072}
-  - {fileID: 7574118492407831386}
-  - {fileID: 7162361140172383909}
-  - {fileID: 5487803467010053023}
-  - {fileID: 7185169226038971427}
-  - {fileID: 6333662055007971971}
-  - {fileID: 6152961715951943575}
-  - {fileID: 8531919921349036013}
-  - {fileID: 3269329726206405991}
-  sliceLayer:
-    serializedVersion: 2
-    m_Bits: 64
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -5132,8 +5102,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   VisionMinimumAwareness: 1
   VisionAwarenessBuildRate: 10
-  ProximityMinimumAwareness: 0
-  ProximityAwarenessBuildRate: 1
   AwarenessDecayDelay: 0.1
   AwarenessDecayRate: 0.1
 --- !u!114 &1933331836087927981
@@ -5151,8 +5119,6 @@ MonoBehaviour:
   _VisionConeAngle: 45
   _VisionConeRange: 5.6
   _VisionConeColour: {r: 1, g: 0, b: 0, a: 0.25}
-  _ProximityDetectionRange: 2
-  _ProximityRangeColour: {r: 1, g: 1, b: 1, a: 0.25}
 --- !u!114 &595118818657832413
 MonoBehaviour:
   m_ObjectHideFlags: 0

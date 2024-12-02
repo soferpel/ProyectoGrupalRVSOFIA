@@ -8,8 +8,10 @@ public class OrderController : MonoBehaviour
     private XRSocketInteractor socketBox;
     private ClientController client;
     private BoxController boxController;
+    public int cash = 0;
     public string boxTag = "Box";
-    public GameObject counterPosition; //posicion en la que esperan los clientes (buypoint)
+
+    public GameObject counterPosition; //(buypoint)
 
     void Start()
     {
@@ -27,23 +29,26 @@ public class OrderController : MonoBehaviour
         if (args.interactableObject.transform.CompareTag(boxTag))
         {
             Debug.Log("Caja en socket");
-
-
-            if (args.interactableObject.transform.CompareTag(boxTag))
+            boxController = args.interactableObject.transform.GetComponent<BoxController>();
+            if (client.isOnBuyPoint() && boxController.IsReadyForDelivery())
             {
-                boxController = args.interactableObject.transform.GetComponent<BoxController>();
-                Debug.Log(boxController.IsReadyForDelivery());
-                if (client.isOnBuyPoint() && boxController.IsReadyForDelivery())
+
+                Debug.Log("Objecto se ha destruido. Pedido entregado");
+                var lidSocket = boxController.socketLid.GetOldestInteractableSelected()?.transform.gameObject;
+                var contentSocket = boxController.socketContent.GetOldestInteractableSelected()?.transform.gameObject;
+                Destroy(args.interactableObject.transform.gameObject);
+                Destroy(lidSocket);
+                Destroy(contentSocket);
+                if (boxController.hasClothes)
                 {
-                    Debug.Log("Objecto se ha destruido");
-                    var lidSocket = boxController.socketLid.transform.gameObject;
-                    var contentSocket = boxController.socketContent.transform.gameObject;
-                    Destroy(args.interactableObject.transform.gameObject);
-                    Destroy(lidSocket);
-                    Destroy(contentSocket);
+                    AddCash();
                 }
             }
-
         }
+    }
+
+    private int AddCash()
+    {
+        return cash += 10;
     }
 }
