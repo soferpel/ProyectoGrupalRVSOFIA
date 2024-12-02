@@ -5,13 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - Box
+  - Arm
+  - Leg
+  - Head
+  - Body
   - stealingpoint
   - sittingpoint
   - pickuppoint
   - waypoint
   - Clothes
   - Lid
-  - Leg
   layers:
   - Default
   - TransparentFX

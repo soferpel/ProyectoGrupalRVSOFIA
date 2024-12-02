@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.XR.Interaction.Toolkit;
 public class ClientController : MonoBehaviour
 {
 
@@ -22,19 +22,32 @@ public class ClientController : MonoBehaviour
     private int pointsToVisit = 0;
     public bool isAlive = true;
 
+    public Rigidbody[] deadRigidbodies;
+    public Collider[] deadColliders;
+    public int countBodyParts = 5;
+    public GameObject body;
+    public GameObject[] sliceableParts;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
         animator = GetComponent<Animator>();
         StartCoroutine(MoveToPoints());
+        foreach(Rigidbody rg in deadRigidbodies)
+        {
+            rg.isKinematic = true;
+        }
+        foreach (Collider collider in deadColliders)
+        {
+            collider.enabled = false;
+        }
     }
 
     IEnumerator MoveToPoints()
     {
         List<Transform> visitedPoints = new List<Transform>();
 
-        while (isAlive)
+        while (isAlive && agent.enabled)
         {
             if (isFinalMove)
             {
@@ -60,10 +73,9 @@ public class ClientController : MonoBehaviour
                 pointsVisited++;
             }
 
-            // Mover al destino
             agent.SetDestination(currentTarget.position);
 
-            while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+            while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
             {
                 animator.SetBool("lookAround", false);
                 animator.SetBool("walk", true);
@@ -102,7 +114,7 @@ public class ClientController : MonoBehaviour
 
     private IEnumerator MoveToFinalDestination()
     {
-        while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance)
+        while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
         {
             animator.SetBool("walk", true);
 
@@ -121,8 +133,11 @@ public class ClientController : MonoBehaviour
 
     private void StopMovement()
     {
-        agent.isStopped = true;
-        Debug.Log("El NPC ha terminado su recorrido.");
+        if (agent.enabled)
+        {
+            agent.isStopped = true;
+            Debug.Log("El NPC ha terminado su recorrido.");
+        }
     }
 
     public void ReportDeath()
@@ -140,23 +155,53 @@ public class ClientController : MonoBehaviour
     {
         if (other.gameObject.GetComponent<WeaponController>())
         {
-            StartCoroutine(Die());
+            StartCoroutine(Die(other));
         }
     }
 
-    private IEnumerator Die()
+    private IEnumerator Die(Collider other)
     {
         if (isAlive)
         {
-            isAlive = false; 
-            StopCoroutine(MoveToPoints()); 
-            agent.isStopped = true; 
-            animator.SetTrigger("isDead");
-            yield return new WaitForSeconds(1f);
+            StopCoroutine(MoveToPoints());
+            StopCoroutine(MoveToFinalDestination());
+            Destroy(gameObject.GetComponent<Collider>());
+            Destroy(gameObject.GetComponent<Rigidbody>());
+            Destroy(gameObject.GetComponent<VisionSensor>());
+            isAlive = false;
+            agent.isStopped = true;
+            agent.enabled = false;
+            animator.enabled = false;
+            foreach (Rigidbody rb in deadRigidbodies)
+            {
+                rb.isKinematic = false;
+            }
 
+            foreach (Collider col in deadColliders)
+            {
+                col.enabled = true;
+                col.gameObject.AddComponent<DetectableTarget>();
+                col.gameObject.layer = LayerMask.NameToLayer("BodyParts");
+            }
+
+            Vector3 forceDirection = -(other.transform.position - transform.position).normalized; 
+            float forceStrength = 4f;
+            Vector3 force = forceDirection * forceStrength;
+
+            foreach (Rigidbody rb in deadRigidbodies)
+            {
+                rb.AddForce(force, ForceMode.Impulse);
+            }
+
+            yield return new WaitForSeconds(2f);
+
+            foreach (GameObject part in sliceableParts)
+            {
+                part.layer = LayerMask.NameToLayer("Sliceable");
+            }
+            
         }
     }
-
     public bool isOnBuyPoint()
     {
         float distance = Vector3.Distance(transform.position, buyPoint.position);

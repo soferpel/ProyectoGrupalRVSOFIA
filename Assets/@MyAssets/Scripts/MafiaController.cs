@@ -170,12 +170,12 @@ public class MafiaController : MonoBehaviour
     }
     void OnEnable()
     {
-        clothing.OnMafiaAppearanceGenerated += HandleAppearanceGenerated;
+        Clothing.OnMafiaAppearanceGenerated += HandleAppearanceGenerated;
     }
 
     void OnDisable()
     {
-        clothing.OnMafiaAppearanceGenerated -= HandleAppearanceGenerated;
+        Clothing.OnMafiaAppearanceGenerated -= HandleAppearanceGenerated;
     }
 
     private void HandleAppearanceGenerated(string description)

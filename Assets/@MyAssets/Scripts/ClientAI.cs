@@ -58,12 +58,12 @@ public class ClientAI : MonoBehaviour
         {
             if (!clientController.isAlive)
             {
-                clientController.ReportDeath(); 
+                clientController.ReportDeath();
             } 
-        }
-        if(target.gameObject.layer == LayerMask.NameToLayer("BodyParts"))
-        {
-            clientController.ReportDeath();
+            if(target.gameObject.layer == LayerMask.NameToLayer("BodyParts"))
+            {
+                clientController.ReportDeath();
+            }
         }
     }
 }
