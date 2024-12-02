@@ -109,14 +109,7 @@ public class Clothing : MonoBehaviour
 
     public Texture nurse_suit_texture;
 
-    public Texture police_suit_texture;
-
-
-    public Texture roober_suit_texture;
-
-
     public Texture security_guard_suit_texture;
-   
 
     public Texture seller_suit_texture;
 
@@ -190,12 +183,6 @@ public class Clothing : MonoBehaviour
         mechanic_suit_hat.SetActive(false);
 
         nurse_suit.SetActive(false);
-
-        police_suit.SetActive(false);
-        police_suit_hat.SetActive(false);
-
-        roober_suit.SetActive(false);
-        roober_suit_hat.SetActive(false);
 
         security_guard_suit.SetActive(false);
         security_guard_suit_hat.SetActive(false);
@@ -493,11 +480,9 @@ public class Clothing : MonoBehaviour
             // firemansuit   3
             // mechanicsuit  4
             // nursesuit     5
-            // policesuit    6
-            // roobersuit    7
-            // securitysuit  8
-            // sellersuit    9
-            // workersuit    10
+            // securitysuit  6
+            // sellersuit    7
+            // workersuit    8
 
             // banker suit
             if (which_suit == 0)
@@ -565,46 +550,8 @@ public class Clothing : MonoBehaviour
 
                
             }
-            // police suit
-            if (which_suit == 6)
-            {
-                police_suit.SetActive(true);
-
-                police_suit.GetComponent<Renderer>().materials[0].mainTexture = police_suit_texture;
-
-                if (hat)
-                {
-                    police_suit_hat.SetActive(true);
-
-                    police_suit_hat.GetComponent<Renderer>().materials[0].mainTexture = police_suit_texture;
-                }
-            }
-            // robber suit
-            if (which_suit == 7)
-            {
-                roober_suit.SetActive(true);
-
-                roober_suit.GetComponent<Renderer>().materials[0].mainTexture = roober_suit_texture;
-
-              
-                    roober_suit_hat.SetActive(true);
-
-                    roober_suit_hat.GetComponent<Renderer>().materials[0].mainTexture = roober_suit_texture;
-
-
-                hair_a.SetActive(false);
-                hair_b.SetActive(false);
-                hair_c.SetActive(false);
-                hair_d.SetActive(false);
-                hair_e.SetActive(false);
-
-                beard_a.SetActive(false);
-                beard_b.SetActive(false);
-                beard_c.SetActive(false);
-                beard_d.SetActive(false);
-            }
             // security guard suit
-            if (which_suit == 8)
+            if (which_suit == 6)
             {
                 security_guard_suit.SetActive(true);
 
@@ -618,15 +565,14 @@ public class Clothing : MonoBehaviour
                 }
             }
             // seller suit
-            if (which_suit == 9)
+            if (which_suit == 7)
             {
                 seller_suit.SetActive(true);
 
                 seller_suit.GetComponent<Renderer>().materials[0].mainTexture = seller_suit_texture;
-
             }
             // worker suit
-            if (which_suit == 10)
+            if (which_suit == 8)
             {
                 worker_suit.SetActive(true);
 
@@ -804,8 +750,6 @@ public class Clothing : MonoBehaviour
         fireman_suit, fireman_suit_hat,
         mechanic_suit, mechanic_suit_hat,
         nurse_suit,
-        police_suit, police_suit_hat,
-        roober_suit, roober_suit_hat,
         security_guard_suit, security_guard_suit_hat,
         seller_suit,
         worker_suit, worker_suit_hat,
@@ -820,10 +764,10 @@ public class Clothing : MonoBehaviour
         tank_top,
         trousers
     };
-        description += (male_female == 0) ? "Gender: Male | " : "Gender: Female | ";
+        description += (male_female == 0) ? "Genero: Hombre | " : "Genero: Mujer | ";
         if (skin_head.GetComponent<Renderer>() != null && skin_head.GetComponent<Renderer>().materials[0].mainTexture != null)
         {
-            description += $"Skin Color: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
+            description += $"Color de piel: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
         }
 
         foreach (GameObject item in clothes)
