@@ -5,16 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - Box
-  - Arm
-  - Leg
-  - Head
-  - Body
   - stealingpoint
   - sittingpoint
   - pickuppoint
   - waypoint
   - Clothes
   - Lid
+  - Brazo
+  - Pierna
+  - Torso
+  - Cabeza
   layers:
   - Default
   - TransparentFX

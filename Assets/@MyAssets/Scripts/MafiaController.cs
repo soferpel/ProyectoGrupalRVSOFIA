@@ -137,7 +137,7 @@ public class MafiaController : MonoBehaviour
 
     private void GenerateOrder()
     {
-        string[] bodyParts = { "Torso", "Cabeza", "Pierna Izquierda", "Pierna Derecha", "Brazo Izquierdo", "Brazo Derecho" };
+        string[] bodyParts = { "Torso", "Cabeza", "Pierna", "Brazo"};
 
         string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
         orderDescription = selectedPart + "";
@@ -181,5 +181,10 @@ public class MafiaController : MonoBehaviour
     private void HandleAppearanceGenerated(string description)
     {
         AppearanceDescription = description;
+    }
+
+    public string getGeneratedOrder()
+    {
+        return orderDescription;
     }
 }
