@@ -472,7 +472,7 @@ public class Clothing : MonoBehaviour
         if (suit_or_cloth == 0)
         {
             // suits
-            int which_suit = UnityEngine.Random.Range(0,11);
+            int which_suit = UnityEngine.Random.Range(0,9);
 
             // bankersuit    0
             // cocksuit      1
