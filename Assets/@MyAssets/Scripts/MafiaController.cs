@@ -47,7 +47,7 @@ public class MafiaController : MonoBehaviour
             if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
             {
                 currentTarget = buyPoint;
-                waitTime = 5f;
+                waitTime = 500f;
                 isGoingToBuy = true;
                 pointsVisited++;
             }
@@ -138,7 +138,6 @@ public class MafiaController : MonoBehaviour
     private void GenerateOrder()
     {
         string[] bodyParts = { "Torso", "Cabeza", "Pierna", "Brazo"};
-
         string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
         orderDescription = selectedPart + "";
         Debug.Log("El pedido del mafioso es: " + orderDescription);

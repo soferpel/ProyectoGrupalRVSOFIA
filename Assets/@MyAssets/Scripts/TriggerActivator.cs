@@ -46,7 +46,6 @@ public class TriggerActivator : MonoBehaviour
         if (parentCollider != null)
         {
             parentCollider.isTrigger = isTrigger;
-            Debug.Log($"Se ha puesto el trigger del collider a {isTrigger} del obj: {parent.name}");
         }
 
         for (int i = 0; i < parent.childCount; i++)

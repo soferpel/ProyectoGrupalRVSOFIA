@@ -7,6 +7,7 @@ public class OrderController : MonoBehaviour
 {
     private XRSocketInteractor socketBox;
     private ClientController client;
+    private MafiaController mafia;
     private BoxController boxController;
     public int cash = 0;
     public string boxTag = "Box";
@@ -18,6 +19,8 @@ public class OrderController : MonoBehaviour
         socketBox = GetComponent<XRSocketInteractor>();
         socketBox.selectEntered.AddListener(OnBoxOnSocket);
         client = FindObjectOfType<ClientController>();
+        mafia = FindObjectOfType<MafiaController>();
+        boxController = FindObjectOfType<BoxController>();
     }
 
     void Update()
@@ -30,9 +33,8 @@ public class OrderController : MonoBehaviour
         {
             Debug.Log("Caja en socket");
             boxController = args.interactableObject.transform.GetComponent<BoxController>();
-            if (client.isOnBuyPoint() && boxController.IsReadyForDelivery())
+            if ((client.isOnBuyPoint() || mafia.isOnBuyPoint()) && boxController.IsReadyForDelivery())
             {
-
                 Debug.Log("Objecto se ha destruido. Pedido entregado");
                 var lidSocket = boxController.socketLid.GetOldestInteractableSelected()?.transform.gameObject;
                 var contentSocket = boxController.socketContent.GetOldestInteractableSelected()?.transform.gameObject;
@@ -41,6 +43,7 @@ public class OrderController : MonoBehaviour
                 Destroy(contentSocket);
                 if (boxController.hasClothes)
                 {
+                    Debug.Log("Objecto se ha destruido. Pedido entregado ROPA");
                     AddCash();
                 }
             }
