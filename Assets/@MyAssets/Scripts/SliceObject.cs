@@ -192,7 +192,7 @@ public class SliceObject : MonoBehaviour
         collisionCutComponents.client.countBodyParts--;
         if (collisionCutComponents.client.countBodyParts <= 0)
         {
-           collisionCutComponents.client.body.tag = "Body";
+           collisionCutComponents.client.body.tag = "Torso";
         }
         Destroy(partController);
 
@@ -322,13 +322,58 @@ public class SliceObject : MonoBehaviour
 
     private void DetachPart(GameObject part)
     {
+        if (part == null)
+        {
+            Debug.LogError("El objeto 'part' es nulo. No se puede proceder con DetachPart.");
+            return;
+        }
         part.tag = collisionCutComponents.gameObjectTag;
-        XRGrabInteractable grabInteractable = part.AddComponent<XRGrabInteractable>();
-        grabInteractable.useDynamicAttach = true;
-        part.layer = LayerMask.NameToLayer("BodyParts");
-        part.AddComponent<TriggerActivator>();
-    }
+        GameObject container = new GameObject($"{part.name}_Centered");
+        Vector3 containerPosition = part.transform.position;
+        Collider partCollider = part.GetComponent<Collider>();
 
+        if (partCollider == null)
+        {
+            partCollider = part.GetComponentInChildren<Collider>();
+        }
+
+        if (partCollider != null)
+        {
+            containerPosition = partCollider.bounds.center;
+        }
+        else
+        {
+            Debug.LogWarning($"El objeto {part.name} y sus hijos no tienen Collider. Usando la posición original del objeto.");
+        }
+        container.transform.position = containerPosition;
+        container.transform.rotation = part.transform.rotation; 
+        container.transform.localScale = Vector3.one;
+
+        Vector3 offset = part.transform.position - containerPosition;
+        part.transform.SetParent(container.transform);
+        part.transform.localPosition = offset;     
+
+        part.transform.localRotation = Quaternion.identity;
+        part.transform.localScale = Vector3.one;
+
+        Rigidbody partRb = part.GetComponent<Rigidbody>();
+        if (partRb != null)
+        {
+            partRb.isKinematic = true;
+        }
+        XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
+        grabInteractable.useDynamicAttach = true;
+        grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
+        container.layer = LayerMask.NameToLayer("BodyParts");
+        part.AddComponent<TriggerActivator>();
+
+        if (partRb != null)
+        {
+            Destroy(partRb);
+        }
+
+        Debug.Log($"El pivote del objeto {part.name} ha sido ajustado y ahora está dentro del contenedor {container.name}.");
+    }
 
     public GameObject GetSkinnedSubMesh(Mesh originalMesh, Bounds[] bounds, SkinnedMeshRenderer originalSkinnedRenderer, bool inBound, MeshFilter originalMeshFilter, List<string> boneNames)
     {
