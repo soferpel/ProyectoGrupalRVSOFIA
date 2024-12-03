@@ -141,7 +141,7 @@ public class MafiaController : MonoBehaviour
 
         string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
         orderDescription = selectedPart + "";
-        Debug.Log("El pedido del mafioso es: " + orderDescription);
+        Debug.Log("Pedido del mafioso: " + orderDescription);
     }
 
     private void OnTriggerEnter(Collider other)
