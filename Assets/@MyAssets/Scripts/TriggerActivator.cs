@@ -13,7 +13,7 @@ public class TriggerActivator : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         objCollider = GetComponent<Collider>(); 
-        grabInteractable = GetComponent<XRGrabInteractable>(); 
+        grabInteractable = GetComponent<XRGrabInteractable>();
 
         if (grabInteractable != null)
         {
@@ -41,7 +41,6 @@ public class TriggerActivator : MonoBehaviour
     {
         if (visited.Contains(parent)) return;
         visited.Add(parent);
-
         Collider parentCollider = parent.GetComponent<Collider>();
         if (parentCollider != null)
         {

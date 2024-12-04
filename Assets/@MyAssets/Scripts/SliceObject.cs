@@ -153,7 +153,7 @@ public class SliceObject : MonoBehaviour
                             tempObject3.transform.SetParent(detachPart.transform);
                             MeshCollider collider = tempObject3.AddComponent<MeshCollider>();
                             collider.convex = true;
-                            XRGrabInteractable grabInteractable = detachPart.GetComponent<XRGrabInteractable>();
+                            XRGrabInteractable grabInteractable = detachPart.transform.parent.GetComponent<XRGrabInteractable>();
                             grabInteractable.enabled = false;
                             grabInteractable.colliders.Add(collider);
                             grabInteractable.enabled = true;
@@ -329,6 +329,7 @@ public class SliceObject : MonoBehaviour
         }
         part.tag = collisionCutComponents.gameObjectTag;
         GameObject container = new GameObject($"{part.name}_Centered");
+        container.tag = part.tag;
         Vector3 containerPosition = part.transform.position;
         Collider partCollider = part.GetComponent<Collider>();
 
@@ -365,7 +366,8 @@ public class SliceObject : MonoBehaviour
         grabInteractable.useDynamicAttach = true;
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");
-        part.AddComponent<TriggerActivator>();
+        container.AddComponent<TriggerActivator>();
+        //part.AddComponent<TriggerActivator>();
 
         if (partRb != null)
         {
