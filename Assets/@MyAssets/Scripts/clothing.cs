@@ -47,12 +47,6 @@ public class Clothing : MonoBehaviour
 
     public GameObject nurse_suit;
 
-    public GameObject police_suit;
-    public GameObject police_suit_hat;
-
-    public GameObject roober_suit;
-    public GameObject roober_suit_hat;
-
     public GameObject security_guard_suit;
     public GameObject security_guard_suit_hat;
 
@@ -767,7 +761,7 @@ public class Clothing : MonoBehaviour
         description += (male_female == 0) ? "Genero: Hombre | " : "Genero: Mujer | ";
         if (skin_head.GetComponent<Renderer>() != null && skin_head.GetComponent<Renderer>().materials[0].mainTexture != null)
         {
-            description += $"Color de piel: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
+            description += $"Color de piel y ojos: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
         }
 
         foreach (GameObject item in clothes)
@@ -778,8 +772,18 @@ public class Clothing : MonoBehaviour
                 string textureName = (renderer != null && renderer.material.mainTexture != null)
                     ? renderer.material.mainTexture.name
                     : "No Texture";
-
-                description += $"{item.name} (Texture: {textureName}) | ";
+                if(item.name == "traje de banquero")
+                {
+                    description += $"{item.name} {textureName} | ";
+                }
+                else if (item.name.Contains("traje"))
+                {
+                    description += $"{item.name} | ";
+                }
+                else
+                {
+                    description += $"{item.name} {textureName} | ";
+                }
             }
         }
 

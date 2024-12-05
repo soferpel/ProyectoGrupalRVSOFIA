@@ -15,6 +15,7 @@ TagManager:
   - Pierna
   - Torso
   - Cabeza
+  - Leg
   layers:
   - Default
   - TransparentFX
@@ -23,7 +24,7 @@ TagManager:
   - Water
   - UI
   - Sliceable
-  - 
+  - BoxLayer
   - 
   - 
   - 

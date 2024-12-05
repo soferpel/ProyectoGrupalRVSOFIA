@@ -128,7 +128,6 @@ GameObject:
   - component: {fileID: 1231791684449762744}
   - component: {fileID: 3533853245079765187}
   - component: {fileID: 8196490638460808957}
-  - component: {fileID: 7606279968804633598}
   - component: {fileID: 9021463055210710788}
   - component: {fileID: 5066451842695806759}
   - component: {fileID: 8916456465801197758}
@@ -150,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 2135279796973887472}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -23.19711, y: -2.7389228, z: 25.184801}
+  m_LocalPosition: {x: -4.35, y: -2.7389228, z: 25.184801}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -214,66 +213,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7606279968804633598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2135279796973887472}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60523e0647cc6ab43acc73cb266a32a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_InteractionManager: {fileID: 0}
-  m_InteractionLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_InteractionLayers:
-    m_Bits: 4294967295
-  m_AttachTransform: {fileID: 7210707609308663758}
-  m_KeepSelectedTargetValid: 1
-  m_DisableVisualsWhenBlockedInGroup: 1
-  m_StartingSelectedInteractable: {fileID: 0}
-  m_StartingTargetFilter: {fileID: 0}
-  m_HoverEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_HoverExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_SelectEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_SelectExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_StartingHoverFilters: []
-  m_StartingSelectFilters: []
-  m_OnHoverEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnHoverExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnSelectEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnSelectExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ShowInteractableHoverMeshes: 1
-  m_InteractableHoverMeshMaterial: {fileID: 0}
-  m_InteractableCantHoverMeshMaterial: {fileID: 0}
-  m_SocketActive: 1
-  m_InteractableHoverScale: 1
-  m_RecycleDelayTime: 1
-  m_HoverSocketSnapping: 0
-  m_SocketSnappingRadius: 0.1
-  m_SocketScaleMode: 0
-  m_FixedScale: {x: 1, y: 1, z: 1}
-  m_TargetBoundsSize: {x: 1, y: 1, z: 1}
 --- !u!64 &9021463055210710788
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -341,7 +280,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 3
+    m_Bits: 19
   m_DistanceCalculationMode: 1
   m_SelectMode: 0
   m_FocusMode: 1
@@ -510,8 +449,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   socketLid: {fileID: 2976460373206941633}
   socketContent: {fileID: 968845223028171476}
+  hasClothes: 0
   lidTag: Lid
-  contentTag: Clothes
+  clothesTag: Clothes
 --- !u!1 &2425618656122861108
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,7 +464,7 @@ GameObject:
   - component: {fileID: 968845223028171476}
   - component: {fileID: 591785642506120671}
   m_Layer: 0
-  m_Name: AttachClothes
+  m_Name: AttachContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -562,7 +502,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 8
+    m_Bits: 24
   m_AttachTransform: {fileID: 7210707609308663758}
   m_KeepSelectedTargetValid: 1
   m_DisableVisualsWhenBlockedInGroup: 1
@@ -825,7 +765,7 @@ Transform:
   m_GameObject: {fileID: 4481533425929392344}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -26.259108, y: -4.30529, z: 29.094803}
+  m_LocalPosition: {x: -7.411997, y: -4.30529, z: 29.094803}
   m_LocalScale: {x: 100, y: 99.99997, z: 99.99997}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1485,8 +1425,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   socketLid: {fileID: 7797820036012644443}
   socketContent: {fileID: 3352564248140954566}
+  hasClothes: 0
   lidTag: Lid
-  contentTag: Clothes
+  clothesTag: Clothes
 --- !u!1 &5031602122482135948
 GameObject:
   m_ObjectHideFlags: 0
@@ -1625,7 +1566,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5370692097150986952}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.471, y: 2.6087, z: -8.465}
   m_LocalScale: {x: 0.19782642, y: 0.19782642, z: 0.19782642}
   m_ConstrainProportionsScale: 0
@@ -1814,7 +1755,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7707965541549753992
 Transform:
   m_ObjectHideFlags: 0
@@ -2669,12 +2610,12 @@ PrefabInstance:
     - target: {fileID: 907412847959010340, guid: b036eca2d6d9be84782a0e33ab3402fa,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 907412847959010340, guid: b036eca2d6d9be84782a0e33ab3402fa,
         type: 3}
       propertyPath: m_TagString
-      value: Leg
+      value: Pierna
       objectReference: {fileID: 0}
     - target: {fileID: 1984567743873728348, guid: b036eca2d6d9be84782a0e33ab3402fa,
         type: 3}
@@ -2714,7 +2655,7 @@ PrefabInstance:
     - target: {fileID: 6208208789864682903, guid: b036eca2d6d9be84782a0e33ab3402fa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -23.328537
+      value: -4.4814262
       objectReference: {fileID: 0}
     - target: {fileID: 6208208789864682903, guid: b036eca2d6d9be84782a0e33ab3402fa,
         type: 3}
@@ -2769,6 +2710,11 @@ PrefabInstance:
     - target: {fileID: 6478336623058498219, guid: b036eca2d6d9be84782a0e33ab3402fa,
         type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6940211273150286463, guid: b036eca2d6d9be84782a0e33ab3402fa,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8544477392562181272, guid: b036eca2d6d9be84782a0e33ab3402fa,
