@@ -367,7 +367,7 @@ public class SliceObject : MonoBehaviour
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");
         container.AddComponent<TriggerActivator>();
-        //part.AddComponent<TriggerActivator>();
+        container.AddComponent<BodyPartScaler>();
 
         if (partRb != null)
         {
@@ -376,6 +376,7 @@ public class SliceObject : MonoBehaviour
 
         Debug.Log($"El pivote del objeto {part.name} ha sido ajustado y ahora está dentro del contenedor {container.name}.");
     }
+
 
     public GameObject GetSkinnedSubMesh(Mesh originalMesh, Bounds[] bounds, SkinnedMeshRenderer originalSkinnedRenderer, bool inBound, MeshFilter originalMeshFilter, List<string> boneNames)
     {

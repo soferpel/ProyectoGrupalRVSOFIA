@@ -5,9 +5,15 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     private Collider weaponCollider;
+    public int durability = 100;  // Durabilidad inicial
+    public int maxDurability = 100; // Durabilidad máxima
+    public int repairCost = 50; // Costo de reparación
+    public int currentDurability;  // Durabilidad actual
+
     // Start is called before the first frame update
     void Start()
     {
+        currentDurability = durability;
         weaponCollider = GetComponent<Collider>();
     }
 
