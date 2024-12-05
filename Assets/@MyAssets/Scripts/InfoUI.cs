@@ -6,14 +6,22 @@ public class InfoUI : MonoBehaviour
     [SerializeField] private GameObject infoPanel; 
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI orderText;
+    [SerializeField] private TextMeshProUGUI text;
+    private OrderController orderController;
 
     private MafiaController currentMafia;
+
+    private void Start()
+    {
+        orderController = FindObjectOfType<OrderController>();
+    }
 
     void Update()
     {
         if (infoPanel != null && infoPanel.activeSelf)
         {
             UpdateMafiaInfo();
+            UpdateCashInfo();
         }
     }
 
@@ -31,5 +39,10 @@ public class InfoUI : MonoBehaviour
             descriptionText.text = "No hay mafioso presente";
             orderText.text = "Sin pedido";
         }
+    }
+
+    private void UpdateCashInfo()
+    {
+        text.text =  orderController.cash.ToString();
     }
 }
