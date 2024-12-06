@@ -8,15 +8,15 @@ public class ClientController : MonoBehaviour
 
     private Animator animator;
 
-    public List<Transform> patrolPoints;
-    public Transform buyPoint;
-    public List<Transform> finalPoints;
+    private Transform buyPoint;
+    private Transform finalPoint;
+    private Transform doorExitPoint;
+    private Transform finalDestinationPoint;
     public float waitTime = 2f;
     public float distanceThreshold = 1f;
 
     private NavMeshAgent agent;
     private Transform currentTarget;
-    private bool isGoingToBuy = false;
     private bool isFinalMove = false;
     private int pointsVisited = 0;
     private int pointsToVisit = 0;
@@ -28,13 +28,25 @@ public class ClientController : MonoBehaviour
     public int countBodyParts = 5;
     public GameObject body;
     public GameObject[] sliceableParts;
+    private ShopNavigator shopNavigator;
+
+    public float waitTimeBuyPoint = 10f;
+    public bool inBuyPoint = false;
+    public bool inQueue = false;
+    public bool served = false;
+    private BuyPointController buyPointController;
+    private Coroutine waitTimeCoroutine;
+
+    public ClientTimerSlider slider;
     void Start()
     {
+        slider.SetActive(false);
         agent = GetComponent<NavMeshAgent>();
-        pointsToVisit = Random.Range(2, patrolPoints.Count + 1);
+        pointsToVisit = 1;//Random.Range(2, 5);
         animator = GetComponent<Animator>();
-        StartCoroutine(MoveToPoints());
-        foreach(Rigidbody rg in deadRigidbodies)
+        StartCoroutine(EnterFromDoor());
+        agent.enabled = false;
+        foreach (Rigidbody rg in deadRigidbodies)
         {
             rg.isKinematic = true;
         }
@@ -43,75 +55,253 @@ public class ClientController : MonoBehaviour
             collider.enabled = false;
         }
     }
+    IEnumerator EnterFromDoor()
+    {
+        Transform entryPoint = doorExitPoint;
+        Transform finalEntryPoint = finalPoint;
+
+        agent.enabled = false;
+        animator.SetBool("walk", true);
+
+        while (Vector3.Distance(transform.position, entryPoint.position) > 0.1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, entryPoint.position, Time.deltaTime * 2f);
+            Vector3 direction = -(entryPoint.position - transform.position).normalized;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
+            }
+
+            yield return null;
+        }
+        shopNavigator.OpenDoor();
+
+        while (Vector3.Distance(transform.position, finalEntryPoint.position) > 0.1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, finalEntryPoint.position, Time.deltaTime * 2f);
+            Vector3 direction = -(finalEntryPoint.position - transform.position).normalized;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
+            }
+
+            yield return null;
+        }
+
+
+        agent.enabled = true;
+        animator.SetBool("walk", false);
+        StartCoroutine(MoveToPoints());
+
+    }
 
     IEnumerator MoveToPoints()
     {
-        List<Transform> visitedPoints = new List<Transform>();
-
         while (isAlive && agent.enabled)
         {
             if (isFinalMove)
             {
-                MoveToFinalPoint();
+                DecideFinalAction();
                 yield break;
             }
 
-            if (!isGoingToBuy && Random.value < 0.5f && buyPoint != null && pointsVisited < pointsToVisit - 1)
-            {
-                currentTarget = buyPoint;
-                waitTime = 150f;
-                isGoingToBuy = true;
-                pointsVisited++;
-            }
-            else
-            {
-                do
-                {
-                    currentTarget = patrolPoints[Random.Range(0, patrolPoints.Count)];
-                } while (visitedPoints.Contains(currentTarget));
+            currentTarget = shopNavigator.GetRandomPointWithinStoreBounds();
+            pointsVisited++;
 
-                visitedPoints.Add(currentTarget);
-                pointsVisited++;
+            if (currentTarget != null)
+            {
+                yield return MoveToTarget(currentTarget, true);
             }
 
-            agent.SetDestination(currentTarget.position);
-
-            while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
-            {
-                animator.SetBool("lookAround", false);
-                animator.SetBool("walk", true);
-
-                if (agent.velocity.sqrMagnitude > 0.01f)
-                {
-                    Vector3 direction = agent.velocity.normalized;
-                    Quaternion lookRotation = Quaternion.LookRotation(direction * -1);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-                }
-                yield return null;
-            }
-
-            animator.SetBool("walk", false);
-
-            agent.updateRotation = true;
-            animator.SetBool("lookAround", true);
             yield return new WaitForSeconds(waitTime);
 
-            if (pointsVisited >= pointsToVisit || isGoingToBuy)
+            if (pointsVisited >= pointsToVisit)
             {
                 isFinalMove = true;
             }
         }
     }
 
-    private void MoveToFinalPoint()
+    IEnumerator MoveToTarget(Transform target, bool lookAround)
     {
-        if (finalPoints.Count == 0) return;
+        if (agent.enabled)
+        {
 
-        currentTarget = finalPoints[Random.Range(0, finalPoints.Count)];
-        agent.SetDestination(currentTarget.position);
+            agent.SetDestination(target.position);
 
-        StartCoroutine(MoveToFinalDestination());
+            while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
+            {
+                animator.SetBool("lookAround", false);
+                animator.SetBool("walk", true);
+
+                if (agent.desiredVelocity.sqrMagnitude > 0.01f)
+                {
+                    Vector3 direction = -agent.desiredVelocity.normalized;
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
+                }
+
+                yield return null;
+            }
+
+            animator.SetBool("walk", false);
+            if (lookAround) animator.SetBool("lookAround", true);
+            agent.updateRotation = true;
+
+            if ( target.gameObject != null && target.gameObject.name == "RandomTarget" || target.gameObject.name == "QueuePosition")
+            {
+                Destroy(target.gameObject);
+            }
+        }
     }
+
+    void DecideFinalAction()
+    {
+        float decision = Random.value;
+
+        if (decision < 1f && buyPoint != null)
+        {
+            StartCoroutine(MoveToBuyMode());
+        }
+        else
+        {
+            StartCoroutine(MoveToFinalPoint());
+        }
+    }
+
+    private IEnumerator MoveToFinalPoint()
+    {
+        yield return StartCoroutine(MoveToTarget(finalPoint, false)); 
+        yield return StartCoroutine(ExitThroughDoor());
+    }
+
+    private IEnumerator MoveToBuyMode()
+    {
+        if (!buyPointController.IsOccupied())
+        {
+            buyPointController.OccupyPoint(this);
+            yield return StartCoroutine(MoveToTarget(buyPointController.buyPointTransform, false));
+            StartWaitTimer();
+            inBuyPoint = true;
+
+        }
+        else
+        {
+            bool inQueue= buyPointController.PlaceInQueue(this);
+
+            if(inQueue){
+                int queuePosition = buyPointController.customerQueue.IndexOf(this);
+                if (queuePosition >= 0)
+                {
+                    Vector3 queuePositionOffset = buyPointController.buyPointTransform.position - new Vector3(2 * (queuePosition + 1), 0, 0);
+                    Transform queuePositionTransform = new GameObject("QueuePosition").transform;
+                    queuePositionTransform.position = queuePositionOffset;
+
+                    yield return StartCoroutine(MoveToTarget(queuePositionTransform, false));
+                }
+            }
+            else
+            {
+                StartCoroutine(MoveToFinalPoint());
+            }
+            
+        }
+        
+    }
+    private IEnumerator MoveToBuyPoint()
+    {
+        yield return StartCoroutine(MoveToTarget(buyPointController.buyPointTransform, false));
+        StartWaitTimer();
+        inBuyPoint = true;
+
+    }
+    public void MoveToQueuePosition(Vector3 newPosition, bool inbuyPoint)
+    {
+        Transform queuePositionTransform = new GameObject("QueuePosition").transform;
+        queuePositionTransform.position = newPosition;
+
+        if (inbuyPoint)
+        {
+            StartCoroutine(MoveToBuyPoint());
+            Destroy(queuePositionTransform.gameObject);
+        }
+        else
+        {
+            StartCoroutine(MoveToTarget(queuePositionTransform, false));
+        }
+
+    }
+    void StartWaitTimer()
+    {
+        if (waitTimeCoroutine != null)
+        {
+            StopCoroutine(waitTimeCoroutine);
+        }
+        waitTimeCoroutine = StartCoroutine(WaitAtBuyPoint());
+    }
+
+    IEnumerator WaitAtBuyPoint()
+    {
+        slider.SetActive(true);
+        float elapsedTime = 0f;
+        while (elapsedTime < waitTimeBuyPoint && !served)
+        {
+            elapsedTime += Time.deltaTime;
+            slider.SetSliderValue(elapsedTime, waitTimeBuyPoint);
+            yield return null;
+        }
+
+        if (!served)
+        {
+            buyPointController.FreePoint();
+            StartCoroutine(MoveToFinalPoint());
+        }
+        slider.SetActive(false);
+    }
+    IEnumerator ExitThroughDoor()
+    {
+        Transform exitPoint = doorExitPoint;
+        Transform finalExitPoint = finalDestinationPoint;
+
+        agent.enabled = false;
+        shopNavigator.OpenDoor();
+        animator.SetBool("walk", true);
+        while (Vector3.Distance(transform.position, exitPoint.position) > 0.1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, exitPoint.position, Time.deltaTime * 2f);
+            Vector3 direction = -(exitPoint.position - transform.position).normalized;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
+            }
+
+            yield return null;
+        }
+
+
+        while (Vector3.Distance(transform.position, finalExitPoint.position) > 0.1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, finalExitPoint.position, Time.deltaTime * 2f);
+            Vector3 direction = -(finalExitPoint.position - transform.position).normalized;
+
+            if (direction.sqrMagnitude > 0.01f)
+            {
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
+            }
+
+            yield return null;
+        }
+
+        Destroy(gameObject);
+    }
+
 
     private IEnumerator MoveToFinalDestination()
     {
@@ -137,7 +327,6 @@ public class ClientController : MonoBehaviour
         if (agent.enabled)
         {
             agent.isStopped = true;
-            Debug.Log("El NPC ha terminado su recorrido.");
         }
     }
 
@@ -145,11 +334,10 @@ public class ClientController : MonoBehaviour
     {
         if (!isAlive) return;
 
-        Debug.Log("ReportDeath llamado. Cambiando a movimiento final.");
         isFinalMove = true;
 
         StopCoroutine(MoveToPoints());
-        MoveToFinalPoint();
+        MoveToFinalDestination();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -158,6 +346,7 @@ public class ClientController : MonoBehaviour
         {
             Debug.Log("Cliente atacado por un cuchillo.");
             hasBeenAttacked = true;
+            StopAllCoroutines();
             StartCoroutine(Die(other));
         }
     }
@@ -166,14 +355,25 @@ public class ClientController : MonoBehaviour
     {
         if (isAlive)
         {
-            StopCoroutine(MoveToPoints());
-            StopCoroutine(MoveToFinalDestination());
+            slider.SetActive(false);
             Destroy(gameObject.GetComponent<Collider>());
             Destroy(gameObject.GetComponent<Rigidbody>());
             Destroy(gameObject.GetComponent<VisionSensor>());
             isAlive = false;
-            agent.isStopped = true;
-            agent.enabled = false;
+            if (inBuyPoint)
+            {
+                Debug.Log("MUERTO SERVICIO");
+                buyPointController.FreePoint();
+            }else if(inQueue)
+            {
+                Debug.Log("MUERTO EN COLA");
+                buyPointController.RemoveClientFromQueue(this);
+            }
+            if (agent.isActiveAndEnabled)
+            {
+                agent.isStopped = true;
+                agent.enabled = false;
+            }
             animator.enabled = false;
             foreach (Rigidbody rb in deadRigidbodies)
             {
@@ -206,14 +406,32 @@ public class ClientController : MonoBehaviour
     }
     public bool isOnBuyPoint()
     {
-        float distance = Vector3.Distance(transform.position, buyPoint.position);
-        bool isCloseToBuyPoint = distance <= distanceThreshold;
-        if (isCloseToBuyPoint)
-        {
-            Debug.Log("Cliente cerca del Buy Point.");
-        }
-        return isCloseToBuyPoint;
+        return inBuyPoint;
     }
 
+    public void SetBuyPoint(Transform buyPoint)
+    {
+        this.buyPoint = buyPoint;
+    }
+    public void SetFinalPoint(Transform finalPoint)
+    {
+        this.finalPoint = finalPoint;
+    }
+    public void SetDoorExitPoint(Transform doorExitPoint)
+    {
+        this.doorExitPoint = doorExitPoint;
+    }
+    public void SetFinalDestinationPoint(Transform finalDestinationPoint)
+    {
+        this.finalDestinationPoint = finalDestinationPoint;
+    }
+    public void SetBuyPointController(BuyPointController buyPointController)
+    {
+        this.buyPointController = buyPointController;
+    }
+    public void SetShopNavigator(ShopNavigator shopNavigator)
+    {
+        this.shopNavigator = shopNavigator;
+    }
 }
 
