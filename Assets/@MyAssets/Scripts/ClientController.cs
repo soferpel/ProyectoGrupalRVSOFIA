@@ -21,6 +21,7 @@ public class ClientController : MonoBehaviour
     private int pointsVisited = 0;
     private int pointsToVisit = 0;
     public bool isAlive = true;
+    public bool hasBeenAttacked = false;
 
     public Rigidbody[] deadRigidbodies;
     public Collider[] deadColliders;
@@ -155,6 +156,8 @@ public class ClientController : MonoBehaviour
     {
         if (other.gameObject.GetComponent<WeaponController>())
         {
+            Debug.Log("Cliente atacado por un cuchillo.");
+            hasBeenAttacked = true;
             StartCoroutine(Die(other));
         }
     }
@@ -199,7 +202,6 @@ public class ClientController : MonoBehaviour
             {
                 part.layer = LayerMask.NameToLayer("Sliceable");
             }
-            
         }
     }
     public bool isOnBuyPoint()

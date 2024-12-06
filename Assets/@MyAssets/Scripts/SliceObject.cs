@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EzySlice;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.Events;
 
 public class SliceObject : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class SliceObject : MonoBehaviour
     private GameObject collisionCut;
     private SliceablePartController collisionCutComponents;
     public float umbralDistancia =0.1f;
+    public bool hasCut = false;
+    public UnityEvent OnCutMade;
     void Update()
     {
         if (Physics.Linecast(startSlicePoint.position, endSlicePoint.position, out RaycastHit hit, sliceableLayer))
@@ -196,6 +199,9 @@ public class SliceObject : MonoBehaviour
         }
         Destroy(partController);
 
+        Debug.Log("Se ha cortado parte del cuerpo");
+        hasCut = true;
+        OnCutMade?.Invoke();
     }
 
     public void SetupSlicedComponent(GameObject slicedObject)
@@ -374,7 +380,6 @@ public class SliceObject : MonoBehaviour
             Destroy(partRb);
         }
 
-        Debug.Log($"El pivote del objeto {part.name} ha sido ajustado y ahora está dentro del contenedor {container.name}.");
     }
 
 
