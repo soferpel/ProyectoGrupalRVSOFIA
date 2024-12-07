@@ -40,6 +40,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.Hands
         /// </summary>
         public void ToggleActiveState()
         {
+            Debug.Log("pulsado");
             m_CurrentlyActive = !m_CurrentlyActive;
             activationGameObject.SetActive(m_CurrentlyActive);
         }
