@@ -9,6 +9,7 @@ public class InfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text;
     private OrderController orderController;
 
+    public ClientManager clientManager;
     private MafiaController currentMafia;
 
     private void Start()
@@ -27,12 +28,15 @@ public class InfoUI : MonoBehaviour
 
     private void UpdateMafiaInfo()
     {
-        currentMafia = FindObjectOfType<MafiaController>();
-
-        if (currentMafia != null)
+        if(clientManager.mafia != null)
         {
-            descriptionText.text = currentMafia.AppearanceDescription;
-            orderText.text = currentMafia.orderDescription;
+            currentMafia = clientManager.mafia.GetComponent<MafiaController>();
+
+            if (currentMafia != null)
+            {
+                descriptionText.text = currentMafia.AppearanceDescription;
+                orderText.text = currentMafia.orderDescription;
+            }
         }
         else
         {

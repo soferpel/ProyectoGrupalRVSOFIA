@@ -41,7 +41,6 @@ public class ShopNavigator : MonoBehaviour
         GameObject tempTarget = new GameObject("RandomTarget");
         tempTarget.transform.position = randomPosition;
 
-        Debug.Log(tempTarget.transform);
         return tempTarget.transform;
     }
 

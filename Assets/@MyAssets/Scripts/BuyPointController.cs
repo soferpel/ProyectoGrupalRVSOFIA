@@ -5,18 +5,18 @@ using UnityEngine;
 public class BuyPointController : MonoBehaviour
 {
     public Transform buyPointTransform;
-    public List<ClientController> customerQueue = new List<ClientController>();
+    public List<PersonController> customerQueue = new List<PersonController>();
     public int maxQueueSize = 5;
-    public ClientController currentCustomer = null;
+    public PersonController currentCustomer = null;
 
     public bool IsOccupied()
     {
         return currentCustomer != null;
     }
 
-    public bool PlaceInQueue(ClientController customer)
+    public bool PlaceInQueue(PersonController customer)
     {
-        if (customerQueue.Count < maxQueueSize)
+        if (customer.TryGetComponent(out MafiaController _))
         {
             customerQueue.Add(customer);
             customer.inQueue = true;
@@ -24,11 +24,21 @@ public class BuyPointController : MonoBehaviour
         }
         else
         {
-            return false;
+
+            if (customerQueue.Count < maxQueueSize)
+            {
+                customerQueue.Add(customer);
+                customer.inQueue = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
-    public void OccupyPoint(ClientController customer)
+    public void OccupyPoint(PersonController customer)
     {
         currentCustomer = customer;
     }
@@ -40,7 +50,7 @@ public class BuyPointController : MonoBehaviour
             UpdateQueuePositions();
             if (customerQueue.Count > 0)
             {
-                ClientController nextCustomer = customerQueue[0];
+                PersonController nextCustomer = customerQueue[0];
                 customerQueue.RemoveAt(0);
                 OccupyPoint(nextCustomer);
             }
@@ -54,7 +64,7 @@ public class BuyPointController : MonoBehaviour
     {
         for (int i = 0; i < customerQueue.Count; i++)
         {
-            ClientController customer = customerQueue[i];
+            PersonController customer = customerQueue[i];
             Vector3 newQueuePosition = buyPointTransform.position - new Vector3(2 * i, 0, 0);
             if (i == 0)
             {
@@ -75,7 +85,7 @@ public class BuyPointController : MonoBehaviour
         }
     }
 
-    public void RemoveClientFromQueue(ClientController client)
+    public void RemoveClientFromQueue(PersonController client)
     {
         if (customerQueue.Contains(client))
         {
