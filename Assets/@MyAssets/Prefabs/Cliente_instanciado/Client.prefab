@@ -1561,9 +1561,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aa671b4c2b23d5439e56844af177556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waitTime: 2
-  distanceThreshold: 1
+  slider: {fileID: 6776835126546240778}
   isAlive: 1
+  isReported: 0
+  waitTime: 2
+  inBuyPoint: 0
+  served: 0
+  inQueue: 0
+  waitTimeBuyPoint: 10
+  distanceThreshold: 1
   hasBeenAttacked: 0
   deadRigidbodies:
   - {fileID: 1244215893255851910}
@@ -1605,11 +1611,6 @@ MonoBehaviour:
   - {fileID: 1563047095040040065}
   - {fileID: 4968215964275325811}
   - {fileID: 2872825006229257540}
-  waitTimeBuyPoint: 10
-  inBuyPoint: 0
-  inQueue: 0
-  served: 0
-  slider: {fileID: 6776835126546240778}
 --- !u!65 &2693957462350037603
 BoxCollider:
   m_ObjectHideFlags: 0

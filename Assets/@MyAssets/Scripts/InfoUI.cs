@@ -12,18 +12,23 @@ public class InfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textWeapon;
     [SerializeField] private Button repairButton;
     [SerializeField] private TextMeshProUGUI repairMessage;
+    [SerializeField] private Button boxButton;
+    [SerializeField] private TextMeshProUGUI textBox;
+    [SerializeField] private BoxButtom boxBuyController;
 
-
-    private OrderController orderController;
+    public OrderController orderController;
     public ClientManager clientManager;
     private MafiaController currentMafia;
-    private WeaponController weaponController;
+    public WeaponController weaponController;
     private Coroutine messageCoroutine;
 
     private void Start()
     {
-        orderController = FindObjectOfType<OrderController>();
-        weaponController = FindObjectOfType<WeaponController>();
+        if (textBox != null)
+        {
+        textBox.text = boxBuyController.boxCost.ToString();
+
+        }
     }
 
     void Update()
@@ -33,6 +38,7 @@ public class InfoUI : MonoBehaviour
             UpdateMafiaInfo();
             UpdateCashInfo();
             UpdateWeaponInfo();
+            UpdateBoxInfo();
         }
     }
 
@@ -58,6 +64,10 @@ public class InfoUI : MonoBehaviour
     public void UpdateCashInfo()
     {
         textCash.text =  orderController.cash.ToString();
+    }
+    public void UpdateBoxInfo()
+    {
+        boxButton.interactable = orderController.cash > boxBuyController.boxCost;
     }
 
     public void UpdateWeaponInfo()
@@ -87,7 +97,7 @@ public class InfoUI : MonoBehaviour
 
             if (weaponController.currentDurability > 0)
             {
-                ShowRepairMessage("Tu arma todav�a no necesita reparaci�n.");
+                ShowRepairMessage("Tu arma todavía no necesita reparación.");
             }
             else
             {
