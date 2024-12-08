@@ -34,6 +34,7 @@ public class ClientController : PersonController
         if (!isAlive) return;
 
         isFinalMove = true;
+        isReported = true;
         StopAllCoroutines();
         StartCoroutine(MoveToFinalPoint());
     }
