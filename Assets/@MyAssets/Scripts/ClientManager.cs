@@ -5,12 +5,16 @@ using UnityEngine;
 public class ClientManager : MonoBehaviour
 {
     public GameObject clientPrefab;
+    public GameObject mafiaPrefab;
     public Transform spawnPoint;
 
     public float initialMinInterval = 25f;
     public float initialMaxInterval = 50f;
     public float minIntervalLimit = 10f;
     public float intervalDecrement = 0.1f;
+
+    public float mafiaSpawnInterval = 120f;
+    public GameObject mafia = null;
 
     private float currentMinInterval;
     private float currentMaxInterval;
@@ -21,19 +25,20 @@ public class ClientManager : MonoBehaviour
     public Transform finalDestinationPoint;
     public BuyPointController buyPointController;
     public ShopNavigator shopNavigator;
-    void Start()
+    private void Start()
     {
         currentMinInterval = initialMinInterval;
         currentMaxInterval = initialMaxInterval;
 
         StartCoroutine(SpawnClients());
+        StartCoroutine(SpawnMafioso());
     }
 
-    IEnumerator SpawnClients()
+    private IEnumerator SpawnClients()
     {
         while (true)
         {
-            SpawnClient();
+            SpawnClient(clientPrefab);
 
             float waitTime = Random.Range(currentMinInterval, currentMaxInterval);
 
@@ -50,16 +55,28 @@ public class ClientManager : MonoBehaviour
             }
         }
     }
-
-    void SpawnClient()
+    private IEnumerator SpawnMafioso()
     {
-        GameObject client = Instantiate(clientPrefab, spawnPoint.position, Quaternion.identity);
-        ClientController controller = client.GetComponent<ClientController>();
+        while (true)
+        {
+            yield return new WaitForSeconds(mafiaSpawnInterval);
+
+            if (mafia == null)
+            {
+                mafia = SpawnClient(mafiaPrefab);
+            }
+        }
+    }
+    private GameObject SpawnClient(GameObject prefab)
+    {
+        GameObject client = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
+        PersonController controller = client.GetComponent<PersonController>();
         controller.SetBuyPoint(buyPoint);
         controller.SetFinalPoint(finalPoint);
         controller.SetDoorExitPoint(doorExitPoint);
         controller.SetFinalDestinationPoint(finalDestinationPoint);
         controller.SetBuyPointController(buyPointController);
         controller.SetShopNavigator(shopNavigator);
+        return client;
     }
 }
