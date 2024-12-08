@@ -6,18 +6,18 @@ using TMPro;
 public class WeaponButton : MonoBehaviour
 {
     private WeaponController weaponController;
-    private InfoUI infoUI;
+    public InfoUI infoUI;
 
     private void Start()
     {
-        weaponController = FindObjectOfType<WeaponController>();
-        infoUI = FindObjectOfType<InfoUI>();
+        weaponController = infoUI.weaponController;
     }
 
     public void RepairKnife()
     {
         if (weaponController != null)
         {
+            Debug.Log("Cuchillo arreglado");
             weaponController.RepairKnife();
         }
 

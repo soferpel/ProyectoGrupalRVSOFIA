@@ -77,6 +77,7 @@ public class ClientManager : MonoBehaviour
         controller.SetFinalDestinationPoint(finalDestinationPoint);
         controller.SetBuyPointController(buyPointController);
         controller.SetShopNavigator(shopNavigator);
+        client.SetActive(true);
         return client;
     }
 }
