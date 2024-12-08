@@ -7,6 +7,7 @@ public abstract class PersonController : MonoBehaviour
 {
     public ClientTimerSlider slider;
     public bool isAlive = true;
+    public bool isReported = false;
     public float waitTime = 2f;
     public bool inBuyPoint = false;
     public bool served = false;
@@ -231,6 +232,12 @@ public abstract class PersonController : MonoBehaviour
             }
 
             yield return null;
+        }
+
+        if (this is ClientController client && client.isReported)
+        {
+            Debug.Log("Cadáver reportado. Fin del juego.");
+            GameManager.isGameOver = true;
         }
 
         Destroy(gameObject);
