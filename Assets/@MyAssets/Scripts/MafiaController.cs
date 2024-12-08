@@ -32,13 +32,7 @@ public class MafiaController : PersonController
         if (other.gameObject.GetComponent<WeaponController>())
         {
             Debug.Log("El mafioso no puede ser atacado.");
-
-            Destroy(gameObject.GetComponent<Collider>());
-            Destroy(gameObject.GetComponent<Rigidbody>());
-            Destroy(gameObject.GetComponent<VisionSensor>());
-            agent.isStopped = true;
-            agent.enabled = false;
-
+            StopAllCoroutines();
             StartCoroutine(HandleAttackSequence());
         }
     }
