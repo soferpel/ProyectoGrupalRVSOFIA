@@ -266,7 +266,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7311152422172812413}
-  - component: {fileID: 3911583172121865864}
+  - component: {fileID: 7528402479846189697}
   m_Layer: 0
   m_Name: BoxShelf
   m_TagString: Untagged
@@ -299,7 +299,7 @@ Transform:
   - {fileID: 7509275976137602453}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
---- !u!114 &3911583172121865864
+--- !u!114 &7528402479846189697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -308,7 +308,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8368137963441582339}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6afb9b5b719b11242ab62d9bccec9247, type: 3}
+  m_Script: {fileID: 11500000, guid: cb9edbf028d910e49ab2836b01b27517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   boxSpawnPoints:

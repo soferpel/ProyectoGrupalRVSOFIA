@@ -17,7 +17,6 @@ public class WeaponButton : MonoBehaviour
     {
         if (weaponController != null)
         {
-            Debug.Log("Cuchillo arreglado");
             weaponController.RepairKnife();
         }
 

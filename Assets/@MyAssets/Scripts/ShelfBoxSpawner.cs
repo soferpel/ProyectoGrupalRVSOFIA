@@ -13,6 +13,12 @@ public class ShelfBoxSpawner : MonoBehaviour
 
     public LayerMask detectionLayer;
 
+    public bool startBox = false;
+
+    private void Start()
+    {
+        if (startBox) SpawnBoxes();
+    }
     public void SpawnBoxes()
     {
         foreach (Transform spawnPoint in boxSpawnPoints)
@@ -20,7 +26,6 @@ public class ShelfBoxSpawner : MonoBehaviour
             Collider[] colliders = Physics.OverlapSphere(spawnPoint.position, colliderCheckRadius, detectionLayer);
             if (colliders.Length == 0)
             {
-                Debug.DrawLine(spawnPoint.position, spawnPoint.position * colliderCheckRadius, Color.red, 10f);
                 Instantiate(box, spawnPoint.position, spawnPoint.rotation);
                 Instantiate(boxLid, spawnPoint.position + offset, spawnPoint.rotation);
             }
@@ -37,7 +42,6 @@ public class ShelfBoxSpawner : MonoBehaviour
             if (colliders.Length == 0)
             {
                 cont++;
-                Instantiate(boxLid, spawnPoint.position + offset, spawnPoint.rotation);
             }
         }
         return cont;

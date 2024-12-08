@@ -38,36 +38,41 @@ public class BoxController : MonoBehaviour
 
     private void ObjectOnSocket(SelectEnterEventArgs args)
     {
-        string order = mafiaController.getGeneratedOrder();
-        //string[] possibleContent = { "Clothes", "Torso", "Cabeza", "Pierna Izquierda", "Pierna Derecha", "Brazo Izquierdo", "Brazo Derecho" };
-        GameObject placedObject = args.interactableObject.transform.gameObject;
-
-        if (placedObject.CompareTag(lidTag))
+        //he puesto este if para que no salga error
+        if (mafiaController != null)
         {
-            Debug.Log("Se ha colocado la tapa");
-            hasLid = true;
 
-            if (!hasContent)
+            string order = mafiaController.getGeneratedOrder();
+            //string[] possibleContent = { "Clothes", "Torso", "Cabeza", "Pierna Izquierda", "Pierna Derecha", "Brazo Izquierdo", "Brazo Derecho" };
+            GameObject placedObject = args.interactableObject.transform.gameObject;
+
+            if (placedObject.CompareTag(lidTag))
             {
-                socketContent.socketActive = false;
+                Debug.Log("Se ha colocado la tapa");
+                hasLid = true;
+
+                if (!hasContent)
+                {
+                    socketContent.socketActive = false;
+                }
             }
-        }
-        else if (placedObject.CompareTag(clothesTag))
-        {
-            Debug.Log("Se ha colocado ropa");
-            hasContent = true;
-            hasClothes = true;
-        }
-        else if (IsBodyPart(placedObject))
-        {
-            Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
-
-            //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
-            ScaleObjectInstantly(placedObject, targetScale);
-            if (placedObject.CompareTag(order))
+            else if (placedObject.CompareTag(clothesTag))
             {
+                Debug.Log("Se ha colocado ropa");
                 hasContent = true;
-                Debug.Log("Parte del cuerpo coincide con el pedido.");
+                hasClothes = true;
+            }
+            else if (IsBodyPart(placedObject))
+            {
+                Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
+
+                //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
+                ScaleObjectInstantly(placedObject, targetScale);
+                if (placedObject.CompareTag(order))
+                {
+                    hasContent = true;
+                    Debug.Log("Parte del cuerpo coincide con el pedido.");
+                }
             }
         }
     }

@@ -12,7 +12,9 @@ public class InfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textWeapon;
     [SerializeField] private Button repairButton;
     [SerializeField] private TextMeshProUGUI repairMessage;
-
+    [SerializeField] private Button boxButton;
+    [SerializeField] private TextMeshProUGUI textBox;
+    [SerializeField] private BoxButtom boxBuyController;
 
     public OrderController orderController;
     public ClientManager clientManager;
@@ -22,7 +24,11 @@ public class InfoUI : MonoBehaviour
 
     private void Start()
     {
-       
+        if (textBox != null)
+        {
+        textBox.text = boxBuyController.boxCost.ToString();
+
+        }
     }
 
     void Update()
@@ -32,6 +38,7 @@ public class InfoUI : MonoBehaviour
             UpdateMafiaInfo();
             UpdateCashInfo();
             UpdateWeaponInfo();
+            UpdateBoxInfo();
         }
     }
 
@@ -57,6 +64,10 @@ public class InfoUI : MonoBehaviour
     public void UpdateCashInfo()
     {
         textCash.text =  orderController.cash.ToString();
+    }
+    public void UpdateBoxInfo()
+    {
+        boxButton.interactable = orderController.cash > boxBuyController.boxCost;
     }
 
     public void UpdateWeaponInfo()

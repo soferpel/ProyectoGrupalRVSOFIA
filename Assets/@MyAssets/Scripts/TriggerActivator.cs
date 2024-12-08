@@ -25,13 +25,19 @@ public class TriggerActivator : MonoBehaviour
     private void OnGrab(SelectEnterEventArgs args)
     {
         HashSet<Transform> visited = new HashSet<Transform>();
-        SetColliderTrigger(transform, true, visited);
+        // he puesto este if para poder quitar la tapa
+        Debug.Log("tag: "+gameObject.tag);
+        if (!gameObject.CompareTag("Lid"))
+        {
+            SetColliderTrigger(transform, true, visited);
+        }
         rb.isKinematic = true;
     }
 
     private void OnRelease(SelectExitEventArgs args)
     {
         HashSet<Transform> visited = new HashSet<Transform>();
+        Debug.Log("hola");
         SetColliderTrigger(transform, false, visited);
         rb.isKinematic = false;
     }
