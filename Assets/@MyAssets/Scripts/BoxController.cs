@@ -16,6 +16,8 @@ public class BoxController : MonoBehaviour
     public float scaleDuration = 0.2f;
     public Vector3 targetScale = new Vector3(0.5f, 0.5f, 0.5f);
 
+    public List<string> containedItems = new List<string>();
+
 
     void Start()
     {
@@ -41,10 +43,10 @@ public class BoxController : MonoBehaviour
         //he puesto este if para que no salga error
         if (mafiaController != null)
         {
+            GameObject placedObject = args.interactableObject.transform.gameObject;
 
             string order = mafiaController.getGeneratedOrder();
             //string[] possibleContent = { "Clothes", "Torso", "Cabeza", "Pierna Izquierda", "Pierna Derecha", "Brazo Izquierdo", "Brazo Derecho" };
-            GameObject placedObject = args.interactableObject.transform.gameObject;
 
             if (placedObject.CompareTag(lidTag))
             {
@@ -58,20 +60,36 @@ public class BoxController : MonoBehaviour
             }
             else if (placedObject.CompareTag(clothesTag))
             {
+                containedItems.Add(clothesTag); // Registrar ropa
                 Debug.Log("Se ha colocado ropa");
                 hasContent = true;
                 hasClothes = true;
             }
             else if (IsBodyPart(placedObject))
             {
+                containedItems.Add(placedObject.tag); // Registrar partes del cuerpo
                 Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
 
                 //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
                 ScaleObjectInstantly(placedObject, targetScale);
+
                 if (placedObject.CompareTag(order))
                 {
+                    Debug.Log("Se ha colocado ropa");
                     hasContent = true;
-                    Debug.Log("Parte del cuerpo coincide con el pedido.");
+                    hasClothes = true;
+                }
+                else if (IsBodyPart(placedObject))
+                {
+                    Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
+
+                    //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
+                    ScaleObjectInstantly(placedObject, targetScale);
+                    if (placedObject.CompareTag(order))
+                    {
+                        hasContent = true;
+                        Debug.Log("Parte del cuerpo coincide con el pedido.");
+                    }
                 }
             }
         }
@@ -111,17 +129,17 @@ public class BoxController : MonoBehaviour
             yield return null;
         }
 
-        // Ajustar al tamaño final para asegurar exactitud
+        // Ajustar al tamaï¿½o final para asegurar exactitud
         obj.transform.localScale = targetScale;
-        Debug.Log($"Tamaño final de {obj.name}: {obj.transform.localScale}");
+        Debug.Log($"Tamaï¿½o final de {obj.name}: {obj.transform.localScale}");
 
-        Debug.Log("SE HA CAMBIADO TAMAÑO PARTE??");
+        Debug.Log("SE HA CAMBIADO TAMAï¿½O PARTE??");
     }*/
 
 
     private void ScaleObjectInstantly(GameObject obj, Vector3 targetScale)
     {
         obj.transform.localScale = targetScale;
-        Debug.Log($"Escala cambiada instantáneamente de {obj.name} a {obj.transform.localScale}");
+        Debug.Log($"Escala cambiada instantï¿½neamente de {obj.name} a {obj.transform.localScale}");
     }
 }

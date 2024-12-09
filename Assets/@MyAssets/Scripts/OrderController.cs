@@ -9,6 +9,7 @@ public class OrderController : MonoBehaviour
     private ClientController client;
     private MafiaController mafia;
     private BoxController boxController;
+    private BuyPointController buyPointController;
     public int cash = 0;
     public string boxTag = "Box";
 
@@ -21,6 +22,7 @@ public class OrderController : MonoBehaviour
         client = FindObjectOfType<ClientController>();
         mafia = FindObjectOfType<MafiaController>();
         boxController = FindObjectOfType<BoxController>();
+        buyPointController = FindObjectOfType<BuyPointController>();
     }
 
     void Update()
@@ -33,21 +35,61 @@ public class OrderController : MonoBehaviour
         {
             Debug.Log("Caja en socket");
             boxController = args.interactableObject.transform.GetComponent<BoxController>();
-            if ((client.isOnBuyPoint() || mafia.isOnBuyPoint()) && boxController.IsReadyForDelivery())
+            if (buyPointController.IsOccupied() && boxController.IsReadyForDelivery())
             {
-                Debug.Log("Objecto se ha destruido. Pedido entregado");
-                var lidSocket = boxController.socketLid.GetOldestInteractableSelected()?.transform.gameObject;
-                var contentSocket = boxController.socketContent.GetOldestInteractableSelected()?.transform.gameObject;
-                Destroy(args.interactableObject.transform.gameObject);
-                Destroy(lidSocket);
-                Destroy(contentSocket);
-                if (boxController.hasClothes)
+                PersonController currentCustomer = buyPointController.currentCustomer;
+                if (currentCustomer is ClientController)
                 {
-                    Debug.Log("Objecto se ha destruido. Pedido entregado ROPA");
-                    AddCash();
+                    ClientOrder(args);
+                }
+                else if (currentCustomer is MafiaController)
+                {
+                    MafiaOrder(args);
                 }
             }
         }
+    }
+
+
+    private void ClientOrder(SelectEnterEventArgs args)
+    {
+        if (boxController.hasClothes)
+        {
+            Debug.Log("Pedido correcto. Se entrega al cliente");
+            DestroyOrder(args);
+            AddCash();
+        }
+        else
+        {
+            Debug.Log("Pedido incorrecto. No se entrega al cliente");
+        }
+    }
+    private void MafiaOrder(SelectEnterEventArgs args)
+    {
+        MafiaController mafia = buyPointController.currentCustomer as MafiaController;
+        string requiredItem = mafia.getGeneratedOrder();
+
+        if (boxController.containedItems.Contains(requiredItem))
+        {
+            Debug.Log("Pedido correcto. Se entrega al mafioso");
+            DestroyOrder(args);
+        }
+        else
+        {
+            Debug.Log("Pedido incorrecto. No se entrega al mafioso");
+            //PONER BOOL
+        }
+    }
+
+    private void DestroyOrder(SelectEnterEventArgs args)
+    {
+        var lidSocket = boxController.socketLid.GetOldestInteractableSelected()?.transform.gameObject;
+        var contentSocket = boxController.socketContent.GetOldestInteractableSelected()?.transform.gameObject;
+        Destroy(args.interactableObject.transform.gameObject);
+        Destroy(lidSocket);
+        Destroy(contentSocket);
+
+        buyPointController.FreePoint(); 
     }
 
     private int AddCash()
