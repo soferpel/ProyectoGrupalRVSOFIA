@@ -61,6 +61,9 @@ public class OrderController : MonoBehaviour
             Debug.Log("Pedido correcto. Se entrega al cliente");
             DestroyOrder(args);
             AddCash();
+        }else if (boxController.ContainsBodyPart())
+        {
+            GameManager.isGameOver = true;
         }
         else
         {
@@ -77,10 +80,14 @@ public class OrderController : MonoBehaviour
             Debug.Log("Pedido correcto. Se entrega al mafioso");
             DestroyOrder(args);
         }
+        else if (boxController.hasClothes)
+        {
+            GameManager.isGameOver = true;
+            Debug.Log("Pedido incorrecto. GameOver");
+        }
         else
         {
             Debug.Log("Pedido incorrecto. No se entrega al mafioso");
-            //PONER BOOL
         }
     }
 
