@@ -35,15 +35,18 @@ public class OrderController : MonoBehaviour
         {
             Debug.Log("Caja en socket");
             boxController = args.interactableObject.transform.GetComponent<BoxController>();
+            Debug.Log(buyPointController.IsOccupied() + "    " + boxController.IsReadyForDelivery());
             if (buyPointController.IsOccupied() && boxController.IsReadyForDelivery())
             {
                 PersonController currentCustomer = buyPointController.currentCustomer;
                 if (currentCustomer is ClientController)
                 {
+                    Debug.Log("cleinte");
                     ClientOrder(args);
                 }
                 else if (currentCustomer is MafiaController)
                 {
+                    Debug.Log("mafia");
                     MafiaOrder(args);
                 }
             }

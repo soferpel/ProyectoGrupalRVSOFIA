@@ -25,6 +25,7 @@ public class ClientManager : MonoBehaviour
     public Transform finalDestinationPoint;
     public BuyPointController buyPointController;
     public ShopNavigator shopNavigator;
+    public GameObject player;
     private void Start()
     {
         currentMinInterval = initialMinInterval;
@@ -78,6 +79,11 @@ public class ClientManager : MonoBehaviour
         controller.SetBuyPointController(buyPointController);
         controller.SetShopNavigator(shopNavigator);
         client.SetActive(true);
+
+        if(client.TryGetComponent(out MafiaController mafiacontr))
+        {
+            mafiacontr.player = player;
+        }
         return client;
     }
 }

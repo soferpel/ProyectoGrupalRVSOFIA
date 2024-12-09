@@ -29,6 +29,7 @@ public class BoxController : MonoBehaviour
         mafiaController = FindObjectOfType<MafiaController>();
 
         socketLid.selectEntered.AddListener(ObjectOnSocket);
+        socketLid.selectExited.AddListener(ObjectOutSocket);
         socketContent.selectEntered.AddListener(ObjectOnSocket);
     }
 
@@ -40,23 +41,16 @@ public class BoxController : MonoBehaviour
 
     private void ObjectOnSocket(SelectEnterEventArgs args)
     {
-        //he puesto este if para que no salga error
-        if (mafiaController != null)
-        {
-            GameObject placedObject = args.interactableObject.transform.gameObject;
-
-            string order = mafiaController.getGeneratedOrder();
-            //string[] possibleContent = { "Clothes", "Torso", "Cabeza", "Pierna Izquierda", "Pierna Derecha", "Brazo Izquierdo", "Brazo Derecho" };
+        GameObject placedObject = args.interactableObject.transform.gameObject;
 
             if (placedObject.CompareTag(lidTag))
             {
                 Debug.Log("Se ha colocado la tapa");
                 hasLid = true;
-
-                if (!hasContent)
-                {
-                    socketContent.socketActive = false;
-                }
+                if(!hasContent)
+            {
+                socketContent.socketActive = false;
+            }
             }
             else if (placedObject.CompareTag(clothesTag))
             {
@@ -69,18 +63,31 @@ public class BoxController : MonoBehaviour
             {
                 containedItems.Add(placedObject.tag); // Registrar partes del cuerpo
                 Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
+                hasContent = true;
 
-                //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
-                ScaleObjectInstantly(placedObject, targetScale);
-                if (placedObject.CompareTag(order))
+            //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
+            ScaleObjectInstantly(placedObject, targetScale);
+                if (mafiaController != null)
                 {
-                    hasContent = true;
-                    Debug.Log("Parte del cuerpo coincide con el pedido.");
+                    string order = mafiaController.getGeneratedOrder();
+                    //string[] possibleContent = { "Clothes", "Torso", "Cabeza", "Pierna Izquierda", "Pierna Derecha", "Brazo Izquierdo", "Brazo Derecho" };
+                    if (placedObject.CompareTag(order))
+                    {
+                        Debug.Log("Parte del cuerpo coincide con el pedido.");
+                    }
                 }
             }
+        
+    }
+    public void ObjectOutSocket(SelectExitEventArgs args)
+    {
+        Debug.Log("quitada tapa");
+        hasLid = false;
+        if (!hasContent)
+        {
+            socketContent.socketActive = true;
         }
     }
-
     private bool IsBodyPart(GameObject obj)
     {
         string[] bodyPartTags = { "Torso", "Cabeza", "Pierna", "Brazo" };
@@ -96,6 +103,7 @@ public class BoxController : MonoBehaviour
 
     public bool IsReadyForDelivery()
     {
+        Debug.Log("caja :"+ hasLid + "  " + hasContent);
         return hasLid && hasContent;
     }
 

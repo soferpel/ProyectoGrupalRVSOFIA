@@ -133,7 +133,7 @@ Transform:
   m_GameObject: {fileID: 2461517316394587358}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.0006999989, y: -0.008900002, z: -0.004100001}
+  m_LocalPosition: {x: -0.0007, y: -0.0001, z: -0.0041}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -557,6 +557,7 @@ MonoBehaviour:
   clothesTag: Clothes
   scaleDuration: 0.2
   targetScale: {x: 0.5, y: 0.5, z: 0.5}
+  containedItems: []
 --- !u!1 &3406045269812544280
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class MafiaController : PersonController
     public string appearanceDescription;
     public string orderDescription;
 
-    private Transform player;
+    public GameObject player;
 
     protected override void Start()
     {
@@ -39,9 +39,11 @@ public class MafiaController : PersonController
 
     private IEnumerator HandleAttackSequence()
     {
+        agent.enabled = false;
+        
         if (player != null)
         {
-            Vector3 directionToPlayer = (player.position - transform.position).normalized;
+            Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(new Vector3(directionToPlayer.x, 0, directionToPlayer.z));
             float rotationSpeed = 5f;
 
@@ -51,12 +53,12 @@ public class MafiaController : PersonController
                 yield return null;
             }
         }
-
+        
         if (animator != null)
         {
             animator.SetBool("lookAround", false);
             animator.SetBool("walk", false);
-            //animator.SetBool("attack", true);
+            animator.SetBool("attack", true);
         }
 
         yield return new WaitForSeconds(2f);

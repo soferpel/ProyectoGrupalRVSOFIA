@@ -180,6 +180,7 @@ public class SliceObject : MonoBehaviour
                         Destroy(collider);
                     }
                 }
+                detachPart.transform.parent.localScale = new Vector3(0.8f, 0.8f, 0.8f);
             }
             Destroy(tempObject2);
             Destroy(inBoundMesh);
@@ -195,7 +196,12 @@ public class SliceObject : MonoBehaviour
         collisionCutComponents.client.countBodyParts--;
         if (collisionCutComponents.client.countBodyParts <= 0)
         {
-           collisionCutComponents.client.body.tag = "Torso";
+            collisionCutComponents.client.body.tag = "Torso";
+            collisionCutComponents.client.body.AddComponent<TriggerActivator>();
+            collisionCutComponents.client.body.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+
+            //DetachPart(collisionCutComponents.client.body);
+
         }
         Destroy(partController);
 
@@ -368,6 +374,7 @@ public class SliceObject : MonoBehaviour
         {
             partRb.isKinematic = true;
         }
+        container.AddComponent<DetectableTarget>();
         XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
         grabInteractable.useDynamicAttach = true;
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
