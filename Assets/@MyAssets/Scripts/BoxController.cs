@@ -72,24 +72,10 @@ public class BoxController : MonoBehaviour
 
                 //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
                 ScaleObjectInstantly(placedObject, targetScale);
-
                 if (placedObject.CompareTag(order))
                 {
-                    Debug.Log("Se ha colocado ropa");
                     hasContent = true;
-                    hasClothes = true;
-                }
-                else if (IsBodyPart(placedObject))
-                {
-                    Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
-
-                    //StartCoroutine(ScaleObject(placedObject, targetScale, scaleDuration));
-                    ScaleObjectInstantly(placedObject, targetScale);
-                    if (placedObject.CompareTag(order))
-                    {
-                        hasContent = true;
-                        Debug.Log("Parte del cuerpo coincide con el pedido.");
-                    }
+                    Debug.Log("Parte del cuerpo coincide con el pedido.");
                 }
             }
         }
