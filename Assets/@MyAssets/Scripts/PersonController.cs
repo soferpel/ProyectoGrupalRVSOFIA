@@ -28,6 +28,7 @@ public abstract class PersonController : MonoBehaviour
     protected BuyPointController buyPointController;
     protected Coroutine waitTimeCoroutine;
     protected float buyProbability = 0;
+    protected int personDirection = 1;
     protected virtual void Start()
     {
         slider.SetActive(false);
@@ -49,7 +50,7 @@ public abstract class PersonController : MonoBehaviour
         while (Vector3.Distance(transform.position, entryPoint.position) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, entryPoint.position, Time.deltaTime * 2f);
-            Vector3 direction = -(entryPoint.position - transform.position).normalized;
+            Vector3 direction = -(entryPoint.position - transform.position).normalized * personDirection;
 
             if (direction.sqrMagnitude > 0.01f)
             {
@@ -64,7 +65,7 @@ public abstract class PersonController : MonoBehaviour
         while (Vector3.Distance(transform.position, finalEntryPoint.position) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, finalEntryPoint.position, Time.deltaTime * 2f);
-            Vector3 direction = -(finalEntryPoint.position - transform.position).normalized;
+            Vector3 direction = -(finalEntryPoint.position - transform.position).normalized * personDirection;
 
             if (direction.sqrMagnitude > 0.01f)
             {
@@ -172,7 +173,7 @@ public abstract class PersonController : MonoBehaviour
 
                 if (agent.desiredVelocity.sqrMagnitude > 0.01f)
                 {
-                    Vector3 direction = -agent.desiredVelocity.normalized;
+                    Vector3 direction = -agent.desiredVelocity.normalized * personDirection;
                     Quaternion targetRotation = Quaternion.LookRotation(direction);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
                 }
@@ -208,7 +209,7 @@ public abstract class PersonController : MonoBehaviour
         while (Vector3.Distance(transform.position, exitPoint.position) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, exitPoint.position, Time.deltaTime * 2f);
-            Vector3 direction = -(exitPoint.position - transform.position).normalized;
+            Vector3 direction = -(exitPoint.position - transform.position).normalized * personDirection;
 
             if (direction.sqrMagnitude > 0.01f)
             {
@@ -223,7 +224,7 @@ public abstract class PersonController : MonoBehaviour
         while (Vector3.Distance(transform.position, finalExitPoint.position) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, finalExitPoint.position, Time.deltaTime * 2f);
-            Vector3 direction = -(finalExitPoint.position - transform.position).normalized;
+            Vector3 direction = -(finalExitPoint.position - transform.position).normalized * personDirection;
 
             if (direction.sqrMagnitude > 0.01f)
             {

@@ -14,7 +14,7 @@ public class ClientController : PersonController
     public int countBodyParts = 5;
     public GameObject body;
     public GameObject[] sliceableParts;
-
+    public Vector3 reportDirection;
     protected override void Start()
     {
         buyProbability = 0.5f;
@@ -31,12 +31,31 @@ public class ClientController : PersonController
 
     public void ReportDeath()
     {
-        if (!isAlive) return;
+        if (!isAlive || isReported) return;
 
+        personDirection = -1;
         isFinalMove = true;
         isReported = true;
         StopAllCoroutines();
-        StartCoroutine(MoveToFinalPoint());
+        reportDirection = agent.destination;
+        agent.enabled = false;
+        StartCoroutine(HandleDeathSequence());
+    }
+
+    private IEnumerator HandleDeathSequence()
+    {
+        animator.SetTrigger("scared");
+
+            Vector3 direction = -(reportDirection - transform.position).normalized * personDirection;
+            Debug.Log(reportDirection + "mira q: "+direction);
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = targetRotation;
+        
+        yield return new WaitForSeconds(2f);
+
+        animator.SetTrigger("run");
+        agent.enabled = true;
+        yield return StartCoroutine(MoveToFinalPoint());
     }
 
     private void OnTriggerEnter(Collider other)
