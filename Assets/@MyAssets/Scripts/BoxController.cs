@@ -31,6 +31,7 @@ public class BoxController : MonoBehaviour
         socketLid.selectEntered.AddListener(ObjectOnSocket);
         socketLid.selectExited.AddListener(ObjectOutSocket);
         socketContent.selectEntered.AddListener(ObjectOnSocket);
+       
     }
 
     void Update()
@@ -59,7 +60,7 @@ public class BoxController : MonoBehaviour
                 hasContent = true;
                 hasClothes = true;
             }
-            else if (IsBodyPart(placedObject))
+            else if (IsBodyPart(placedObject.tag))
             {
                 containedItems.Add(placedObject.tag); // Registrar partes del cuerpo
                 Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
@@ -88,12 +89,25 @@ public class BoxController : MonoBehaviour
             socketContent.socketActive = true;
         }
     }
-    private bool IsBodyPart(GameObject obj)
+
+    private bool IsBodyPart(string tag)
     {
         string[] bodyPartTags = { "Torso", "Cabeza", "Pierna", "Brazo" };
-        foreach (string tag in bodyPartTags)
+        foreach (string bodyPartTag in bodyPartTags)
         {
-            if (obj.CompareTag(tag))
+            if (tag.Equals(bodyPartTag))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool ContainsBodyPart()
+    {
+        foreach (string item in containedItems)
+        {
+            if (IsBodyPart(item))
             {
                 return true;
             }
