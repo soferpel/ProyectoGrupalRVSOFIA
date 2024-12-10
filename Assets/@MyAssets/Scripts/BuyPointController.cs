@@ -48,6 +48,7 @@ public class BuyPointController : MonoBehaviour
         if (currentCustomer != null)
         {
             UpdateQueuePositions();
+            Debug.Log("x actualizada lista");
             if (customerQueue.Count > 0)
             {
                 PersonController nextCustomer = customerQueue[0];

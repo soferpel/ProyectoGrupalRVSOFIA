@@ -15,6 +15,7 @@ public class ClientController : PersonController
     public GameObject body;
     public GameObject[] sliceableParts;
     public Vector3 reportDirection;
+    public Joint[] joints;
     protected override void Start()
     {
         buyProbability = 0.5f;
@@ -38,6 +39,7 @@ public class ClientController : PersonController
         isReported = true;
         StopAllCoroutines();
         reportDirection = agent.destination;
+        agent.speed = 4;
         agent.enabled = false;
         StartCoroutine(HandleDeathSequence());
     }

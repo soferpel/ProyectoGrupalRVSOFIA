@@ -197,10 +197,10 @@ public class SliceObject : MonoBehaviour
         if (collisionCutComponents.client.countBodyParts <= 0)
         {
             collisionCutComponents.client.body.tag = "Torso";
-            collisionCutComponents.client.body.AddComponent<TriggerActivator>();
-            collisionCutComponents.client.body.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            //collisionCutComponents.client.body.AddComponent<TriggerActivator>();
+            //collisionCutComponents.client.body.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
-            //DetachPart(collisionCutComponents.client.body);
+            DetachBody(collisionCutComponents.client.body);
 
         }
         Destroy(partController);
@@ -210,6 +210,64 @@ public class SliceObject : MonoBehaviour
         OnCutMade?.Invoke();
     }
 
+    private void DetachBody(GameObject part)
+    {
+        XRGrabInteractable partGrab = (part.GetComponent<XRGrabInteractable>());
+        partGrab.enabled = false;
+            partGrab.colliders.Clear();
+
+        partGrab.enabled = true;
+        Destroy(partGrab);
+        if (part == null)
+        {
+            Debug.LogError("El objeto 'part' es nulo. No se puede proceder con DetachPart.");
+            return;
+        }
+        GameObject container = new GameObject($"{part.name}_Centered");
+        container.tag = "Torso";
+        Vector3 containerPosition = part.transform.position;
+        Collider partCollider = part.GetComponent<Collider>();
+
+        if (partCollider != null)
+        {
+            containerPosition = partCollider.bounds.center;
+        }
+        else
+        {
+            Debug.LogWarning($"El objeto {part.name} y sus hijos no tienen Collider. Usando la posición original del objeto.");
+        }
+        container.transform.position = containerPosition;
+        container.transform.rotation = part.transform.rotation;
+
+        Vector3 offset = part.transform.position - containerPosition;
+        part.transform.SetParent(container.transform);
+        Debug.Log(part.transform.localPosition + " offset " + offset);
+        part.transform.localPosition = new Vector3(0,0, 0.3f);
+
+        container.transform.localScale = new Vector3(0.6f,0.6f,0.6f);
+        part.transform.localRotation *= Quaternion.Euler(0, 90, -90);
+        Rigidbody partRb = part.GetComponent<Rigidbody>();
+        if (partRb != null)
+        {
+            partRb.isKinematic = true;
+        }
+        container.AddComponent<DetectableTarget>();
+        XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
+            grabInteractable.colliders.Add(partCollider);
+        grabInteractable.useDynamicAttach = true;
+        grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
+        container.layer = LayerMask.NameToLayer("BodyParts");
+        container.AddComponent<TriggerActivator>();
+        container.AddComponent<BodyPartScaler>();
+        /*
+        */
+        
+        if (partRb != null)
+        {
+            Destroy(partRb);
+        }
+
+    }
     public void SetupSlicedComponent(GameObject slicedObject)
     {
         Rigidbody rg = slicedObject.AddComponent<Rigidbody>();

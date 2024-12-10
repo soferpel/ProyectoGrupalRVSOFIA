@@ -33,7 +33,7 @@ public abstract class PersonController : MonoBehaviour
     {
         slider.SetActive(false);
         agent = GetComponent<NavMeshAgent>();
-        pointsToVisit = Random.Range(2, 5);
+        pointsToVisit = Random.Range(2, 4);
         animator = GetComponent<Animator>();
         StartCoroutine(EnterFromDoor());
         agent.enabled = false;
@@ -101,7 +101,7 @@ public abstract class PersonController : MonoBehaviour
                 yield return MoveToTarget(currentTarget, true);
             }
 
-            yield return new WaitForSeconds(waitTime);
+            yield return new WaitForSeconds(Random.Range(1, 4));
 
             if (pointsVisited >= pointsToVisit)
             {
@@ -161,6 +161,14 @@ public abstract class PersonController : MonoBehaviour
 
     protected IEnumerator MoveToTarget(Transform target, bool lookAround)
     {
+        if (inBuyPoint)
+        {
+            buyPointController.FreePoint();
+        }
+        else if (inQueue)
+        {
+            buyPointController.RemoveClientFromQueue(this);
+        }
         if (agent.enabled)
         {
 
@@ -280,12 +288,9 @@ public abstract class PersonController : MonoBehaviour
             slider.SetSliderValue(elapsedTime, waitTimeBuyPoint);
             yield return null;
         }
-
-        if (!served)
-        {
-            buyPointController.FreePoint();
-            StartCoroutine(MoveToFinalPoint());
-        }
+        Debug.Log("x Me voy");
+        buyPointController.FreePoint();
+        StartCoroutine(MoveToFinalPoint());
         slider.SetActive(false);
     }
 

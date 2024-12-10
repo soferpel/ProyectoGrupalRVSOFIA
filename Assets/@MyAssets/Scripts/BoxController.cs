@@ -117,7 +117,6 @@ public class BoxController : MonoBehaviour
 
     public bool IsReadyForDelivery()
     {
-        Debug.Log("caja :"+ hasLid + "  " + hasContent);
         return hasLid && hasContent;
     }
 

@@ -42,26 +42,29 @@ public class OrderController : MonoBehaviour
                 if (currentCustomer is ClientController)
                 {
                     Debug.Log("cleinte");
-                    ClientOrder(args);
+                    ClientOrder(args, currentCustomer);
                 }
                 else if (currentCustomer is MafiaController)
                 {
                     Debug.Log("mafia");
-                    MafiaOrder(args);
+                    MafiaOrder(args, currentCustomer);
                 }
             }
         }
     }
 
 
-    private void ClientOrder(SelectEnterEventArgs args)
+    private void ClientOrder(SelectEnterEventArgs args, PersonController client)
     {
         if (boxController.hasClothes)
         {
-            Debug.Log("Pedido correcto. Se entrega al cliente");
             DestroyOrder(args);
+            client.served = true;
+            
+            Debug.Log("Pedido correcto. Se entrega al cliente");
             AddCash();
-        }else if (boxController.ContainsBodyPart())
+        }
+        else if (boxController.ContainsBodyPart())
         {
             GameManager.isGameOver = true;
         }
@@ -70,7 +73,7 @@ public class OrderController : MonoBehaviour
             Debug.Log("Pedido incorrecto. No se entrega al cliente");
         }
     }
-    private void MafiaOrder(SelectEnterEventArgs args)
+    private void MafiaOrder(SelectEnterEventArgs args, PersonController client)
     {
         MafiaController mafia = buyPointController.currentCustomer as MafiaController;
         string requiredItem = mafia.getGeneratedOrder();
@@ -78,6 +81,7 @@ public class OrderController : MonoBehaviour
         if (boxController.containedItems.Contains(requiredItem))
         {
             Debug.Log("Pedido correcto. Se entrega al mafioso");
+            client.served = true;
             DestroyOrder(args);
         }
         else if (boxController.hasClothes)
@@ -99,7 +103,6 @@ public class OrderController : MonoBehaviour
         Destroy(lidSocket);
         Destroy(contentSocket);
 
-        buyPointController.FreePoint(); 
     }
 
     private int AddCash()

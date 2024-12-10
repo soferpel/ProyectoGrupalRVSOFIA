@@ -1568,7 +1568,7 @@ MonoBehaviour:
   inBuyPoint: 0
   served: 0
   inQueue: 0
-  waitTimeBuyPoint: 10
+  waitTimeBuyPoint: 30
   distanceThreshold: 1
   hasBeenAttacked: 0
   deadRigidbodies:
@@ -1611,6 +1611,7 @@ MonoBehaviour:
   - {fileID: 1563047095040040065}
   - {fileID: 4968215964275325811}
   - {fileID: 2872825006229257540}
+  reportDirection: {x: 0, y: 0, z: 0}
 --- !u!65 &2693957462350037603
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1669,7 +1670,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.35
-  m_Speed: 3.5
+  m_Speed: 2.2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
