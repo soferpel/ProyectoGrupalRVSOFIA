@@ -197,8 +197,7 @@ public class SliceObject : MonoBehaviour
         if (collisionCutComponents.client.countBodyParts <= 0)
         {
             collisionCutComponents.client.body.tag = "Torso";
-            //collisionCutComponents.client.body.AddComponent<TriggerActivator>();
-            //collisionCutComponents.client.body.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+
 
             DetachBody(collisionCutComponents.client.body);
 

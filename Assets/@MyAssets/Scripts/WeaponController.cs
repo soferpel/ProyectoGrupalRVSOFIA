@@ -33,8 +33,7 @@ public class WeaponController : MonoBehaviour
         weaponCollider.isTrigger = isTrigger;
     }
 
-    // DE MOMENTO solo se va a poder mejorar despues de que se haya quedado sin durabilidad
-    public void RepairKnife() //se llama desde ui
+    public void RepairKnife() 
     {
         if (currentDurability <= 0)
         {
@@ -73,7 +72,7 @@ public class WeaponController : MonoBehaviour
     {
         if (!clientStates.ContainsKey(client))
         {
-            clientStates[client] = false; // cliente no procesado
+            clientStates[client] = false; 
         }
 
         if (currentDurability > 0 && !clientStates[client])
@@ -81,7 +80,7 @@ public class WeaponController : MonoBehaviour
             currentDurability--; 
             Debug.Log($"Cuchillo usado en cliente {client.name}. Durabilidad actual: {currentDurability}");
 
-            clientStates[client] = true; // cliente procesado
+            clientStates[client] = true; 
 
             if (currentDurability <= 0)
             {

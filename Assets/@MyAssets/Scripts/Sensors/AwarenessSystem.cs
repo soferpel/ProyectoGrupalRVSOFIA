@@ -8,10 +8,7 @@ class TrackedTarget
     public Vector3 RawPosition;
 
     public float LastSensedTime = -1f;
-    public float Awareness; // 0     = not aware (will be culled); 
-                            // 0-1   = rough idea (no set location); 
-                            // 1-2   = likely target (location)
-                            // 2     = fully detected
+    public float Awareness; 
 
     public bool UpdateAwareness(DetectableTarget target, Vector3 position, float awareness, float minAwareness)
     {
@@ -35,7 +32,7 @@ class TrackedTarget
 
     public bool DecayAwareness(float decayTime, float amount)
     {
-        // detected too recently - no change
+
         if ((Time.time - LastSensedTime) < decayTime)
             return false;
 
@@ -58,8 +55,7 @@ public class AwarenessSystem : MonoBehaviour
     [SerializeField] float VisionMinimumAwareness = 1f;
     [SerializeField] float VisionAwarenessBuildRate = 10f;
 
-    //[SerializeField] float ProximityMinimumAwareness = 0f;
-    //[SerializeField] float ProximityAwarenessBuildRate = 1f;
+
 
     [SerializeField] float AwarenessDecayDelay = 0.1f;
     [SerializeField] float AwarenessDecayRate = 0.1f;
@@ -67,13 +63,13 @@ public class AwarenessSystem : MonoBehaviour
     Dictionary<GameObject, TrackedTarget> Targets = new Dictionary<GameObject, TrackedTarget>();
     ClientAI LinkedAI;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         LinkedAI = GetComponent<ClientAI>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         List<GameObject> toCleanup = new List<GameObject>();
@@ -83,38 +79,26 @@ public class AwarenessSystem : MonoBehaviour
             {
                 if (Targets[targetGO].Awareness <= 0f)
                 {
-                    //LinkedAI.OnFullyLost();
+
                     toCleanup.Add(targetGO);
-                }/*
-                else
-                {
-                    if (Targets[targetGO].Awareness >= 1f)
-                        LinkedAI.OnLostDetect(targetGO);
-                    else
-                        LinkedAI.OnLostSuspicion();
-                }*/
+                }
             }
         }
 
-        // cleanup targets that are no longer detected
+
         foreach (var target in toCleanup)
             Targets.Remove(target);
     }
 
     void UpdateAwareness(GameObject targetGO, DetectableTarget target, Vector3 position, float awareness, float minAwareness)
     {
-        // not in targets
+
         if (!Targets.ContainsKey(targetGO))
             Targets[targetGO] = new TrackedTarget();
 
-        // update target awareness
+
         if (Targets[targetGO].UpdateAwareness(target, position, awareness, minAwareness))
-        {/*
-            if (Targets[targetGO].Awareness >= 2f)
-                LinkedAI.OnFullyDetected(targetGO);
-            else if (Targets[targetGO].Awareness >= 1f)
-                LinkedAI.OnDetected(targetGO);
-            else */
+        {
             if (Targets[targetGO].Awareness >= 0f)
                 LinkedAI.OnDetected(targetGO);
         }
@@ -122,20 +106,15 @@ public class AwarenessSystem : MonoBehaviour
 
     public void ReportCanSee(DetectableTarget seen)
     {
-        // determine where the target is in the field of view
+
         var vectorToTarget = (seen.transform.position - LinkedAI.EyeLocation).normalized;
         var dotProduct = Vector3.Dot(vectorToTarget, LinkedAI.EyeDirection);
 
-        // determine the awareness contribution
+
         var awareness = VisionSensitivity.Evaluate(dotProduct) * VisionAwarenessBuildRate * Time.deltaTime;
 
         UpdateAwareness(seen.gameObject, seen, seen.transform.position, awareness, VisionMinimumAwareness);
     }
 
-    //public void ReportInProximity(DetectableTarget target)
-    //{
-    //    var awareness = ProximityAwarenessBuildRate * Time.deltaTime;
 
-    //    UpdateAwareness(target.gameObject, target, target.transform.position, awareness, ProximityMinimumAwareness);
-    //}
 }

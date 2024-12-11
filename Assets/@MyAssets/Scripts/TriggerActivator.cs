@@ -25,7 +25,7 @@ public class TriggerActivator : MonoBehaviour
     private void OnGrab(SelectEnterEventArgs args)
     {
         HashSet<Transform> visited = new HashSet<Transform>();
-        // he puesto este if para poder quitar la tapa
+
         Debug.Log("tag: "+gameObject.tag);
         if (!gameObject.CompareTag("Lid"))
         {
@@ -56,7 +56,7 @@ public class TriggerActivator : MonoBehaviour
         for (int i = 0; i < parent.childCount; i++)
         {
             Transform child = parent.GetChild(i);
-            // llamada recursiva para los hijos de hijos
+
             SetColliderTrigger(child, isTrigger, visited);
         }
     }

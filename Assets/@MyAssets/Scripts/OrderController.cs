@@ -13,7 +13,7 @@ public class OrderController : MonoBehaviour
     public int cash = 0;
     public string boxTag = "Box";
 
-    public GameObject counterPosition; //(buypoint)
+    public GameObject counterPosition; 
 
     void Start()
     {
