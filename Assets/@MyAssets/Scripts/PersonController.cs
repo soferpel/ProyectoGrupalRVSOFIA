@@ -161,14 +161,7 @@ public abstract class PersonController : MonoBehaviour
 
     protected IEnumerator MoveToTarget(Transform target, bool lookAround)
     {
-        if (inBuyPoint)
-        {
-            buyPointController.FreePoint();
-        }
-        else if (inQueue)
-        {
-            buyPointController.RemoveClientFromQueue(this);
-        }
+
         if (agent.enabled)
         {
 
