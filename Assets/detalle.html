@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Detalle de la Empresa</title>
+</head>
+<body>
+    <h1>Detalle de la Empresa</h1>
+    <p>Nombre: {{ empresa.nombre }}</p>
+    <p>CIF: {{ empresa.cif }}</p>
+    <h2>Trabajadores</h2>
+    <ul>
+    {% for trabajador in empresa.trabajadores.all %}
+        <li>
+            <a href="{% url 'detalleTrabajadorPlantillas' trabajador.id %}">
+                {{ trabajador.nombre }} ({{ trabajador.antiguedad }} años de antigüedad)
+            </a>
+        </li>
+    {% empty %}
+        <li>No hay trabajadores asociados a esta empresa.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
