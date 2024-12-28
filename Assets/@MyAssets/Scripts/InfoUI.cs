@@ -12,6 +12,8 @@ public class InfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textWeapon;
     [SerializeField] private Button repairButton;
     [SerializeField] private TextMeshProUGUI repairMessage;
+    [SerializeField] private Slider repairSlider;
+    [SerializeField] private Image repairSliderFillImage;
     [SerializeField] private Button boxButton;
     [SerializeField] private TextMeshProUGUI textBox;
     [SerializeField] private BoxButtom boxBuyController;
@@ -72,7 +74,10 @@ public class InfoUI : MonoBehaviour
 
     public void UpdateWeaponInfo()
     {
-        textWeapon.text = $"Durabilidad del cuchillo (max 10): " + weaponController.currentDurability;
+        int value = weaponController.currentDurability;
+        textWeapon.text = $"Durabilidad del cuchillo (max 10): " + value;
+        repairSlider.value = value/10f;
+        repairSliderFillImage.color = Color.Lerp(Color.red, Color.green, value/10f);
         UpdateRepairButton();
     }
 
@@ -82,9 +87,7 @@ public class InfoUI : MonoBehaviour
         {
             bool canRepair = weaponController.currentDurability <= 0 && orderController.cash >= weaponController.repairCost;
             repairButton.interactable = canRepair;
-            var colors = repairButton.colors;
-            colors.normalColor = canRepair ? Color.white : new Color(1f, 1f, 1f, 0.5f); // mas claro
-            repairButton.colors = colors;
+            
 
             if (!canRepair)
             {

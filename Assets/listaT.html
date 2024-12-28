@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Lista de Trabajadores</title>
+</head>
+<body>
+    <h1>Lista de Trabajadores</h1>
+    <ul>
+    {% for trabajador in lista_trabajadores %}
+        <li>
+            <a href="{% url 'detalleTrabajadorPlantillas' trabajador.id %}">
+                {{ trabajador.nombre }} ({{ trabajador.antiguedad }} años de antigüedad) - Empresa: {{ trabajador.empresa.nombre }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
