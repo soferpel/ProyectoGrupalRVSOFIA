@@ -46,6 +46,14 @@ public class ClientController : PersonController
 
     private IEnumerator HandleDeathSequence()
     {
+        if (inBuyPoint)
+        {
+            buyPointController.FreePoint();
+        }
+        else if (inQueue)
+        {
+            buyPointController.RemoveClientFromQueue(this);
+        }
         animator.SetTrigger("scared");
 
             Vector3 direction = -(reportDirection - transform.position).normalized * personDirection;

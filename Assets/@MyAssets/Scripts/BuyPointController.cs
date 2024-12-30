@@ -40,6 +40,7 @@ public class BuyPointController : MonoBehaviour
 
     public void OccupyPoint(PersonController customer)
     {
+        customer.inBuyPoint = true;
         currentCustomer = customer;
     }
 
@@ -47,6 +48,7 @@ public class BuyPointController : MonoBehaviour
     {
         if (currentCustomer != null)
         {
+            currentCustomer.inBuyPoint = false;
             UpdateQueuePositions();
             Debug.Log("x actualizada lista");
             if (customerQueue.Count > 0)
@@ -88,6 +90,7 @@ public class BuyPointController : MonoBehaviour
 
     public void RemoveClientFromQueue(PersonController client)
     {
+        client.inQueue = false;
         if (customerQueue.Contains(client))
         {
             int clientIndex = customerQueue.IndexOf(client);
