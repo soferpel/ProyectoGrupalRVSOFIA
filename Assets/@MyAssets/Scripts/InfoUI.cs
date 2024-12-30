@@ -69,15 +69,15 @@ public class InfoUI : MonoBehaviour
     }
     public void UpdateBoxInfo()
     {
-        boxButton.interactable = orderController.cash > boxBuyController.boxCost;
+        boxButton.interactable = orderController.cash >= boxBuyController.boxCost;
     }
 
     public void UpdateWeaponInfo()
     {
         int value = weaponController.currentDurability;
-        textWeapon.text = $"Durabilidad del cuchillo (max 10): " + value;
-        repairSlider.value = value/10f;
-        repairSliderFillImage.color = Color.Lerp(Color.red, Color.green, value/10f);
+        textWeapon.text = $"Durabilidad del cuchillo (max "+ weaponController.maxDurability + "): " + value;
+        repairSlider.value = value/weaponController.maxDurability;
+        repairSliderFillImage.color = Color.Lerp(Color.red, Color.green, value/ weaponController.maxDurability);
         UpdateRepairButton();
     }
 

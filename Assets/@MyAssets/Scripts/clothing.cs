@@ -758,10 +758,10 @@ public class Clothing : MonoBehaviour
         tank_top,
         trousers
     };
-        description += (male_female == 0) ? "Genero: Hombre | " : "Genero: Mujer | ";
+        description += (male_female == 0) ? "Genero: Hombre \n" : "Genero: Mujer \n ";
         if (skin_head.GetComponent<Renderer>() != null && skin_head.GetComponent<Renderer>().materials[0].mainTexture != null)
         {
-            description += $"Color de piel y ojos: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} | ";
+            description += $"Color de piel y ojos: {skin_head.GetComponent<Renderer>().materials[0].mainTexture.name} \n ";
         }
 
         foreach (GameObject item in clothes)
@@ -774,20 +774,20 @@ public class Clothing : MonoBehaviour
                     : "No Texture";
                 if(item.name == "traje de banquero")
                 {
-                    description += $"{item.name} {textureName} | ";
+                    description += $"{item.name} {textureName} \n ";
                 }
                 else if (item.name.Contains("traje"))
                 {
-                    description += $"{item.name} | ";
+                    description += $"{item.name} \n ";
                 }
                 else
                 {
-                    description += $"{item.name} {textureName} | ";
+                    description += $"{item.name} {textureName} \n ";
                 }
             }
         }
 
-        return description.TrimEnd(' ', '|');
+        return description.TrimEnd(' ', '\n');
     }
 
 

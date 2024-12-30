@@ -18,7 +18,6 @@ public class ShelfClothSpawner : MonoBehaviour
             Collider[] colliders = Physics.OverlapSphere(spawnPoint.position, colliderCheckRadius, detectionLayer);
             if (colliders.Length == 0)
             {
-        Debug.Log("hola");
                 Instantiate(cloth, spawnPoint.position, spawnPoint.rotation);
             }
         }

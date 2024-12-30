@@ -43,6 +43,6 @@ public class MafiaDialogue : MonoBehaviour
 
             yield return new WaitForSeconds(dialogueClips[i].length + 0.5f);
         }
-        SceneManager.LoadScene("Game 1");
+        SceneManager.LoadScene("tutorial");
     }
 }

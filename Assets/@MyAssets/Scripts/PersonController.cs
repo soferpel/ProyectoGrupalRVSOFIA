@@ -19,6 +19,7 @@ public abstract class PersonController : MonoBehaviour
     protected ShopNavigator shopNavigator;
     protected int pointsToVisit = 0;
     protected int pointsVisited = 0;
+    [SerializeField]
     protected Transform doorExitPoint;
     protected Transform finalPoint;
     protected Transform finalDestinationPoint;
@@ -39,7 +40,7 @@ public abstract class PersonController : MonoBehaviour
         agent.enabled = false;
     }
 
-    protected IEnumerator EnterFromDoor()
+    virtual protected IEnumerator EnterFromDoor()
     {
         Transform entryPoint = doorExitPoint;
         Transform finalEntryPoint = finalPoint;
@@ -271,7 +272,7 @@ public abstract class PersonController : MonoBehaviour
 
     }
 
-    protected IEnumerator WaitAtBuyPoint()
+    protected virtual IEnumerator WaitAtBuyPoint()
     {
         slider.SetActive(true);
         float elapsedTime = 0f;
@@ -287,7 +288,7 @@ public abstract class PersonController : MonoBehaviour
         slider.SetActive(false);
     }
 
-    protected IEnumerator MoveToBuyPoint()
+    protected virtual IEnumerator MoveToBuyPoint()
     {
         yield return StartCoroutine(MoveToTarget(buyPointController.buyPointTransform, false));
         StartWaitTimer();

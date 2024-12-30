@@ -19,7 +19,7 @@ public class MafiaController : PersonController
         base.Start();
     }
 
-    private void GenerateOrder()
+    protected void GenerateOrder()
     {
         string[] bodyParts = { "Torso", "Cabeza", "Pierna", "Brazo"};
         string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
@@ -27,7 +27,7 @@ public class MafiaController : PersonController
         Debug.Log("Pedido del mafioso: " + orderDescription);
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent<WeaponController>())
         {

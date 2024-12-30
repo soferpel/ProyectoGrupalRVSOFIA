@@ -26,7 +26,7 @@ public class ClientManager : MonoBehaviour
     public BuyPointController buyPointController;
     public ShopNavigator shopNavigator;
     public GameObject player;
-    private void Start()
+    protected virtual void Start()
     {
         currentMinInterval = initialMinInterval;
         currentMaxInterval = initialMaxInterval;
