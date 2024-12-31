@@ -16,8 +16,10 @@ public class ClientController : PersonController
     public GameObject[] sliceableParts;
     public Vector3 reportDirection;
     public Joint[] joints;
+    public bool isFemale;
     protected override void Start()
     {
+        Debug.Log("Female: " + isFemale);
         buyProbability = 0.5f;
         foreach (Rigidbody rg in deadRigidbodies)
         {
@@ -54,6 +56,14 @@ public class ClientController : PersonController
         {
             buyPointController.RemoveClientFromQueue(this);
         }
+        if (isFemale)
+        {
+            audioSource[1].Play();
+        }
+        else
+        {
+            audioSource[2].Play();
+        }
         animator.SetTrigger("scared");
 
             Vector3 direction = -(reportDirection - transform.position).normalized * personDirection;
@@ -73,6 +83,7 @@ public class ClientController : PersonController
         if (other.gameObject.GetComponent<WeaponController>())
         {
             Debug.Log("Cliente atacado por un cuchillo.");
+            audioSource[3].Play();
             hasBeenAttacked = true;
             StopAllCoroutines();
             StartCoroutine(Die(other));

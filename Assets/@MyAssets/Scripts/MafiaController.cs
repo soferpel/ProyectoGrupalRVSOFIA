@@ -11,9 +11,11 @@ public class MafiaController : PersonController
     public string orderDescription;
     public GameObject gun;
     public GameObject player;
+    private int audioRandom;
 
     protected override void Start()
     {
+        audioRandom = UnityEngine.Random.Range(0, 3);
         buyProbability = 1;
         GenerateOrder();
         base.Start();
@@ -50,6 +52,18 @@ public class MafiaController : PersonController
             Quaternion finalRotation = lookRotation * Quaternion.Euler(0, 80, 0);
 
             float rotationSpeed = 5f;
+            if(audioRandom == 0)
+            {
+                audioSource[1].Play();
+            }
+            else if(audioRandom == 1)
+            {
+                audioSource[2].Play();
+            }
+            else
+            {
+                audioSource[3].Play();
+            }
             if (animator != null)
             {
                 animator.SetBool("lookAround", false);

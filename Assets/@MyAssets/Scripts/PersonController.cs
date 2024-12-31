@@ -30,8 +30,10 @@ public abstract class PersonController : MonoBehaviour
     protected Coroutine waitTimeCoroutine;
     protected float buyProbability = 0;
     protected int personDirection = 1;
+    public AudioSource[] audioSource;
     protected virtual void Start()
     {
+        audioSource = GetComponents<AudioSource>();
         slider.SetActive(false);
         agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, 4);
@@ -62,6 +64,7 @@ public abstract class PersonController : MonoBehaviour
             yield return null;
         }
         shopNavigator.OpenDoor();
+        PlayDoorSound();
 
         while (Vector3.Distance(transform.position, finalEntryPoint.position) > 0.1f)
         {
@@ -222,6 +225,7 @@ public abstract class PersonController : MonoBehaviour
             yield return null;
         }
 
+        PlayDoorSound();
 
         while (Vector3.Distance(transform.position, finalExitPoint.position) > 0.1f)
         {
@@ -299,6 +303,15 @@ public abstract class PersonController : MonoBehaviour
     public bool isOnBuyPoint()
     {
         return inBuyPoint;
+    }
+
+    private void PlayDoorSound()
+    {
+        if (audioSource[0] != null && audioSource[0].clip != null)
+        {
+            Debug.Log("Reproduciendo sonido de puerta...");
+            audioSource[0].Play();
+        }
     }
 
     public void SetBuyPoint(Transform buyPoint)

@@ -19,6 +19,12 @@ public class SliceObject : MonoBehaviour
     public float umbralDistancia =0.1f;
     public bool hasCut = false;
     public UnityEvent OnCutMade;
+    public AudioSource audioSource;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     void Update()
     {
         if (Physics.Linecast(startSlicePoint.position, endSlicePoint.position, out RaycastHit hit, sliceableLayer))
@@ -27,6 +33,7 @@ public class SliceObject : MonoBehaviour
             if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
             {
                 collisionCutComponents = partController;
+                audioSource.Play();
                 Slice(partController.target, partController);
             }
             collisionCutComponents = null;
