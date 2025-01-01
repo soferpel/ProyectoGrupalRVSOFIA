@@ -48,6 +48,7 @@ public class ClientController : PersonController
 
     private IEnumerator HandleDeathSequence()
     {
+
         if (inBuyPoint)
         {
             buyPointController.FreePoint();
@@ -56,14 +57,13 @@ public class ClientController : PersonController
         {
             buyPointController.RemoveClientFromQueue(this);
         }
+        audioSource[4].Stop();
         if (isFemale)
         {
-            audioSource[4].Stop();
             audioSource[1].Play();
         }
         else
         {
-            audioSource[4].Stop();
             audioSource[2].Play();
         }
         animator.SetTrigger("scared");
@@ -97,6 +97,7 @@ public class ClientController : PersonController
     {
         if (isAlive)
         {
+
             slider.SetActive(false);
             Destroy(gameObject.GetComponent<Collider>());
             Destroy(gameObject.GetComponent<Rigidbody>());
