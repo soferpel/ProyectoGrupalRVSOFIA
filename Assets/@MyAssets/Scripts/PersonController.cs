@@ -34,6 +34,7 @@ public abstract class PersonController : MonoBehaviour
     protected virtual void Start()
     {
         audioSource = GetComponents<AudioSource>();
+        audioSource[4].Play();
         slider.SetActive(false);
         agent = GetComponent<NavMeshAgent>();
         pointsToVisit = Random.Range(2, 4);
@@ -227,6 +228,12 @@ public abstract class PersonController : MonoBehaviour
 
         PlayDoorSound();
 
+        if (this is ClientController client && client.isReported)
+        {
+            Debug.Log("Cadáver reportado. Fin del juego.");
+            GameManager.isGameOver = true;
+        }
+
         while (Vector3.Distance(transform.position, finalExitPoint.position) > 0.1f)
         {
             transform.position = Vector3.MoveTowards(transform.position, finalExitPoint.position, Time.deltaTime * 2f);
@@ -239,12 +246,6 @@ public abstract class PersonController : MonoBehaviour
             }
 
             yield return null;
-        }
-
-        if (this is ClientController client && client.isReported)
-        {
-            Debug.Log("Cadáver reportado. Fin del juego.");
-            GameManager.isGameOver = true;
         }
 
         Destroy(gameObject);

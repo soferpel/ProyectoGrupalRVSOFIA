@@ -58,10 +58,12 @@ public class ClientController : PersonController
         }
         if (isFemale)
         {
+            audioSource[4].Stop();
             audioSource[1].Play();
         }
         else
         {
+            audioSource[4].Stop();
             audioSource[2].Play();
         }
         animator.SetTrigger("scared");
@@ -83,6 +85,7 @@ public class ClientController : PersonController
         if (other.gameObject.GetComponent<WeaponController>())
         {
             Debug.Log("Cliente atacado por un cuchillo.");
+            audioSource[4].Stop();
             audioSource[3].Play();
             hasBeenAttacked = true;
             StopAllCoroutines();

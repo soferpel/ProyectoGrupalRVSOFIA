@@ -52,6 +52,7 @@ public class MafiaController : PersonController
             Quaternion finalRotation = lookRotation * Quaternion.Euler(0, 80, 0);
 
             float rotationSpeed = 5f;
+            audioSource[4].Stop();
             if(audioRandom == 0)
             {
                 audioSource[1].Play();
