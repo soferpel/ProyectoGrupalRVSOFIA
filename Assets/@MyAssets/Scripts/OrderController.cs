@@ -73,10 +73,7 @@ public class OrderController : MonoBehaviour
         {
             client1.ReportDeath();
         }
-        else
-        {
-            Debug.Log("Pedido incorrecto. No se entrega al cliente");
-        }
+
     }
     private void MafiaOrder(SelectEnterEventArgs args, PersonController client)
     {
@@ -90,42 +87,14 @@ public class OrderController : MonoBehaviour
             client.served = true;
             DestroyOrder(args);
         }
-        else if (boxController.hasClothes)
+        else
         {
 
             StartCoroutine(mafia.HandleAttackSequence());
         }
-        else
-        {
-            StartCoroutine(HandleMafiaApproachAndAttack(mafia));
-        }
+
     }
-    private IEnumerator HandleMafiaApproachAndAttack(MafiaController mafia)
-    {
-        Transform playerTransform = Camera.main.transform;
-        if (playerTransform == null)
-        {
-            yield break;
-        }
 
-        NavMeshAgent mafiaAgent = mafia.GetComponent<NavMeshAgent>();
-        if (mafiaAgent == null)
-        {
-            yield break;
-        }
-
-        float stopDistance = 1.0f;
-        mafiaAgent.SetDestination(playerTransform.position);
-
-        while (Vector3.Distance(mafia.transform.position, playerTransform.position) > stopDistance)
-        {
-            yield return null;
-        }
-
-        mafiaAgent.isStopped = true;
-
-        yield return StartCoroutine(mafia.HandleAttackSequence());
-    }
 
     private void DestroyOrder(SelectEnterEventArgs args)
     {
