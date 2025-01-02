@@ -8,18 +8,10 @@ public class StartMenuUI : MonoBehaviour
 {
     public GameObject mainPanel;
     public GameObject controlPanel;
-    public GameObject clientManager;
-    private void Start()
-    {
-        mainPanel.SetActive(true);
-    }
 
     public void OnPlayButtonPressed()
     {
         Debug.Log("Jugar button pressed");
-        PlayerPrefs.SetInt("ShowMainMenu", 0);
-        PlayerPrefs.SetInt("ClientManagerActive", 1);
-        PlayerPrefs.Save();
         SceneManager.LoadScene("Game 1", LoadSceneMode.Single);
     }
 

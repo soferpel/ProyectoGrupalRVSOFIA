@@ -54,7 +54,7 @@ public class TutorialManager : MonoBehaviour
     }
     void LoadNextScene()
     {
-        SceneManager.LoadScene("Game 1");
+        SceneManager.LoadScene("StartMenuGame");
     }
 
 }

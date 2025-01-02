@@ -37,6 +37,42 @@ public class DumpsterController : MonoBehaviour
         }
     }
 
+
+    private void OnObjectPlaced(SelectEnterEventArgs args)
+    {
+        GameObject placedObject = args.interactableObject.transform.gameObject;
+        Debug.Log($"OBJETO TIRADO: {placedObject.name}");
+
+        // Encontrar el objeto raíz del cuerpo
+        GameObject rootObject = FindRootObject(placedObject);
+
+        // Destruir todos los hijos y el objeto raíz
+        DestroyAllChildrenAndSelf(rootObject);
+    }
+
+    private GameObject FindRootObject(GameObject obj)
+    {
+        // Recorre los padres hasta encontrar el objeto raíz (sin un padre)
+        while (obj.transform.parent != null)
+        {
+            obj = obj.transform.parent.gameObject;
+        }
+        return obj;
+    }
+
+    private void DestroyAllChildrenAndSelf(GameObject obj)
+    {
+        // Destruir todos los hijos del objeto principal
+        foreach (Transform child in obj.transform)
+        {
+            DestroyAllChildrenAndSelf(child.gameObject); // Recursivamente destruir cada hijo
+        }
+
+        // Destruir el objeto principal después de los hijos
+        Debug.Log($"Destruyendo: {obj.name}");
+        Destroy(obj);
+    }
+    /*
     private void OnObjectPlaced(SelectEnterEventArgs args)
     {
         GameObject placedObject = args.interactableObject.transform.gameObject;
@@ -45,7 +81,7 @@ public class DumpsterController : MonoBehaviour
         /*
         GameObject rootObject = FindRootObject(placedObject);
         DestroyAllChildrenAndSelf(rootObject);
-        */
+        
 
     }
     /*
@@ -70,7 +106,9 @@ public class DumpsterController : MonoBehaviour
         // Destruir el objeto principal después de los hijos
         Destroy(obj);
     }
+    
     */
+
     private IEnumerator OpenLids()
     {
         float elapsed = 0f;
