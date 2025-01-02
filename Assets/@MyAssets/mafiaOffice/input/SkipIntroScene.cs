@@ -27,6 +27,6 @@ public class SkipIntroScene : MonoBehaviour
 
     private void SkipIntro(InputAction.CallbackContext context)
     {
-        SceneManager.LoadScene("tutorial");
+        SceneManager.LoadScene("Game 1");
     }
 }
