@@ -5,8 +5,24 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static bool isGameOver = false;
-    //[SerializeField] private string gameOverSceneName = "GameOver";
-    [SerializeField] private float delayBeforeSceneChange = 2f;
+    [SerializeField] private float delayBeforeSceneChange = 1.5f;
+
+    public static GameManager Instance { get; private set; }
+
+    public static float SurvivalTime { get; set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); 
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Update()
     {
@@ -20,8 +36,6 @@ public class GameManager : MonoBehaviour
     private IEnumerator LoadGameOverScene()
     {
         yield return new WaitForSeconds(delayBeforeSceneChange);
-
-        Debug.Log("Escena Cambiada");
-        //SceneManager.LoadScene(gameOverSceneName);
+        SceneManager.LoadScene("GameOver");
     }
 }

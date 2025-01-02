@@ -132,6 +132,7 @@ public class Clothing : MonoBehaviour
     public static List<string> existingClientDescriptions = new List<string>();
     private int male_female;
     private MafiaController mafiaController;
+    private ClientController clientController;
     public delegate void AppearanceGenerated(string description);
     public static event AppearanceGenerated OnMafiaAppearanceGenerated;
 
@@ -723,8 +724,10 @@ public class Clothing : MonoBehaviour
         }
         else
         {
+            clientController = GetComponent<ClientController>();
             start_random_clothing();
             string clientDescription = GenerateAppearanceDescription();
+            clientController.isFemale = (male_female == 1) ? true : false;
             existingClientDescriptions.Add(clientDescription);
         }
     }

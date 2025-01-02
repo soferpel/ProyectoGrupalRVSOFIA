@@ -9,11 +9,17 @@ public class TimerController : MonoBehaviour
 
     void Update()
     {
-        elapsedTime += Time.deltaTime;
+        if (!GameManager.isGameOver)
+        {
+            elapsedTime += Time.deltaTime;
 
-        int minutes = Mathf.FloorToInt(elapsedTime / 60f);
-        int seconds = Mathf.FloorToInt(elapsedTime % 60f);
+            int minutes = Mathf.FloorToInt(elapsedTime / 60f);
+            int seconds = Mathf.FloorToInt(elapsedTime % 60f);
 
-        timerText.text = $"{minutes:00}:{seconds:00}";
+            timerText.text = $"{minutes:00}:{seconds:00}";
+
+
+            GameManager.SurvivalTime = elapsedTime;
+        }
     }
 }

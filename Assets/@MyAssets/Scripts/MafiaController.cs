@@ -11,9 +11,11 @@ public class MafiaController : PersonController
     public string orderDescription;
     public GameObject gun;
     public GameObject player;
+    private int audioRandom;
 
     protected override void Start()
     {
+        audioRandom = UnityEngine.Random.Range(0, 3);
         buyProbability = 1;
         GenerateOrder();
         base.Start();
@@ -37,7 +39,7 @@ public class MafiaController : PersonController
         }
     }
 
-    private IEnumerator HandleAttackSequence()
+    public IEnumerator HandleAttackSequence()
     {
         gun.SetActive(true);
         agent.enabled = false;
@@ -50,6 +52,19 @@ public class MafiaController : PersonController
             Quaternion finalRotation = lookRotation * Quaternion.Euler(0, 80, 0);
 
             float rotationSpeed = 5f;
+            audioSource[4].Stop();
+            if(audioRandom == 0)
+            {
+                audioSource[1].Play();
+            }
+            else if(audioRandom == 1)
+            {
+                audioSource[2].Play();
+            }
+            else
+            {
+                audioSource[3].Play();
+            }
             if (animator != null)
             {
                 animator.SetBool("lookAround", false);
@@ -115,4 +130,68 @@ public class MafiaController : PersonController
     {
         return orderDescription;
     }
+
+    protected override IEnumerator WaitAtBuyPoint()
+    {
+        slider.SetActive(true);
+        float elapsedTime = 0f;
+        while (elapsedTime < waitTimeBuyPoint && !served)
+        {
+            elapsedTime += Time.deltaTime;
+            slider.SetSliderValue(elapsedTime, waitTimeBuyPoint);
+            yield return null;
+        }
+        Debug.Log("x Me voy");
+        buyPointController.FreePoint();
+        //StartCoroutine(MoveToFinalPoint());
+        StartCoroutine(HandleMafiaApproachAndAttack());
+        slider.SetActive(false);
+    }
+
+    private IEnumerator HandleMafiaApproachAndAttack()
+    {
+        Transform playerTransform = Camera.main.transform;
+        if (playerTransform == null)
+        {
+            yield break;
+        }
+
+        agent.stoppingDistance = 2;
+        yield return StartCoroutine(MoveToPlayer());
+        Debug.Log("HE LLEGADO");
+        StartCoroutine(HandleAttackSequence());
+    }
+
+    protected IEnumerator MoveToPlayer()
+    {
+
+        if (agent.enabled)
+        {
+
+            agent.SetDestination(Camera.main.transform.position);
+
+            while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
+            {
+                agent.SetDestination(Camera.main.transform.position);
+
+                animator.SetBool("lookAround", false);
+                animator.SetBool("walk", true);
+
+                if (agent.desiredVelocity.sqrMagnitude > 0.01f)
+                {
+                    Vector3 direction = -agent.desiredVelocity.normalized * personDirection;
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
+                }
+
+                yield return null;
+            }
+
+            animator.SetBool("walk", false);
+            agent.updateRotation = true;
+
+            
+        }
+    }
+
 }

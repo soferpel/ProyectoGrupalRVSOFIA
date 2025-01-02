@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class OrderController : MonoBehaviour
@@ -13,10 +14,12 @@ public class OrderController : MonoBehaviour
     public int cash = 0;
     public string boxTag = "Box";
 
-    public GameObject counterPosition; 
+    public GameObject counterPosition;
+    public AudioSource audioSource;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         socketBox = GetComponent<XRSocketInteractor>();
         socketBox.selectEntered.AddListener(OnBoxOnSocket);
         client = FindObjectOfType<ClientController>();
@@ -56,8 +59,10 @@ public class OrderController : MonoBehaviour
 
     private void ClientOrder(SelectEnterEventArgs args, PersonController client)
     {
+        ClientController client1 = buyPointController.currentCustomer as ClientController;
         if (boxController.hasClothes)
         {
+            audioSource.Play();
             DestroyOrder(args);
             client.served = true;
             
@@ -66,12 +71,9 @@ public class OrderController : MonoBehaviour
         }
         else if (boxController.ContainsBodyPart())
         {
-            GameManager.isGameOver = true;
+            client1.ReportDeath();
         }
-        else
-        {
-            Debug.Log("Pedido incorrecto. No se entrega al cliente");
-        }
+
     }
     private void MafiaOrder(SelectEnterEventArgs args, PersonController client)
     {
@@ -80,20 +82,19 @@ public class OrderController : MonoBehaviour
 
         if (boxController.containedItems.Contains(requiredItem))
         {
+            audioSource.Play();
             Debug.Log("Pedido correcto. Se entrega al mafioso");
             client.served = true;
             DestroyOrder(args);
         }
-        else if (boxController.hasClothes)
-        {
-            GameManager.isGameOver = true;
-            Debug.Log("Pedido incorrecto. GameOver");
-        }
         else
         {
-            Debug.Log("Pedido incorrecto. No se entrega al mafioso");
+
+            StartCoroutine(mafia.HandleAttackSequence());
         }
+
     }
+
 
     private void DestroyOrder(SelectEnterEventArgs args)
     {
