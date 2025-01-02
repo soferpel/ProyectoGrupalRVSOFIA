@@ -8,23 +8,19 @@ public class StartMenuUI : MonoBehaviour
 {
     public GameObject mainPanel;
     public GameObject controlPanel;
-    // Start is called before the first frame update
-    void Start()
+    public GameObject clientManager;
+    private void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        mainPanel.SetActive(true);
     }
 
     public void OnPlayButtonPressed()
     {
         Debug.Log("Jugar button pressed");
-        // yo creo que no funciona bien lo siguiente
-        SceneManager.LoadScene("Game 1", LoadSceneMode.Single); // Reinicia la escena
+        PlayerPrefs.SetInt("ShowMainMenu", 0);
+        PlayerPrefs.SetInt("ClientManagerActive", 1);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("Game 1", LoadSceneMode.Single);
     }
 
     public void OnTutorialButtonPressed()
