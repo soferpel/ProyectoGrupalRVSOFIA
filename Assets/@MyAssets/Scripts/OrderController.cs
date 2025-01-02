@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class OrderController : MonoBehaviour
@@ -96,8 +97,34 @@ public class OrderController : MonoBehaviour
         }
         else
         {
-            StartCoroutine(mafia.HandleAttackSequence());
+            StartCoroutine(HandleMafiaApproachAndAttack(mafia));
         }
+    }
+    private IEnumerator HandleMafiaApproachAndAttack(MafiaController mafia)
+    {
+        Transform playerTransform = Camera.main.transform;
+        if (playerTransform == null)
+        {
+            yield break;
+        }
+
+        NavMeshAgent mafiaAgent = mafia.GetComponent<NavMeshAgent>();
+        if (mafiaAgent == null)
+        {
+            yield break;
+        }
+
+        float stopDistance = 1.0f;
+        mafiaAgent.SetDestination(playerTransform.position);
+
+        while (Vector3.Distance(mafia.transform.position, playerTransform.position) > stopDistance)
+        {
+            yield return null;
+        }
+
+        mafiaAgent.isStopped = true;
+
+        yield return StartCoroutine(mafia.HandleAttackSequence());
     }
 
     private void DestroyOrder(SelectEnterEventArgs args)
