@@ -58,6 +58,7 @@ public class OrderController : MonoBehaviour
 
     private void ClientOrder(SelectEnterEventArgs args, PersonController client)
     {
+        ClientController client1 = buyPointController.currentCustomer as ClientController;
         if (boxController.hasClothes)
         {
             audioSource.Play();
@@ -69,7 +70,7 @@ public class OrderController : MonoBehaviour
         }
         else if (boxController.ContainsBodyPart())
         {
-            GameManager.isGameOver = true;
+            client1.ReportDeath();
         }
         else
         {
@@ -88,7 +89,12 @@ public class OrderController : MonoBehaviour
             client.served = true;
             DestroyOrder(args);
         }
-        else 
+        else if (boxController.hasClothes)
+        {
+
+            StartCoroutine(mafia.HandleAttackSequence());
+        }
+        else
         {
             StartCoroutine(mafia.HandleAttackSequence());
         }
