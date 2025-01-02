@@ -130,4 +130,68 @@ public class MafiaController : PersonController
     {
         return orderDescription;
     }
+
+    protected override IEnumerator WaitAtBuyPoint()
+    {
+        slider.SetActive(true);
+        float elapsedTime = 0f;
+        while (elapsedTime < waitTimeBuyPoint && !served)
+        {
+            elapsedTime += Time.deltaTime;
+            slider.SetSliderValue(elapsedTime, waitTimeBuyPoint);
+            yield return null;
+        }
+        Debug.Log("x Me voy");
+        buyPointController.FreePoint();
+        //StartCoroutine(MoveToFinalPoint());
+        StartCoroutine(HandleMafiaApproachAndAttack());
+        slider.SetActive(false);
+    }
+
+    private IEnumerator HandleMafiaApproachAndAttack()
+    {
+        Transform playerTransform = Camera.main.transform;
+        if (playerTransform == null)
+        {
+            yield break;
+        }
+
+        agent.stoppingDistance = 2;
+        yield return StartCoroutine(MoveToPlayer());
+        Debug.Log("HE LLEGADO");
+        StartCoroutine(HandleAttackSequence());
+    }
+
+    protected IEnumerator MoveToPlayer()
+    {
+
+        if (agent.enabled)
+        {
+
+            agent.SetDestination(Camera.main.transform.position);
+
+            while (agent.enabled && (agent.pathPending || agent.remainingDistance > agent.stoppingDistance))
+            {
+                agent.SetDestination(Camera.main.transform.position);
+
+                animator.SetBool("lookAround", false);
+                animator.SetBool("walk", true);
+
+                if (agent.desiredVelocity.sqrMagnitude > 0.01f)
+                {
+                    Vector3 direction = -agent.desiredVelocity.normalized * personDirection;
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
+                }
+
+                yield return null;
+            }
+
+            animator.SetBool("walk", false);
+            agent.updateRotation = true;
+
+            
+        }
+    }
+
 }
