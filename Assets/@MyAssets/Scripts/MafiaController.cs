@@ -39,7 +39,7 @@ public class MafiaController : PersonController
         }
     }
 
-    private IEnumerator HandleAttackSequence()
+    public IEnumerator HandleAttackSequence()
     {
         gun.SetActive(true);
         agent.enabled = false;

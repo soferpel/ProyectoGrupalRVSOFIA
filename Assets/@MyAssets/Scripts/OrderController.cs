@@ -13,10 +13,12 @@ public class OrderController : MonoBehaviour
     public int cash = 0;
     public string boxTag = "Box";
 
-    public GameObject counterPosition; 
+    public GameObject counterPosition;
+    public AudioSource audioSource;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         socketBox = GetComponent<XRSocketInteractor>();
         socketBox.selectEntered.AddListener(OnBoxOnSocket);
         client = FindObjectOfType<ClientController>();
@@ -58,6 +60,7 @@ public class OrderController : MonoBehaviour
     {
         if (boxController.hasClothes)
         {
+            audioSource.Play();
             DestroyOrder(args);
             client.served = true;
             
@@ -80,18 +83,14 @@ public class OrderController : MonoBehaviour
 
         if (boxController.containedItems.Contains(requiredItem))
         {
+            audioSource.Play();
             Debug.Log("Pedido correcto. Se entrega al mafioso");
             client.served = true;
             DestroyOrder(args);
         }
-        else if (boxController.hasClothes)
+        else 
         {
-            GameManager.isGameOver = true;
-            Debug.Log("Pedido incorrecto. GameOver");
-        }
-        else
-        {
-            Debug.Log("Pedido incorrecto. No se entrega al mafioso");
+            StartCoroutine(mafia.HandleAttackSequence());
         }
     }
 
