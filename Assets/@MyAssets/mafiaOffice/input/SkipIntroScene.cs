@@ -27,6 +27,6 @@ public class SkipIntroScene : MonoBehaviour
 
     private void SkipIntro(InputAction.CallbackContext context)
     {
-        SceneManager.LoadScene("Game 1");
+        SceneManager.LoadScene("StartMenuGame");
     }
 }
