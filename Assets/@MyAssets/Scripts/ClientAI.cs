@@ -45,6 +45,7 @@ public class ClientAI : MonoBehaviour
     public void OnDetected(GameObject target)
     {
         ClientController clientController = GetComponent<ClientController>();
+        Debug.Log("detectado "+target.name);
         if (clientController != null)
         {
             if (!clientController.isAlive)
@@ -54,6 +55,19 @@ public class ClientAI : MonoBehaviour
             if(target.gameObject.layer == LayerMask.NameToLayer("BodyParts"))
             {
                 clientController.ReportDeath();
+            }if(target.CompareTag("Player"))
+            {
+                Debug.Log("PLAYER");
+                if(target.TryGetComponent<PlayerHandController>(out PlayerHandController player))
+                {
+                    Debug.Log("PLAYER IF 1");
+
+                    if (player.HasBodyPart()) {
+                        Debug.Log("PLAYER IF 2");
+
+                        clientController.ReportDeath();
+                    }
+                }
             }
         }
     }

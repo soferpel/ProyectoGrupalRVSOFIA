@@ -1048,6 +1048,37 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!1 &825083704771368317
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2860239439530974954}
+  m_Layer: 0
+  m_Name: eyeOffset
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2860239439530974954
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825083704771368317}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.016, y: 1.59, z: -0.477}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1959057422804801635}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &940564382565418648
 GameObject:
   m_ObjectHideFlags: 0
@@ -1206,6 +1237,7 @@ Transform:
   - {fileID: 5031968981126602925}
   - {fileID: 6075462306069505979}
   - {fileID: 2924452930856182130}
+  - {fileID: 2860239439530974954}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &8481315138817633285
@@ -1770,6 +1802,7 @@ MonoBehaviour:
   DetectionMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  eyeOffset: {fileID: 2860239439530974954}
 --- !u!114 &2399813621249804295
 MonoBehaviour:
   m_ObjectHideFlags: 0
