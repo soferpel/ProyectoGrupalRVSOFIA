@@ -16,6 +16,10 @@ public class WeaponController : MonoBehaviour
     public int currentDurability;
     public bool hasCut;
 
+    public Material knifeMaterial;
+    private Color maxDurabilityColor = Color.white;
+    private Color minDurabilityColor = new Color(217f / 255f, 173f / 255f, 155f / 255f);
+
     void Start()
     {
         currentDurability = durability;
@@ -26,6 +30,15 @@ public class WeaponController : MonoBehaviour
         if (sliceObject != null)
         {
             sliceObject.OnCutMade.AddListener(OnCutDetected);
+        }
+        UpdateKnifeColor();
+    }
+    void UpdateKnifeColor()
+    {
+        if (knifeMaterial != null)
+        {
+            float t = (float)currentDurability / maxDurability; 
+            knifeMaterial.color = Color.Lerp(minDurabilityColor, maxDurabilityColor, t);
         }
     }
     public void setColliderTrigger(bool isTrigger)
@@ -42,6 +55,7 @@ public class WeaponController : MonoBehaviour
                 orderController.cash -= repairCost;
                 currentDurability = maxDurability;
                 sliceObject.enabled = true;
+                UpdateKnifeColor();
                 Debug.Log("El cuchillo ha sido reparado");
             }
             else
@@ -79,7 +93,7 @@ public class WeaponController : MonoBehaviour
         {
             currentDurability--; 
             Debug.Log($"Cuchillo usado en cliente {client.name}. Durabilidad actual: {currentDurability}");
-
+            UpdateKnifeColor();
             clientStates[client] = true; 
 
             if (currentDurability <= 0)
@@ -99,6 +113,7 @@ public class WeaponController : MonoBehaviour
         if (currentDurability > 0)
         {
             currentDurability--;
+            UpdateKnifeColor();
             Debug.Log("Corte detectado. Durabilidad actual: " + currentDurability);
 
             if (currentDurability <= 0)
