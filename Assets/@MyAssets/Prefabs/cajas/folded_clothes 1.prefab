@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5267668046403358350}
   - component: {fileID: 7867264604656665271}
   - component: {fileID: 6371937939589947039}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: folded_clothes 1
   m_TagString: Clothes
   m_Icon: {fileID: 0}
@@ -309,6 +309,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: folded_clothes (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6259050155995484309, guid: 362c111e1c7aba048a6b1059ce1d5a4b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8971885096941814875, guid: 362c111e1c7aba048a6b1059ce1d5a4b,
         type: 3}

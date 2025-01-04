@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1347325676276356726}
   - component: {fileID: 1283292860296033934}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Side2Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8846102786382091815}
   - component: {fileID: 2707520717377851098}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Side4Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 6826741945471902308}
   - component: {fileID: 1569709446983497184}
   - component: {fileID: 5846733053223785342}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube 1
   m_TagString: Box
   m_Icon: {fileID: 0}
@@ -568,7 +568,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1500965074261406426}
   - component: {fileID: 6769237607665269336}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Side3Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +620,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6249581016844861373}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GrabPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 5838018749670026466}
   - component: {fileID: 8190363972153408509}
   - component: {fileID: 1321591527570899754}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: AttachLEG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -880,7 +880,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1561330815900520709}
   - component: {fileID: 7839116525372430689}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Side1Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

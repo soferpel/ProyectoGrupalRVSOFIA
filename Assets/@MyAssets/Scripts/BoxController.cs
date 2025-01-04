@@ -14,7 +14,7 @@ public class BoxController : MonoBehaviour
     public string lidTag = "Lid";
     public string clothesTag = "Clothes";
     public float scaleDuration = 0.2f;
-    public Vector3 targetScale = new Vector3(0.5f, 0.5f, 0.5f);
+    public Vector3 targetScale = new Vector3(0.6f, 0.6f, 0.6f);
 
     public List<string> containedItems = new List<string>();
 
@@ -31,7 +31,9 @@ public class BoxController : MonoBehaviour
         socketLid.selectEntered.AddListener(ObjectOnSocket);
         socketLid.selectExited.AddListener(ObjectOutSocket);
         socketContent.selectEntered.AddListener(ObjectOnSocket);
-       
+        socketContent.selectExited.AddListener(ObjectOutSocketContent);
+
+
     }
 
     void Update()
@@ -62,6 +64,8 @@ public class BoxController : MonoBehaviour
             }
             else if (IsBodyPart(placedObject.tag))
             {
+                placedObject.transform.localScale = targetScale;
+
                 containedItems.Add(placedObject.tag); 
                 Debug.Log($"Se ha colocado parte del cuerpo: {placedObject.name}");
                 hasContent = true;
@@ -85,6 +89,18 @@ public class BoxController : MonoBehaviour
         {
             socketContent.socketActive = true;
         }
+    }
+
+    public void ObjectOutSocketContent(SelectExitEventArgs args)
+    {
+        GameObject placedObject = args.interactableObject.transform.gameObject;
+
+        Debug.Log("quitada parte cuerpo");
+        if (IsBodyPart(placedObject.tag))
+        {
+            placedObject.transform.localScale = Vector3.one;
+        }
+
     }
 
     private bool IsBodyPart(string tag)

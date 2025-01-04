@@ -148,6 +148,8 @@ public class SliceObject : MonoBehaviour
                         {
                             SkinnedMeshRenderer skinnedMeshRenderer3 = child.GetComponent<SkinnedMeshRenderer>();
                             GameObject tempObject3 = new GameObject("meshCloth");
+                            tempObject3.layer = LayerMask.NameToLayer("BodyParts");
+
                             tempObject3.transform.position = child.transform.position;
                             tempObject3.transform.rotation = child.transform.rotation;
                             tempObject3.transform.localScale = new Vector3(1, 1, 1);
@@ -164,6 +166,7 @@ public class SliceObject : MonoBehaviour
                             MeshCollider collider = tempObject3.AddComponent<MeshCollider>();
                             collider.convex = true;
                             XRGrabInteractable grabInteractable = detachPart.transform.parent.GetComponent<XRGrabInteractable>();
+                            grabInteractable.trackScale = false;
                             grabInteractable.enabled = false;
                             grabInteractable.colliders.Add(collider);
                             grabInteractable.enabled = true;
@@ -187,7 +190,7 @@ public class SliceObject : MonoBehaviour
                         Destroy(collider);
                     }
                 }
-                detachPart.transform.parent.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+                //detachPart.transform.parent.localScale = new Vector3(0.6f, 0.6f, 0.6f);
             }
             Destroy(tempObject2);
             Destroy(inBoundMesh);
@@ -219,8 +222,9 @@ public class SliceObject : MonoBehaviour
     private void DetachBody(GameObject part)
     {
         XRGrabInteractable partGrab = (part.GetComponent<XRGrabInteractable>());
+        partGrab.trackScale = false;
         partGrab.enabled = false;
-            partGrab.colliders.Clear();
+        partGrab.colliders.Clear();
 
         partGrab.enabled = true;
         Destroy(partGrab);
@@ -250,7 +254,7 @@ public class SliceObject : MonoBehaviour
         Debug.Log(part.transform.localPosition + " offset " + offset);
         part.transform.localPosition = new Vector3(0,0, 0.3f);
 
-        container.transform.localScale = new Vector3(0.6f,0.6f,0.6f);
+        //container.transform.localScale = new Vector3(0.6f,0.6f,0.6f);
         part.transform.localRotation *= Quaternion.Euler(0, 90, -90);
         Rigidbody partRb = part.GetComponent<Rigidbody>();
         if (partRb != null)
@@ -259,7 +263,8 @@ public class SliceObject : MonoBehaviour
         }
         container.AddComponent<DetectableTarget>();
         XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
-            grabInteractable.colliders.Add(partCollider);
+        grabInteractable.colliders.Add(partCollider);
+        grabInteractable.trackScale = false;
         grabInteractable.useDynamicAttach = true;
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");
@@ -404,6 +409,8 @@ public class SliceObject : MonoBehaviour
             return;
         }
         part.tag = collisionCutComponents.gameObjectTag;
+        part.layer = LayerMask.NameToLayer("BodyParts");
+
         GameObject container = new GameObject($"{part.name}_Centered");
         container.tag = part.tag;
         Vector3 containerPosition = part.transform.position;
@@ -440,6 +447,7 @@ public class SliceObject : MonoBehaviour
         }
         container.AddComponent<DetectableTarget>();
         XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
+        grabInteractable.trackScale = false;
         grabInteractable.useDynamicAttach = true;
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");

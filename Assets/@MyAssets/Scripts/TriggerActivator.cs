@@ -11,7 +11,7 @@ public class TriggerActivator : MonoBehaviour
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        /*rb = GetComponent<Rigidbody>();
         objCollider = GetComponent<Collider>(); 
         grabInteractable = GetComponent<XRGrabInteractable>();
 
@@ -19,33 +19,33 @@ public class TriggerActivator : MonoBehaviour
         {
             grabInteractable.selectEntered.AddListener(OnGrab);
             grabInteractable.selectExited.AddListener(OnRelease);
-        }
+        }*/
     }
 
     private void OnGrab(SelectEnterEventArgs args)
     {
-        HashSet<Transform> visited = new HashSet<Transform>();
+        /*HashSet<Transform> visited = new HashSet<Transform>();
 
         Debug.Log("tag: "+gameObject.tag);
         if (!gameObject.CompareTag("Lid"))
         {
             SetColliderTrigger(transform, true, visited);
         }
-        rb.isKinematic = true;
+        rb.isKinematic = true;*/
     }
 
     private void OnRelease(SelectExitEventArgs args)
     {
-        HashSet<Transform> visited = new HashSet<Transform>();
+        /*HashSet<Transform> visited = new HashSet<Transform>();
         Debug.Log("hola");
         SetColliderTrigger(transform, false, visited);
-        rb.isKinematic = false;
+        rb.isKinematic = false;*/
     }
 
     private void SetColliderTrigger(Transform parent, bool isTrigger, HashSet<Transform> visited)
 
     {
-        if (visited.Contains(parent)) return;
+       /* if (visited.Contains(parent)) return;
         visited.Add(parent);
         Collider parentCollider = parent.GetComponent<Collider>();
         if (parentCollider != null)
@@ -58,6 +58,6 @@ public class TriggerActivator : MonoBehaviour
             Transform child = parent.GetChild(i);
 
             SetColliderTrigger(child, isTrigger, visited);
-        }
+        }*/
     }
 }
