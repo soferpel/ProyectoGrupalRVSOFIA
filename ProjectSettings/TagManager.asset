@@ -28,8 +28,8 @@ TagManager:
   - Client
   - Player
   - Door
-  - 
-  - 
+  - BoxCollider
+  - Cloth
   - 
   - 
   - 
