@@ -716,7 +716,7 @@ public class Clothing : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         if (GetComponent<MafiaController>() != null)
         {

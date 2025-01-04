@@ -2846,6 +2846,7 @@ MonoBehaviour:
   - {fileID: 6646681574483141889}
   boundsColliders:
   - {fileID: 7952043735335391235}
+  - {fileID: 6749705423934753548}
   gameObjectTag: Cabeza
   client: {fileID: 1128047073529535267}
   boneNames:

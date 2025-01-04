@@ -13,7 +13,14 @@ public class ClientManager : MonoBehaviour
     public float minIntervalLimit = 10f;
     public float intervalDecrement = 0.1f;
 
-    public float mafiaSpawnInterval = 120f;
+    public float mafiaInitialMinInterval = 20f;
+    public float mafiaInitialMaxInterval = 30f;
+    public float mafiaMinIntervalLimit = 10f;
+    public float mafiaIntervalDecrement = 0.1f;
+
+    private float currentMafiaMinInterval;
+    private float currentMafiaMaxInterval;
+
     public GameObject mafia = null;
 
     private float currentMinInterval;
@@ -31,8 +38,20 @@ public class ClientManager : MonoBehaviour
         currentMinInterval = initialMinInterval;
         currentMaxInterval = initialMaxInterval;
 
+        currentMafiaMinInterval = mafiaInitialMinInterval;
+        currentMafiaMaxInterval = mafiaInitialMaxInterval;
+
         StartCoroutine(SpawnClients());
         StartCoroutine(SpawnMafioso());
+    }
+    private void Update()
+    {
+        if (mafia == null)
+        {
+            mafia = SpawnClient(mafiaPrefab);
+            mafia.GetComponent<MafiaController>().GenerateOrder();
+            mafia.SetActive(false);
+        }
     }
 
     private IEnumerator SpawnClients()
@@ -60,11 +79,20 @@ public class ClientManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(mafiaSpawnInterval);
+            float mafiaWaitTime = Random.Range(currentMafiaMinInterval, currentMafiaMaxInterval);
 
-            if (mafia == null)
+            yield return new WaitForSeconds(mafiaWaitTime);
+
+            mafia.SetActive(true);
+
+            if (currentMafiaMinInterval > mafiaMinIntervalLimit)
             {
-                mafia = SpawnClient(mafiaPrefab);
+                currentMafiaMinInterval = Mathf.Max(mafiaMinIntervalLimit, currentMafiaMinInterval - mafiaIntervalDecrement);
+            }
+
+            if (currentMafiaMaxInterval > mafiaMinIntervalLimit)
+            {
+                currentMafiaMaxInterval = Mathf.Max(mafiaMinIntervalLimit, currentMafiaMaxInterval - mafiaIntervalDecrement);
             }
         }
     }

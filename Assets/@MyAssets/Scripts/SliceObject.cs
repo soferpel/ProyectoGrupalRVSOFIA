@@ -33,7 +33,6 @@ public class SliceObject : MonoBehaviour
             if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
             {
                 collisionCutComponents = partController;
-                audioSource.Play();
                 Slice(partController.target, partController);
             }
             collisionCutComponents = null;
@@ -51,6 +50,7 @@ public class SliceObject : MonoBehaviour
         {
             return;
         }
+        audioSource.Play();
 
         SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
         GameObject tempObject = new GameObject("TempSlicingObject");
@@ -250,7 +250,10 @@ public class SliceObject : MonoBehaviour
         container.transform.rotation = part.transform.rotation;
 
         Vector3 offset = part.transform.position - containerPosition;
+        GameObject oldParent = part.transform.parent.parent.gameObject;
         part.transform.SetParent(container.transform);
+        oldParent.transform.GetChild(0).SetParent(part.transform);
+        Destroy(oldParent);
         Debug.Log(part.transform.localPosition + " offset " + offset);
         part.transform.localPosition = new Vector3(0,0, 0.3f);
 

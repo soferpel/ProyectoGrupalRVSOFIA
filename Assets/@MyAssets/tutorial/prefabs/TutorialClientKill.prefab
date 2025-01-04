@@ -10636,6 +10636,7 @@ MonoBehaviour:
   - {fileID: 896733970423305538}
   boundsColliders:
   - {fileID: 6881491705573298642}
+  - {fileID: 6896297627582896638}
   gameObjectTag: Cabeza
   client: {fileID: 7138835924714817372}
   boneNames:
@@ -13806,6 +13807,7 @@ MonoBehaviour:
   DetectionMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  eyeOffset: {fileID: 0}
 --- !u!114 &4663768640349559208
 MonoBehaviour:
   m_ObjectHideFlags: 0

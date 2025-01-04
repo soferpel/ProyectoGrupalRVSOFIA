@@ -12,6 +12,7 @@ public class MafiaController : PersonController
     public GameObject gun;
     public GameObject player;
     private int audioRandom;
+    private bool attacked = false;
 
     protected override void Start()
     {
@@ -21,7 +22,7 @@ public class MafiaController : PersonController
         base.Start();
     }
 
-    protected void GenerateOrder()
+    public void GenerateOrder()
     {
         string[] bodyParts = { "Torso", "Cabeza", "Pierna", "Brazo"};
         string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
@@ -31,8 +32,9 @@ public class MafiaController : PersonController
 
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<WeaponController>())
+        if (other.gameObject.GetComponent<WeaponController>() && !attacked)
         {
+            attacked = true;
             Debug.Log("El mafioso no puede ser atacado.");
             StopAllCoroutines();
             StartCoroutine(HandleAttackSequence());
