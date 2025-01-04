@@ -35,6 +35,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ClickB"",
+                    ""type"": ""Button"",
+                    ""id"": ""d1c3b4fd-7e91-42f4-88ea-17ffd0ec887d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -48,6 +57,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""skipIntro"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2d54c7e-bf32-4a80-a011-9a0ddfe24042"",
+                    ""path"": ""<XRController>{RightHand}/{SecondaryButton}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ClickB"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -57,6 +77,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_skipIntro = m_Player.FindAction("skipIntro", throwIfNotFound: true);
+        m_Player_ClickB = m_Player.FindAction("ClickB", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -119,11 +140,13 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_skipIntro;
+    private readonly InputAction m_Player_ClickB;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @skipIntro => m_Wrapper.m_Player_skipIntro;
+        public InputAction @ClickB => m_Wrapper.m_Player_ClickB;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -136,6 +159,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @skipIntro.started += instance.OnSkipIntro;
             @skipIntro.performed += instance.OnSkipIntro;
             @skipIntro.canceled += instance.OnSkipIntro;
+            @ClickB.started += instance.OnClickB;
+            @ClickB.performed += instance.OnClickB;
+            @ClickB.canceled += instance.OnClickB;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -143,6 +169,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @skipIntro.started -= instance.OnSkipIntro;
             @skipIntro.performed -= instance.OnSkipIntro;
             @skipIntro.canceled -= instance.OnSkipIntro;
+            @ClickB.started -= instance.OnClickB;
+            @ClickB.performed -= instance.OnClickB;
+            @ClickB.canceled -= instance.OnClickB;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -163,5 +192,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnSkipIntro(InputAction.CallbackContext context);
+        void OnClickB(InputAction.CallbackContext context);
     }
 }

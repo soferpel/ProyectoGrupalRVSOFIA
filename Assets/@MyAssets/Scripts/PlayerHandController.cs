@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.SceneManagement;
 
 public class PlayerHandController : MonoBehaviour
 {
@@ -10,6 +12,17 @@ public class PlayerHandController : MonoBehaviour
 
     private GameObject leftHandItem;
     private GameObject rightHandItem;
+
+    private PlayerControls playerControls;
+
+    private GameObject weaponRight;
+    private GameObject weaponLeft;
+
+
+    private void Awake()
+    {
+        playerControls = new PlayerControls();
+    }
 
     private void Start()
     {
@@ -53,6 +66,75 @@ public class PlayerHandController : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+
+    private void OnEnable()
+    {
+        playerControls.Player.ClickB.performed += HideKnife;
+        playerControls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerControls.Player.ClickB.performed -= HideKnife;
+        playerControls.Disable();
+    }
+
+    private void HideKnife(InputAction.CallbackContext context)
+    {
+        if(rightHandItem!=null && rightHandItem.TryGetComponent<WeaponController>(out _))
+        {
+            weaponRight = rightHandItem;
+            rightHandItem.SetActive(false);
+            rightHandItem = null;
+            return;
+        }
+
+        if(rightHandItem == null && weaponRight != null)
+        {
+            weaponRight.transform.position = rightHandInteractor.transform.position;
+            weaponRight.SetActive(true);
+            StartCoroutine(ForceGrabWeapon(weaponRight, rightHandInteractor));
+            rightHandItem = weaponRight;
+
+            weaponRight = null;
+            return;
+        }
+
+        if (leftHandItem != null && leftHandItem.TryGetComponent<WeaponController>(out _))
+        {
+            weaponLeft = leftHandItem;
+            leftHandItem.SetActive(false);
+            leftHandItem = null;
+            return;
+        }
+
+        if (leftHandItem == null && weaponLeft != null)
+        {
+            weaponLeft.transform.position = leftHandInteractor.transform.position;
+            weaponLeft.SetActive(true);
+            StartCoroutine(ForceGrabWeapon(weaponLeft, leftHandInteractor));
+            leftHandItem = weaponLeft;
+
+            weaponLeft = null;
+            return;
+        }
+
+    }
+
+    private IEnumerator ForceGrabWeapon(GameObject weapon, XRDirectInteractor handInteractor)
+    {
+        yield return null;
+
+        var interactable = weapon.GetComponent<XRGrabInteractable>();
+        if (interactable != null)
+        {
+            handInteractor.interactionManager.SelectEnter(handInteractor, interactable);
+        }
+        else
+        {
+            Debug.LogWarning("El objeto no tiene un XRGrabInteractable.");
         }
     }
 }
