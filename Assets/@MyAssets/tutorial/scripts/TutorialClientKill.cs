@@ -68,6 +68,64 @@ public class TutorialClientKill : ClientController
 
         agent.enabled = true;
         animator.SetBool("walk", false);
-        StartCoroutine(MoveToTarget(killPoint,false));
+        StartCoroutine(MoveToTarget(killPoint, false));
+    }
+
+    protected override IEnumerator Die(Collider other)
+    {
+        if (isAlive)
+        {
+
+            slider.SetActive(false);
+            Destroy(gameObject.GetComponent<Collider>());
+            Destroy(gameObject.GetComponent<Rigidbody>());
+            Destroy(gameObject.GetComponent<VisionSensor>());
+            isAlive = false;
+            if (inBuyPoint)
+            {
+                Debug.Log("MUERTO SERVICIO");
+                buyPointController.FreePoint();
+            }
+            else if (inQueue)
+            {
+                Debug.Log("MUERTO EN COLA");
+                buyPointController.RemoveClientFromQueue(this);
+            }
+            if (agent.isActiveAndEnabled)
+            {
+                agent.isStopped = true;
+                agent.enabled = false;
+            }
+            animator.enabled = false;
+            foreach (Rigidbody rb in deadRigidbodies)
+            {
+                rb.isKinematic = false;
+            }
+
+            foreach (Collider col in deadColliders)
+            {
+                col.enabled = true;
+                col.gameObject.AddComponent<DetectableTarget>();
+                col.gameObject.layer = LayerMask.NameToLayer("BodyParts");
+            }
+
+            Vector3 forceDirection = -(other.transform.position - transform.position).normalized;
+            float forceStrength = 4f;
+            Vector3 force = forceDirection * forceStrength;
+
+            foreach (Rigidbody rb in deadRigidbodies)
+            {
+                rb.AddForce(force, ForceMode.Impulse);
+            }
+
+
+            yield return new WaitForSeconds(2f);
+
+            foreach (GameObject part in sliceableParts)
+            {
+                part.layer = LayerMask.NameToLayer("Sliceable");
+            }
+
+        }
     }
 }

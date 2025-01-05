@@ -20,34 +20,44 @@ public class DumpsterController : MonoBehaviour
 
     private void OnHoverEntered(HoverEnterEventArgs args)
     {
-        Debug.Log("SE LLAMA A HOVER ENTERED????");
+       /* Debug.Log("SE LLAMA A HOVER ENTERED????");
         if (!isOpen)
         {
             isOpen = true;
             StartCoroutine(OpenLids());
-        }
+        }*/
     }
 
     private void OnHoverExited(HoverExitEventArgs args)
     {
-        if (isOpen)
+        /*if (isOpen)
         {
             isOpen = false;
             StartCoroutine(CloseLids());
-        }
+        }*/
     }
 
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.layer == LayerMask.NameToLayer("BodyParts"))
+        {
+            GameObject placedObject = other.gameObject;
+            Debug.Log($"OBJETO TIRADO: {placedObject.name}");
+            if(placedObject.TryGetComponent<TrashPart>(out TrashPart trashPart))
+            {
+                Destroy(trashPart.part);
+            }
+            // Encontrar el objeto raíz del cuerpo
+            GameObject rootObject = FindRootObject(placedObject);
+
+            // Destruir todos los hijos y el objeto raíz
+            DestroyAllChildrenAndSelf(rootObject);
+
+        }
+    }
     private void OnObjectPlaced(SelectEnterEventArgs args)
     {
-        GameObject placedObject = args.interactableObject.transform.gameObject;
-        Debug.Log($"OBJETO TIRADO: {placedObject.name}");
-
-        // Encontrar el objeto raíz del cuerpo
-        GameObject rootObject = FindRootObject(placedObject);
-
-        // Destruir todos los hijos y el objeto raíz
-        DestroyAllChildrenAndSelf(rootObject);
     }
 
     private GameObject FindRootObject(GameObject obj)

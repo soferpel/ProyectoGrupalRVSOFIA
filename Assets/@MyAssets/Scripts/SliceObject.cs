@@ -234,6 +234,11 @@ public class SliceObject : MonoBehaviour
             return;
         }
         GameObject container = new GameObject($"{part.name}_Centered");
+        if (collisionCutComponents.client.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
+        {
+            BodyPartController bodypartController = container.AddComponent<BodyPartController>();
+            bodypartController.decayTime = clientbpc.decayTimer;
+        }
         container.tag = "Torso";
         Vector3 containerPosition = part.transform.position;
         Collider partCollider = part.GetComponent<Collider>();
@@ -415,6 +420,7 @@ public class SliceObject : MonoBehaviour
         part.layer = LayerMask.NameToLayer("BodyParts");
 
         GameObject container = new GameObject($"{part.name}_Centered");
+
         container.tag = part.tag;
         Vector3 containerPosition = part.transform.position;
         Collider partCollider = part.GetComponent<Collider>();
@@ -462,6 +468,11 @@ public class SliceObject : MonoBehaviour
             Destroy(partRb);
         }
 
+        if (collisionCutComponents.client.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
+        {
+            BodyPartController bodypartController = container.AddComponent<BodyPartController>();
+            bodypartController.decayTime = clientbpc.decayTimer;
+        }
     }
 
 

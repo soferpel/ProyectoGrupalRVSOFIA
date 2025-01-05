@@ -18,7 +18,6 @@ public class MafiaController : PersonController
     {
         audioRandom = UnityEngine.Random.Range(0, 3);
         buyProbability = 1;
-        GenerateOrder();
         base.Start();
     }
 
@@ -146,7 +145,7 @@ public class MafiaController : PersonController
         Debug.Log("x Me voy");
         buyPointController.FreePoint();
         //StartCoroutine(MoveToFinalPoint());
-        StartCoroutine(HandleMafiaApproachAndAttack());
+        if(!served)StartCoroutine(HandleMafiaApproachAndAttack());
         slider.SetActive(false);
     }
 

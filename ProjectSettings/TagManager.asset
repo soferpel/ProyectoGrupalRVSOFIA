@@ -16,6 +16,7 @@ TagManager:
   - Torso
   - Cabeza
   - Leg
+  - Podrido
   layers:
   - Default
   - TransparentFX

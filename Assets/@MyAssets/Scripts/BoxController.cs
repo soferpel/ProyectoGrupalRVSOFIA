@@ -105,7 +105,7 @@ public class BoxController : MonoBehaviour
 
     private bool IsBodyPart(string tag)
     {
-        string[] bodyPartTags = { "Torso", "Cabeza", "Pierna", "Brazo" };
+        string[] bodyPartTags = { "Torso", "Cabeza", "Pierna", "Brazo", "Podrido" };
         foreach (string bodyPartTag in bodyPartTags)
         {
             if (tag.Equals(bodyPartTag))

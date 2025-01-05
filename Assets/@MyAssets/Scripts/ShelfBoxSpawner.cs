@@ -46,4 +46,5 @@ public class ShelfBoxSpawner : MonoBehaviour
         }
         return cont;
     }
+    
 }

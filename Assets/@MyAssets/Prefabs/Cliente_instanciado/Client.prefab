@@ -1201,6 +1201,7 @@ GameObject:
   - component: {fileID: 8481315138817633285}
   - component: {fileID: 3015125654800017879}
   - component: {fileID: 1128047073529535267}
+  - component: {fileID: 8694950492944798281}
   - component: {fileID: 2693957462350037603}
   - component: {fileID: 6769101871758133847}
   - component: {fileID: 8152153695231226053}
@@ -1653,6 +1654,43 @@ MonoBehaviour:
   reportDirection: {x: 0, y: 0, z: 0}
   joints: []
   isFemale: 0
+  clothesMaterials:
+  - {fileID: 1374402990933640826}
+  - {fileID: 1891292298942098422}
+  - {fileID: 1659501795070416519}
+  - {fileID: 4444995955132078365}
+  - {fileID: 6646681574483141889}
+  - {fileID: 5515267265772145266}
+  - {fileID: 389068636324409304}
+  - {fileID: 6934717381192317007}
+  - {fileID: 6125755254756121833}
+  - {fileID: 4080550322382321948}
+  - {fileID: 6319169490741046133}
+  - {fileID: 3952656116878647076}
+  skinMaterial: {fileID: 8529312728670101084}
+--- !u!136 &8694950492944798281
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957468581163429957}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.38
+  m_Height: 2.48
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.74, z: 0}
 --- !u!65 &2693957462350037603
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1670,7 +1708,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.33067197, y: 1.7700536, z: 0.32979274}
   m_Center: {x: 0.021153778, y: 0.89, z: -0.03648874}
@@ -1711,7 +1749,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.35
-  m_Speed: 2.2
+  m_Speed: 1.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -4444,6 +4482,7 @@ GameObject:
   - component: {fileID: 6621924459115794555}
   - component: {fileID: 305782505038850190}
   - component: {fileID: 191217366476279177}
+  - component: {fileID: 42288452680406681}
   m_Layer: 0
   m_Name: Bone
   m_TagString: Untagged
@@ -4671,6 +4710,19 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &42288452680406681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657607169892166147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9d904080dc9dd14aa967f47d1252844, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  part: {fileID: 957468581163429957}
 --- !u!1 &2678582717162039792
 GameObject:
   m_ObjectHideFlags: 0
