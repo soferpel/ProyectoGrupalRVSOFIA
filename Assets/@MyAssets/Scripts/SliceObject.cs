@@ -25,20 +25,20 @@ public class SliceObject : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
     }
-    void Update()
-    {
-        if (Physics.Linecast(startSlicePoint.position, endSlicePoint.position, out RaycastHit hit, sliceableLayer))
-        {
-            collisionCut = hit.collider.gameObject;
-            if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
-            {
-                collisionCutComponents = partController;
-                Slice(partController.target, partController);
-            }
-            collisionCutComponents = null;
-            collisionCut = null;
 
+    private void OnTriggerEnter(Collider other)
+    {
+
+        collisionCut = other.gameObject;
+        if(other.gameObject.layer == sliceableLayer)
+        Debug.Log("ha cortado" + collisionCut.name);
+        if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
+        {
+            collisionCutComponents = partController;
+            Slice(partController.target, partController);
         }
+        collisionCutComponents = null;
+        collisionCut = null; 
     }
     public void Slice(GameObject target, SliceablePartController partController)
     {
@@ -46,7 +46,7 @@ public class SliceObject : MonoBehaviour
         Vector3 planeNormal = Vector3.Cross(endSlicePoint.position - startSlicePoint.position, velocity);
         planeNormal.Normalize();
         float alignment = Vector3.Dot(planeNormal, partController.gameObject.transform.up);
-        if (Mathf.Abs(alignment) < 0.95f)
+        if (Mathf.Abs(alignment) < 0.85f)
         {
             return;
         }
