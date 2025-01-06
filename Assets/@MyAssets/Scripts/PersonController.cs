@@ -31,6 +31,8 @@ public abstract class PersonController : MonoBehaviour
     protected float buyProbability = 0;
     protected int personDirection = 1;
     public AudioSource[] audioSource;
+    public string appearanceDescription;
+
     protected virtual void Start()
     {
         audioSource = GetComponents<AudioSource>();
@@ -283,6 +285,7 @@ public abstract class PersonController : MonoBehaviour
         float elapsedTime = 0f;
         while (elapsedTime < waitTimeBuyPoint && !served)
         {
+            transform.rotation = Quaternion.LookRotation(Vector3.forward);
             elapsedTime += Time.deltaTime;
             slider.SetSliderValue(elapsedTime, waitTimeBuyPoint);
             yield return null;
@@ -296,6 +299,7 @@ public abstract class PersonController : MonoBehaviour
     protected virtual IEnumerator MoveToBuyPoint()
     {
         yield return StartCoroutine(MoveToTarget(buyPointController.buyPointTransform, false));
+
         StartWaitTimer();
         inBuyPoint = true;
 

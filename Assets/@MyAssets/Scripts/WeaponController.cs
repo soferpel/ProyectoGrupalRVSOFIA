@@ -7,7 +7,7 @@ public class WeaponController : MonoBehaviour
     private Collider weaponCollider;
     private SliceObject sliceObject;
     private OrderController orderController;
-
+    public static bool isGrabbed = false;
     private Dictionary<ClientController, bool> clientStates = new Dictionary<ClientController, bool>();
 
     public int durability = 10;  
@@ -75,10 +75,14 @@ public class WeaponController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        ClientController client = other.GetComponent<ClientController>();
-        if (client != null)
+        if (isGrabbed)
         {
-            ProcessClient(client);
+            ClientController client = other.GetComponent<ClientController>();
+            if (client != null)
+            {
+                ProcessClient(client);
+            }
+
         }
     }
 

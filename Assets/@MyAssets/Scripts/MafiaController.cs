@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class MafiaController : PersonController
 {
 
-    public string appearanceDescription;
     public string orderDescription;
     public GameObject gun;
     public GameObject player;
@@ -31,7 +30,7 @@ public class MafiaController : PersonController
 
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<WeaponController>() && !attacked)
+        if (other.gameObject.GetComponent<WeaponController>() && !attacked && WeaponController.isGrabbed)
         {
             attacked = true;
             Debug.Log("El mafioso no puede ser atacado.");
@@ -47,7 +46,7 @@ public class MafiaController : PersonController
         
         if (player != null)
         {
-            Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
+            Vector3 directionToPlayer = (Camera.main.transform.position - transform.position).normalized;
             Vector3 flatDirection = new Vector3(directionToPlayer.x, 0, directionToPlayer.z);
             Quaternion lookRotation = Quaternion.LookRotation(flatDirection);
             Quaternion finalRotation = lookRotation * Quaternion.Euler(0, 80, 0);
@@ -138,6 +137,7 @@ public class MafiaController : PersonController
         float elapsedTime = 0f;
         while (elapsedTime < waitTimeBuyPoint && !served)
         {
+            transform.rotation = Quaternion.LookRotation(Vector3.forward);
             elapsedTime += Time.deltaTime;
             slider.SetSliderValue(elapsedTime, waitTimeBuyPoint);
             yield return null;
@@ -146,6 +146,7 @@ public class MafiaController : PersonController
         buyPointController.FreePoint();
         //StartCoroutine(MoveToFinalPoint());
         if(!served)StartCoroutine(HandleMafiaApproachAndAttack());
+        else StartCoroutine(MoveToFinalPoint());
         slider.SetActive(false);
     }
 

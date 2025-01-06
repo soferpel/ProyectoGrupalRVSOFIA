@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 5418219897990078810}
   - component: {fileID: 1049241542360220020}
   m_Layer: 0
-  m_Name: hair_a
+  m_Name: pelo corto
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -432,7 +432,7 @@ GameObject:
   - component: {fileID: 3815947449965192133}
   - component: {fileID: 5561694723624478597}
   m_Layer: 0
-  m_Name: worker
+  m_Name: traje de obrero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -752,7 +752,7 @@ GameObject:
   - component: {fileID: 8342181843664861130}
   - component: {fileID: 8212194650973533731}
   m_Layer: 0
-  m_Name: hair_e
+  m_Name: cresta
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1090,7 +1090,7 @@ GameObject:
   - component: {fileID: 2754531387421719741}
   - component: {fileID: 320038474473439708}
   m_Layer: 0
-  m_Name: farmer_suit
+  m_Name: traje de granjero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1609,6 +1609,7 @@ MonoBehaviour:
   waitTimeBuyPoint: 30
   doorExitPoint: {fileID: 0}
   audioSource: []
+  appearanceDescription: 
   distanceThreshold: 1
   hasBeenAttacked: 0
   deadRigidbodies:
@@ -2494,7 +2495,7 @@ GameObject:
   - component: {fileID: 5914262235201315475}
   - component: {fileID: 2693100113241029184}
   m_Layer: 0
-  m_Name: tank_top
+  m_Name: camiseta sin mangas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3603,7 +3604,7 @@ GameObject:
   - component: {fileID: 975693572685053051}
   - component: {fileID: 6329627652749006071}
   m_Layer: 0
-  m_Name: security_guard_suit
+  m_Name: traje de guardia de seguridad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3713,7 +3714,7 @@ GameObject:
   - component: {fileID: 3349994442182421593}
   - component: {fileID: 8091640583098867677}
   m_Layer: 0
-  m_Name: hat.007
+  m_Name: sombrero de policia
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3823,7 +3824,7 @@ GameObject:
   - component: {fileID: 1793570062116937145}
   - component: {fileID: 3135403950313593694}
   m_Layer: 0
-  m_Name: chain1
+  m_Name: collar cadena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4250,7 +4251,7 @@ GameObject:
   - component: {fileID: 4408628970487203706}
   - component: {fileID: 6976726361488070137}
   m_Layer: 0
-  m_Name: hat.004
+  m_Name: sombrero de mecanico
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4734,7 +4735,7 @@ GameObject:
   - component: {fileID: 8114766643853847564}
   - component: {fileID: 1015091028865631730}
   m_Layer: 0
-  m_Name: seller_suit
+  m_Name: traje de vendedor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4919,7 +4920,7 @@ GameObject:
   - component: {fileID: 4724005066429870218}
   - component: {fileID: 1931673792368580039}
   m_Layer: 0
-  m_Name: shoes1
+  m_Name: playeras
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5407,7 +5408,7 @@ GameObject:
   - component: {fileID: 4741159401021862246}
   - component: {fileID: 4052662808653475763}
   m_Layer: 0
-  m_Name: mechanic
+  m_Name: traje de mecanico
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5801,7 +5802,7 @@ GameObject:
   - component: {fileID: 798656181083414046}
   - component: {fileID: 5964664925416431787}
   m_Layer: 0
-  m_Name: shirt
+  m_Name: camisa
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6021,7 +6022,7 @@ GameObject:
   - component: {fileID: 5380503930631751801}
   - component: {fileID: 8658336936673296543}
   m_Layer: 0
-  m_Name: beard_a
+  m_Name: bigote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6267,7 +6268,7 @@ GameObject:
   - component: {fileID: 1871343549240838015}
   - component: {fileID: 4220467239215726023}
   m_Layer: 0
-  m_Name: hair_d
+  m_Name: pelo largo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6835,7 +6836,7 @@ GameObject:
   - component: {fileID: 910286097879953044}
   - component: {fileID: 4080592459108362671}
   m_Layer: 0
-  m_Name: banker_suit
+  m_Name: traje de banquero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7055,7 +7056,7 @@ GameObject:
   - component: {fileID: 8929949303208756375}
   - component: {fileID: 8460181427107602856}
   m_Layer: 0
-  m_Name: cook_suit
+  m_Name: traje de cocinero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7563,7 +7564,7 @@ GameObject:
   - component: {fileID: 1419574355405041774}
   - component: {fileID: 1472195978212773407}
   m_Layer: 0
-  m_Name: hat
+  m_Name: sombrero de obrero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7783,7 +7784,7 @@ GameObject:
   - component: {fileID: 6304994310213486535}
   - component: {fileID: 6941264260779636046}
   m_Layer: 0
-  m_Name: hair_c
+  m_Name: coleta
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8492,7 +8493,7 @@ GameObject:
   - component: {fileID: 18732730559335328}
   - component: {fileID: 1020407331495736825}
   m_Layer: 0
-  m_Name: beard_d
+  m_Name: barba larga
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9023,7 +9024,7 @@ GameObject:
   - component: {fileID: 3553823937059512714}
   - component: {fileID: 4119599859624732965}
   m_Layer: 0
-  m_Name: glasses
+  m_Name: gafas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9280,7 +9281,7 @@ GameObject:
   - component: {fileID: 1635519807581820453}
   - component: {fileID: 8978997558276098526}
   m_Layer: 0
-  m_Name: shoes2
+  m_Name: bailarinas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9723,7 +9724,7 @@ GameObject:
   - component: {fileID: 1195934367347955593}
   - component: {fileID: 2460159706633114126}
   m_Layer: 0
-  m_Name: pullover
+  m_Name: jersey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10150,7 +10151,7 @@ GameObject:
   - component: {fileID: 6468472134326965392}
   - component: {fileID: 640796682039669879}
   m_Layer: 0
-  m_Name: scarf
+  m_Name: bufanda
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10260,7 +10261,7 @@ GameObject:
   - component: {fileID: 4894634097285780414}
   - component: {fileID: 2618340982954623538}
   m_Layer: 0
-  m_Name: nurse_suit
+  m_Name: traje de enfermero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10370,7 +10371,7 @@ GameObject:
   - component: {fileID: 4797946600432251382}
   - component: {fileID: 7326369270078779992}
   m_Layer: 0
-  m_Name: shoes3
+  m_Name: botas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10512,7 +10513,7 @@ GameObject:
   - component: {fileID: 6232643434987737494}
   - component: {fileID: 4520820144172006658}
   m_Layer: 0
-  m_Name: hat.002
+  m_Name: sombrero de bombero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10622,7 +10623,7 @@ GameObject:
   - component: {fileID: 3769200260506081028}
   - component: {fileID: 565287896258205746}
   m_Layer: 0
-  m_Name: beard_b
+  m_Name: barba circular
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10794,7 +10795,7 @@ GameObject:
   - component: {fileID: 1992390389123790759}
   - component: {fileID: 8462699675501779500}
   m_Layer: 0
-  m_Name: t_shirt
+  m_Name: camiseta
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10904,7 +10905,7 @@ GameObject:
   - component: {fileID: 7782021617004893077}
   - component: {fileID: 3007913784227554208}
   m_Layer: 0
-  m_Name: hat.003
+  m_Name: sombrero de chef
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11050,7 +11051,7 @@ GameObject:
   - component: {fileID: 6763849614768972589}
   - component: {fileID: 2171319562644370342}
   m_Layer: 0
-  m_Name: chain2
+  m_Name: collar con circulo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11160,7 +11161,7 @@ GameObject:
   - component: {fileID: 8768532938185549617}
   - component: {fileID: 6183615830990829308}
   m_Layer: 0
-  m_Name: trousers
+  m_Name: pantalones largos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11270,7 +11271,7 @@ GameObject:
   - component: {fileID: 7890511485752589254}
   - component: {fileID: 3861769529350726185}
   m_Layer: 0
-  m_Name: hair_b
+  m_Name: tupe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11986,7 +11987,7 @@ GameObject:
   - component: {fileID: 5876651500755067210}
   - component: {fileID: 1597868471147674766}
   m_Layer: 0
-  m_Name: hat.006
+  m_Name: sombrero de guardia de seguridad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12096,7 +12097,7 @@ GameObject:
   - component: {fileID: 6322814475721589307}
   - component: {fileID: 5928139925251453584}
   m_Layer: 0
-  m_Name: jacket
+  m_Name: chaqueta
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12206,7 +12207,7 @@ GameObject:
   - component: {fileID: 8588609655434737462}
   - component: {fileID: 4825576341586302401}
   m_Layer: 0
-  m_Name: hat.005
+  m_Name: mascara de ladron
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12316,7 +12317,7 @@ GameObject:
   - component: {fileID: 2432649557155890288}
   - component: {fileID: 2266235585375173580}
   m_Layer: 0
-  m_Name: shortpants
+  m_Name: pantalones cortos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12426,7 +12427,7 @@ GameObject:
   - component: {fileID: 6697477545783952284}
   - component: {fileID: 8430366919806199240}
   m_Layer: 0
-  m_Name: cap3
+  m_Name: sombrero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13210,7 +13211,7 @@ GameObject:
   - component: {fileID: 2710844031938401886}
   - component: {fileID: 5743855734091018107}
   m_Layer: 0
-  m_Name: chain3
+  m_Name: 'collar con cruz '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13968,7 +13969,7 @@ GameObject:
   - component: {fileID: 7323070699290609417}
   - component: {fileID: 2155365184827375716}
   m_Layer: 0
-  m_Name: fireman_suit
+  m_Name: traje de bombero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14183,7 +14184,7 @@ GameObject:
   - component: {fileID: 7148725723218914599}
   - component: {fileID: 6875140276213938839}
   m_Layer: 0
-  m_Name: cap2
+  m_Name: gorro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14324,7 +14325,7 @@ GameObject:
   - component: {fileID: 1512145168941428747}
   - component: {fileID: 4771421483022120885}
   m_Layer: 0
-  m_Name: cap
+  m_Name: gorra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14434,7 +14435,7 @@ GameObject:
   - component: {fileID: 4664098089466437716}
   - component: {fileID: 9018248676338870503}
   m_Layer: 0
-  m_Name: hat.001
+  m_Name: sombrero de paja
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14544,7 +14545,7 @@ GameObject:
   - component: {fileID: 4488279688943947947}
   - component: {fileID: 8800406087221136290}
   m_Layer: 0
-  m_Name: beard_c
+  m_Name: 'barba corta '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -19,6 +19,8 @@ public class StretchableCurtain : MonoBehaviour
     private const float minScaleX = 0.42f;
 
     public float maxGrabDistance = 1.0f;
+
+    public bool horizontal = true;
     void Start()
     {
 
@@ -51,18 +53,35 @@ public class StretchableCurtain : MonoBehaviour
             float currentDistance = direction.magnitude;
             float stretchFactor = currentDistance / initialDistance;
 
- 
-            stretchFactor *= Mathf.Sign(direction.x);
+            if (horizontal)
+            {
+                stretchFactor *= Mathf.Sign(direction.x);
 
 
-            Vector3 newScale = initialScale;
-            newScale.x = Mathf.Clamp(initialScale.x * stretchFactor, minScaleX, maxScaleX);
-            curtain.transform.localScale = newScale;
+                Vector3 newScale = initialScale;
+                newScale.x = Mathf.Clamp(initialScale.x * stretchFactor, minScaleX, maxScaleX);
+                curtain.transform.localScale = newScale;
 
 
-            Vector3 newPosition = curtain.transform.position;
-            newPosition.x = fixedAnchor.position.x - (pivotOffset * (newScale.x / initialScale.x));
-            curtain.transform.position = newPosition;
+                Vector3 newPosition = curtain.transform.position;
+                newPosition.x = fixedAnchor.position.x - (pivotOffset * (newScale.x / initialScale.x));
+                curtain.transform.position = newPosition;
+
+            }
+            else
+            {
+                stretchFactor *= Mathf.Sign(direction.z);
+
+
+                Vector3 newScale = initialScale;
+                newScale.x = Mathf.Clamp(initialScale.x * stretchFactor, minScaleX, maxScaleX);
+                curtain.transform.localScale = newScale;
+
+
+                Vector3 newPosition = curtain.transform.position;
+                newPosition.x = fixedAnchor.position.x - (pivotOffset * (newScale.x / initialScale.x));
+                curtain.transform.position = newPosition;
+            }
         }
     }
 

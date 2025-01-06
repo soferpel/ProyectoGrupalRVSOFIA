@@ -32,6 +32,7 @@ public class ClientController : PersonController
         {
             collider.enabled = false;
         }
+        Debug.Log("Descripcion cliente: " + appearanceDescription);
         base.Start();
     }
 
@@ -85,7 +86,7 @@ public class ClientController : PersonController
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<WeaponController>())
+        if (other.gameObject.GetComponent<WeaponController>() && WeaponController.isGrabbed)
         {
             Debug.Log("Cliente atacado por un cuchillo.");
             audioSource[4].Stop();
@@ -100,7 +101,7 @@ public class ClientController : PersonController
     {
         if (isAlive)
         {
-
+            if(Clothing.existingClientDescriptions.Contains(appearanceDescription)) Clothing.existingClientDescriptions.Remove(appearanceDescription);
             slider.SetActive(false);
             Destroy(gameObject.GetComponent<Collider>());
             Destroy(gameObject.GetComponent<Rigidbody>());
@@ -195,6 +196,40 @@ public class ClientController : PersonController
             }
 
         }
+    }
+    public string AppearanceDescription
+    {
+        get => appearanceDescription;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                Debug.LogError("La apariencia asignada es vacía o nula.");
+            }
+            else
+            {
+                appearanceDescription = value;
+                Debug.Log("Apariencia del mafioso asignada: " + appearanceDescription);
+            }
+        }
+    }
+    void OnEnable()
+    {
+        Clothing.OnClientAppearanceGenerated += HandleAppearanceGenerated;
+    }
+
+    void OnDisable()
+    {
+        Clothing.OnClientAppearanceGenerated -= HandleAppearanceGenerated;
+    }
+
+    private void HandleAppearanceGenerated(string description)
+    {
+        AppearanceDescription = description;
+    }
+    private void OnDestroy()
+    {
+        if (Clothing.existingClientDescriptions.Contains(appearanceDescription)) Clothing.existingClientDescriptions.Remove(appearanceDescription);
     }
 }
 

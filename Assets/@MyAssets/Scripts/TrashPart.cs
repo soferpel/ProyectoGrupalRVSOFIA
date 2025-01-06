@@ -5,4 +5,9 @@ using UnityEngine;
 public class TrashPart : MonoBehaviour
 {
     public GameObject part;
+
+    private void OnDestroy()
+    {
+        Destroy(part);
+    }
 }

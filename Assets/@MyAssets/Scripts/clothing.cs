@@ -135,6 +135,7 @@ public class Clothing : MonoBehaviour
     private ClientController clientController;
     public delegate void AppearanceGenerated(string description);
     public static event AppearanceGenerated OnMafiaAppearanceGenerated;
+    public static event AppearanceGenerated OnClientAppearanceGenerated;
 
     Coroutine coroutine_random_clothing;
 
@@ -714,6 +715,7 @@ public class Clothing : MonoBehaviour
             existingClientDescriptions.Add(description);
             OnMafiaAppearanceGenerated?.Invoke(description);
         }
+
     }
 
     private void Awake()
@@ -727,6 +729,8 @@ public class Clothing : MonoBehaviour
             clientController = GetComponent<ClientController>();
             start_random_clothing();
             string clientDescription = GenerateAppearanceDescription();
+            clientController.appearanceDescription = clientDescription;
+            OnClientAppearanceGenerated?.Invoke(clientDescription);
             clientController.isFemale = (male_female == 1) ? true : false;
             existingClientDescriptions.Add(clientDescription);
         }

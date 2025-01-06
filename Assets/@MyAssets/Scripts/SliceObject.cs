@@ -46,7 +46,7 @@ public class SliceObject : MonoBehaviour
         Vector3 planeNormal = Vector3.Cross(endSlicePoint.position - startSlicePoint.position, velocity);
         planeNormal.Normalize();
         float alignment = Vector3.Dot(planeNormal, partController.gameObject.transform.up);
-        if (Mathf.Abs(alignment) < 0.85f)
+        if (Mathf.Abs(alignment) < 0.95f)
         {
             return;
         }
@@ -238,6 +238,7 @@ public class SliceObject : MonoBehaviour
         {
             BodyPartController bodypartController = container.AddComponent<BodyPartController>();
             bodypartController.decayTime = clientbpc.decayTimer;
+            bodypartController.materials = clientbpc.materials;
         }
         container.tag = "Torso";
         Vector3 containerPosition = part.transform.position;
@@ -472,6 +473,7 @@ public class SliceObject : MonoBehaviour
         {
             BodyPartController bodypartController = container.AddComponent<BodyPartController>();
             bodypartController.decayTime = clientbpc.decayTimer;
+            bodypartController.materials = clientbpc.materials;
         }
     }
 

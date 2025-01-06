@@ -50,10 +50,15 @@ public class InfoUI : MonoBehaviour
         {
             currentMafia = clientManager.mafia.GetComponent<MafiaController>();
 
-            if (currentMafia != null)
+            if (currentMafia != null && !currentMafia.served)
             {
                 descriptionText.text = currentMafia.AppearanceDescription;
                 orderText.text = currentMafia.orderDescription;
+            }
+            else
+            {
+                descriptionText.text = "No hay mafioso presente";
+                orderText.text = "Sin pedido";
             }
         }
         else
@@ -76,8 +81,9 @@ public class InfoUI : MonoBehaviour
     {
         int value = weaponController.currentDurability;
         textWeapon.text = $"Durabilidad del cuchillo (max "+ weaponController.maxDurability + "): " + value;
-        repairSlider.value = value/weaponController.maxDurability;
-        repairSliderFillImage.color = Color.Lerp(Color.red, Color.green, value/ weaponController.maxDurability);
+        repairSlider.value = (float)value/(float)weaponController.maxDurability;
+        Debug.Log("durab: "+ (float)value / (float)weaponController.maxDurability);
+        repairSliderFillImage.color = Color.Lerp(Color.red, Color.green, (float)value/ (float)weaponController.maxDurability);
         UpdateRepairButton();
     }
 
