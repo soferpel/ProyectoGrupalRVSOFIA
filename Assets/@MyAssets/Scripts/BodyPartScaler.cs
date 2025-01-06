@@ -26,23 +26,10 @@ public class BodyPartScaler : MonoBehaviour
 
     private void OnGrab(SelectEnterEventArgs args)
     {
-        /*if (IsBodyPart())
-        {
-            //childCollider.enabled = false;
-            transform.localScale = targetScale;
-            Debug.Log($"Escala de {gameObject.name} cambiada a {targetScale}");
-        }*/
     }
 
     private void OnRelease(SelectExitEventArgs args)
     {
-        /*
-        if (IsBodyPart())
-        {
-            transform.localScale = originalScale;
-            //childCollider.enabled = true;
-            Debug.Log($"Escala de {gameObject.name} cambiada a {originalScale}");
-        }*/
     }
 
     private bool IsBodyPart()

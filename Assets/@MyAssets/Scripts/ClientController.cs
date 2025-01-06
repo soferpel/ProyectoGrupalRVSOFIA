@@ -174,15 +174,13 @@ public class ClientController : PersonController
                             if (render.material == null)
                             {
                                 Debug.LogWarning($"El objeto {child.gameObject.name} tiene un SkinnedMeshRenderer pero no tiene un material asignado.");
-                                continue; // Omite este objeto si no tiene un material
+                                continue; // omite este objeto si no tiene un material
                             }
                             if (!bodypartController.materials.Contains(render.material))
                             {
                                 Debug.Log($"Objeto: {child.gameObject.name}, Material: {render.material.name}");
                                 bodypartController.materials.Add(render.material);
-                            }/*
-                            Debug.Log("EJEMPLO: " + child.gameObject.name +render.material);
-                            bodypartController.materials.Add(render.material);*/
+                            }
                         }
                     }
                 }

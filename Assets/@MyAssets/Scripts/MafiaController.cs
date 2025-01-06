@@ -144,7 +144,6 @@ public class MafiaController : PersonController
         }
         Debug.Log("x Me voy");
         buyPointController.FreePoint();
-        //StartCoroutine(MoveToFinalPoint());
         if(!served)StartCoroutine(HandleMafiaApproachAndAttack());
         else StartCoroutine(MoveToFinalPoint());
         slider.SetActive(false);

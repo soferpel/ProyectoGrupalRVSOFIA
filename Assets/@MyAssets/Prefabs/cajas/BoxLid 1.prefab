@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 4513185075086753503}
   - component: {fileID: 8002065540584613333}
   - component: {fileID: 8147898514659081084}
-  - component: {fileID: 2289017130257017043}
   m_Layer: 11
   m_Name: BoxLid 1
   m_TagString: Lid
@@ -287,15 +286,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.025134444, y: 0.03422581, z: 0.0040990254}
   m_Center: {x: 0, y: -0.000000059604645, z: 0.016358625}
---- !u!114 &2289017130257017043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6900866868238316176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d908c1aa3d2fb348aa17332d6daaa47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

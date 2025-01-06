@@ -190,7 +190,6 @@ public class SliceObject : MonoBehaviour
                         Destroy(collider);
                     }
                 }
-                //detachPart.transform.parent.localScale = new Vector3(0.6f, 0.6f, 0.6f);
             }
             Destroy(tempObject2);
             Destroy(inBoundMesh);
@@ -263,7 +262,6 @@ public class SliceObject : MonoBehaviour
         Debug.Log(part.transform.localPosition + " offset " + offset);
         part.transform.localPosition = new Vector3(0,0, 0.3f);
 
-        //container.transform.localScale = new Vector3(0.6f,0.6f,0.6f);
         part.transform.localRotation *= Quaternion.Euler(0, 90, -90);
         Rigidbody partRb = part.GetComponent<Rigidbody>();
         if (partRb != null)
@@ -277,10 +275,8 @@ public class SliceObject : MonoBehaviour
         grabInteractable.useDynamicAttach = true;
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");
-        container.AddComponent<TriggerActivator>();
         container.AddComponent<BodyPartScaler>();
-        /*
-        */
+
         
         if (partRb != null)
         {
@@ -461,7 +457,6 @@ public class SliceObject : MonoBehaviour
         grabInteractable.useDynamicAttach = true;
         grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");
-        container.AddComponent<TriggerActivator>();
         container.AddComponent<BodyPartScaler>();
 
         if (partRb != null)
