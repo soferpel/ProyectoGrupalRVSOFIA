@@ -4,6 +4,7 @@ using UnityEngine;
 using EzySlice;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.Events;
+using TMPro;
 
 public class SliceObject : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class SliceObject : MonoBehaviour
     public UnityEvent OnCutMade;
     public AudioSource audioSource;
 
+
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -28,24 +30,33 @@ public class SliceObject : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
-        collisionCut = other.gameObject;
-        if(other.gameObject.layer == sliceableLayer)
-        Debug.Log("ha cortado" + collisionCut.name);
-        if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
+        if (enabled)
         {
-            collisionCutComponents = partController;
-            Slice(partController.target, partController);
+            collisionCut = other.gameObject;
+            if (other.gameObject.layer == LayerMask.NameToLayer("Sliceable"))
+            {
+            Debug.Log("trigger enter");
+                Debug.Log("ha cortado" + collisionCut.name);
+                if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
+                {
+                    collisionCutComponents = partController;
+                    Slice(partController.target, partController);
+                }
+                collisionCutComponents = null;
+                collisionCut = null; 
+
+            }
         }
-        collisionCutComponents = null;
-        collisionCut = null; 
     }
+
     public void Slice(GameObject target, SliceablePartController partController)
     {
         Vector3 velocity = velocityEstimator.GetVelocityEstimate();
         Vector3 planeNormal = Vector3.Cross(endSlicePoint.position - startSlicePoint.position, velocity);
         planeNormal.Normalize();
+        planeNormal = gameObject.transform.right;
         float alignment = Vector3.Dot(planeNormal, partController.gameObject.transform.up);
+
         if (Mathf.Abs(alignment) < 0.85f)
         {
             return;
@@ -112,7 +123,7 @@ public class SliceObject : MonoBehaviour
         tempMeshFilter2.mesh = bakedMesh2;
         tempMeshRenderer2.materials = skinnedMeshRenderer2.sharedMaterials;
 
-        SlicedHull hull = tempObject2.Slice(endSlicePoint.position, planeNormal);
+        SlicedHull hull = tempObject2.Slice(gameObject.transform.position, gameObject.transform.right.normalized);
         if (hull != null)
         {
             GameObject upperHull = hull.CreateUpperHull(tempObject2, bloodMaterial);

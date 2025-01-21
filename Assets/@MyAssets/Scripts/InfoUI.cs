@@ -93,7 +93,7 @@ public class InfoUI : MonoBehaviour
         {
             bool canRepair = weaponController.currentDurability <= 0 && orderController.cash >= weaponController.repairCost;
             repairButton.interactable = canRepair;
-            
+            Debug.Log("es reparable " + canRepair +"   "+ (weaponController.currentDurability <= 0) + "    "+ (orderController.cash >= weaponController.repairCost));
 
             if (!canRepair)
             {
