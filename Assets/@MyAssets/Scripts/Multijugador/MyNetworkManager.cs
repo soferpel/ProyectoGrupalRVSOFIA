@@ -3,19 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using System;
+using UnityEngine.Events;
 
 public class MyNetworkManager : MonoBehaviour
 {
+    private const int MAX_PLAYER_AMOUNT = 2;
+    public UnityEvent OnFailedJoin = new UnityEvent();
     public void StartHost()
     {
+        NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallBack;
         NetworkManager.Singleton.StartHost();
-        FullGameManager.Instance.gameState = FullGameManager.GAME_STATES.GameMultiplayer;
-        NetworkManager.Singleton.SceneManager.LoadScene(FullGameManager.Instance.gameState.ToString(), LoadSceneMode.Single);
+        FullGameManager.Instance.GoToGame();
+        //FullGameManager.Instance.gameState = FullGameManager.GAME_STATES.GameMultiplayer;
+        //NetworkManager.Singleton.SceneManager.LoadScene(FullGameManager.Instance.gameState.ToString(), LoadSceneMode.Single);
     }
+
+    private void ConnectionApprovalCallBack(NetworkManager.ConnectionApprovalRequest rquest, NetworkManager.ConnectionApprovalResponse response)
+    {
+        if (SceneManager.GetActiveScene().name == FullGameManager.GAME_STATES.GameMultiplayer.ToString() || NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT)
+            response.Approved = false;
+        else
+            response.Approved = true;
+    }
+
     public void StartClient()
     {
+        NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnectedCallBack;
         NetworkManager.Singleton.StartClient();
+        FullGameManager.Instance.GoToGame();
+
     }
+
+    private void ClientDisconnectedCallBack(ulong obj)
+    {
+        OnFailedJoin.Invoke();
+    }
+
     public void GoBack()
     {
         FullGameManager.Instance.gameState = FullGameManager.GAME_STATES.StartMenuGame;

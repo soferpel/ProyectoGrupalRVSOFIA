@@ -17,27 +17,30 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/@MyAssets/Scene/Game.unity
     guid: b095fba43b1630648b62ca8e3404e666
-  - enabled: 1
+  - enabled: 0
     path: Assets/@MyAssets/Scene/hospital.unity
     guid: 6cab7c68a9db5fd42a21f05ca38e2bc8
-  - enabled: 1
+  - enabled: 0
     path: Assets/@MyAssets/Scene/officemafia.unity
     guid: a40ad7cd985392540bc69c7425bccb24
-  - enabled: 1
+  - enabled: 0
     path: Assets/@MyAssets/Scene/tutorial.unity
     guid: c8b6d7ded8ba85546bfc76fef929e2ce
-  - enabled: 1
+  - enabled: 0
     path: Assets/@MyAssets/Scene/Game 1.unity
     guid: 37313e3b775977e4cae11b77530f4d76
   - enabled: 1
     path: Assets/@MyAssets/Scene/StartMenuGame.unity
     guid: 7c03cf8eae3d4484db55410dd48c0381
-  - enabled: 1
+  - enabled: 0
     path: Assets/@MyAssets/Scene/GameOver.unity
     guid: 70f22ea97226c464e9175860a3ac251f
   - enabled: 1
     path: Assets/@MyAssets/Scene/Multiplayer/LobbyScene.unity
     guid: 41293cdb2e8f9024c9266527dbce8542
+  - enabled: 1
+    path: Assets/@MyAssets/Scene/Multiplayer/GameMultiplayer.unity
+    guid: a050b693aff1424499d7d8d900b67546
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 562aa262cf9be654693a97cc52466503,
       type: 2}
