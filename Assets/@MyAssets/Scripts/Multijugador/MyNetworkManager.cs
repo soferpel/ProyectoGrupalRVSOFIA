@@ -13,8 +13,13 @@ public class MyNetworkManager : MonoBehaviour
     public void StartHost()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallBack;
+        Debug.Log("StartHost1");
         NetworkManager.Singleton.StartHost();
+        Debug.Log("StartHost2");
+
         FullGameManager.Instance.GoToGame();
+        Debug.Log("StartHost3");
+
         //FullGameManager.Instance.gameState = FullGameManager.GAME_STATES.GameMultiplayer;
         //NetworkManager.Singleton.SceneManager.LoadScene(FullGameManager.Instance.gameState.ToString(), LoadSceneMode.Single);
     }
@@ -30,11 +35,17 @@ public class MyNetworkManager : MonoBehaviour
     public void StartClient()
     {
         NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnectedCallBack;
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.StartClient();
         FullGameManager.Instance.GoToGame();
 
     }
 
+    private void OnClientConnected(ulong clientId)
+    {
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+        FullGameManager.Instance.GoToGame();
+    }
     private void ClientDisconnectedCallBack(ulong obj)
     {
         OnFailedJoin.Invoke();

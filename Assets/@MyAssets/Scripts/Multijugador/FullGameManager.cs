@@ -64,23 +64,33 @@ public class FullGameManager : NetworkBehaviour
     public void GoToGame()
     {
         ulong localClientId = NetworkManager.Singleton.LocalClientId;
+        Debug.Log("GoToGame "+ localClientId);
         GoToGameRpc(localClientId);
     }
     [Rpc(SendTo.Server)]
     public void GoToGameRpc(ulong clientId)
     {
+        Debug.Log("GoToGameRPC");
+        bool playerInList = false;
         for (int i = 0; i < playerDataList.Count; i++)
         {
             if (playerDataList[i].clientId == clientId)
             {
-                playerDataList[i] = new PlayerData(playerDataList[i].clientId, true);
-                Debug.Log("jugador añad list");
+                playerInList = true;
+                playerDataList[i] = new PlayerData(clientId, true);
+                Debug.Log("Jugador en la lista");
                 break;
             }
         }
-
+        if (!playerInList)
+        {
+            playerDataList.Add(new PlayerData(clientId, true));
+            Debug.Log("Jugador añadido");
+        }
+        Debug.Log("1: "+ NetworkManager.ConnectedClientsList.Count+ "   2:"+ playerDataList.Count);
         if (NetworkManager.ConnectedClientsList.Count > 1 && playerDataList.Count > 1)
         {
+            Debug.Log("Todos conectados");
             bool allReady = true;
             for (int i = 0; i < playerDataList.Count; i++)
             {

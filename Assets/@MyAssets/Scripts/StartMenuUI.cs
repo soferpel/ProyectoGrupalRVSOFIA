@@ -25,10 +25,6 @@ public class StartMenuUI : MonoBehaviour
         Debug.Log("Multiplayer button pressed");
         SceneManager.LoadScene("LobbyScene", LoadSceneMode.Single);
     }
-    public void hola()
-    {
-
-    }
 
     public void OnControlsButtonPressed()
     {
