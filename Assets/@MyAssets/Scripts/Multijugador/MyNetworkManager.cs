@@ -10,9 +10,15 @@ public class MyNetworkManager : MonoBehaviour
 {
     private const int MAX_PLAYER_AMOUNT = 2;
     public UnityEvent OnFailedJoin = new UnityEvent();
+
+    //private IEnumerator Start()
+    //{
+    //    yield return new WaitForSeconds(1);
+    //    StartHost();
+    //}
     public void StartHost()
     {
-        NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallBack;
+        //NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallBack;
         Debug.Log("StartHost1");
         NetworkManager.Singleton.StartHost();
         Debug.Log("StartHost2");
