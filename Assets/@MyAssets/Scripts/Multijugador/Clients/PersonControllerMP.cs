@@ -17,7 +17,7 @@ public abstract class PersonControllerMP : NetworkBehaviour
 
     protected NavMeshAgent agent;
     protected Animator animator;
-    protected ShopNavigator shopNavigator;
+    protected ShopNavigatorMP shopNavigator;
     protected int pointsToVisit = 0;
     protected int pointsVisited = 0;
     [SerializeField]
@@ -68,7 +68,7 @@ public abstract class PersonControllerMP : NetworkBehaviour
 
             yield return null;
         }
-        shopNavigator.OpenDoor();
+        shopNavigator.OpenDoorClientRpc();
         PlayDoorSound();
 
         while (Vector3.Distance(transform.position, finalEntryPoint.position) > 0.1f)
@@ -234,8 +234,7 @@ public abstract class PersonControllerMP : NetworkBehaviour
 
         if (this is ClientControllerMP client && client.isReported)
         {
-            Debug.Log("Cadáver reportado. Fin del juego.");
-            GameManager.isGameOver = true;
+            HandleGameOverClientRpc();
         }
 
         while (Vector3.Distance(transform.position, finalExitPoint.position) > 0.1f)
@@ -253,6 +252,13 @@ public abstract class PersonControllerMP : NetworkBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    public void HandleGameOverClientRpc()
+    {
+        FullGameManager.Instance.TriggerGameOver();
+        Debug.Log("Juego terminado. ¡Game Over!");
     }
 
     protected void StartWaitTimer()
@@ -341,7 +347,7 @@ public abstract class PersonControllerMP : NetworkBehaviour
     {
         this.buyPointController = buyPointController;
     }
-    public void SetShopNavigator(ShopNavigator shopNavigator)
+    public void SetShopNavigator(ShopNavigatorMP shopNavigator)
     {
         this.shopNavigator = shopNavigator;
     }

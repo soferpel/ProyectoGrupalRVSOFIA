@@ -32,7 +32,7 @@ public class ClientManagerMP : NetworkBehaviour
     public Transform doorExitPoint;
     public Transform finalDestinationPoint;
     public BuyPointControllerMP buyPointController;
-    public ShopNavigator shopNavigator;
+    public ShopNavigatorMP shopNavigator;
     public GameObject player;
     protected virtual void Start()
     {

@@ -144,7 +144,7 @@ public class ClothingMP : NetworkBehaviour
 
 
     [ClientRpc]
-    void SetPartActiveClientRpc(int partIndex, bool isActive, MaterialData matData)
+    void SetPartActiveClientRpc(int partIndex, bool isActive, MaterialData matData, string textureName)
     {
         if (partIndex >= 0 && partIndex < characterParts.Count)
         {
@@ -154,13 +154,13 @@ public class ClothingMP : NetworkBehaviour
                 Material mat = matData.ToMaterial();
                 var renderer = characterParts[partIndex].GetComponent<Renderer>();
                 renderer.material = mat;
+                renderer.material.mainTexture.name = textureName;
             }
         }
     }
 
     void start_random_clothing()
     {
-        Debug.Log("ENTRO AQUI");
         hat = true;
 
         hair_a.SetActive(false);
@@ -230,7 +230,6 @@ public class ClothingMP : NetworkBehaviour
 
         trousers.SetActive(false);
 
-        Debug.Log("Desactivado en todo");
         int skin_color = UnityEngine.Random.Range(0, 6);
 
         skin_head.GetComponent<Renderer>().materials[0].mainTexture = skin_textures[skin_color];
@@ -676,13 +675,21 @@ public class ClothingMP : NetworkBehaviour
             MaterialData matData = MaterialData.FromMaterial(characterParts[i].GetComponent<Renderer>().sharedMaterial);
             if (characterParts[i].activeSelf)
             {
-                SetPartActiveClientRpc(i, true, matData);
+                string textureName = characterParts[i].GetComponent<Renderer>().sharedMaterial.mainTexture.name;
+                SetPartActiveClientRpc(i, true, matData, textureName);
             }
             else
             {
-                SetPartActiveClientRpc(i, false, matData);
+                string textureName = characterParts[i].GetComponent<Renderer>().sharedMaterial.mainTexture.name;
+                SetPartActiveClientRpc(i, false, matData, textureName);
             }
         }
+
+        string clientDescription = GenerateAppearanceDescription();
+        clientController.appearanceDescription = clientDescription;
+        OnClientAppearanceGenerated?.Invoke(clientDescription);
+        clientController.isFemale = (male_female == 1) ? true : false;
+        existingClientDescriptions.Add(clientDescription);
     }
 
     private void EnsureUniqueAppearanceForMafia()
@@ -706,7 +713,6 @@ public class ClothingMP : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
-        Debug.Log("AWAKE");
         characterParts = new List<GameObject>()
         {
             cigarette, crowbar, fireaxe, glock, phone,
@@ -733,8 +739,6 @@ public class ClothingMP : NetworkBehaviour
         if (IsServer)
         {
 
-
-            Debug.Log("AWAKE SERVER");
             if (GetComponent<MafiaControllerMP>() != null)
             {
                 EnsureUniqueAppearanceForMafia();
@@ -743,11 +747,6 @@ public class ClothingMP : NetworkBehaviour
             {
                 clientController = GetComponent<ClientControllerMP>();
                 start_random_clothing();
-                string clientDescription = GenerateAppearanceDescription();
-                clientController.appearanceDescription = clientDescription;
-                OnClientAppearanceGenerated?.Invoke(clientDescription);
-                clientController.isFemale = (male_female == 1) ? true : false;
-                existingClientDescriptions.Add(clientDescription);
             }
         }
     }
@@ -795,6 +794,7 @@ public class ClothingMP : NetworkBehaviour
                 string textureName = (renderer != null && renderer.material.mainTexture != null)
                     ? renderer.material.mainTexture.name
                     : "No Texture";
+                Debug.Log("Textura: "+textureName);
                 if (item.name == "traje de banquero")
                 {
                     description += $"{item.name} {textureName} \n ";

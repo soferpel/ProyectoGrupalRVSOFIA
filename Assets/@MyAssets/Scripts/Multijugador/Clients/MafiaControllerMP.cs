@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,10 +23,22 @@ public class MafiaControllerMP : PersonControllerMP
 
     public void GenerateOrder()
     {
-        string[] bodyParts = { "Torso", "Cabeza", "Pierna", "Brazo" };
-        string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
-        orderDescription = selectedPart + "";
-        Debug.Log("Pedido del mafioso: " + orderDescription);
+        if (IsServer)
+        {
+            string[] bodyParts = { "Torso", "Cabeza", "Pierna", "Brazo" };
+            string selectedPart = bodyParts[Random.Range(0, bodyParts.Length)];
+            orderDescription = selectedPart + "";
+            Debug.Log("Pedido del mafioso: " + orderDescription);
+
+            OrderClientRpc(orderDescription);
+        }
+    }
+
+    [ClientRpc]
+    private void OrderClientRpc(string order)
+    {
+        orderDescription = order;
+        Debug.Log("Pedido sincronizado: " + orderDescription);
     }
 
     protected virtual void OnTriggerEnter(Collider other)
@@ -90,10 +103,7 @@ public class MafiaControllerMP : PersonControllerMP
         yield return new WaitForSeconds(2f);
 
 
-        GameManager.isGameOver = true;
-
-        Debug.Log("Juego terminado. ¡Game Over!");
-
+        HandleGameOverClientRpc();
     }
 
     public string AppearanceDescription
