@@ -7453,7 +7453,6 @@ GameObject:
   - component: {fileID: 1566412021109942192}
   - component: {fileID: 5797952205161242692}
   - component: {fileID: 3463238402697564204}
-  - component: {fileID: 3294686903951828771}
   - component: {fileID: 8864871435929723196}
   - component: {fileID: 4259453608080388918}
   - component: {fileID: 7684109719891990869}
@@ -7463,6 +7462,7 @@ GameObject:
   - component: {fileID: -1057135909512952182}
   - component: {fileID: -7682076444352724768}
   - component: {fileID: 1266330182081421513}
+  - component: {fileID: 260395854276201034}
   m_Layer: 0
   m_Name: Mafia
   m_TagString: Untagged
@@ -7522,7 +7522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 230663558
+  GlobalObjectIdHash: 1683605402
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -7989,32 +7989,6 @@ MonoBehaviour:
   _VisionConeAngle: 45
   _VisionConeRange: 5.6
   _VisionConeColour: {r: 1, g: 0, b: 0, a: 0.25}
---- !u!114 &3294686903951828771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4368000783781150676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0853989f9b4a79642b9af2a165e94f9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 8864871435929723196}
-  isAlive: 1
-  isReported: 0
-  waitTime: 2
-  inBuyPoint: 0
-  served: 0
-  inQueue: 0
-  waitTimeBuyPoint: 30
-  doorExitPoint: {fileID: 0}
-  audioSource: []
-  appearanceDescription: 
-  orderDescription: 
-  gun: {fileID: 7513281148552467141}
-  player: {fileID: 0}
 --- !u!114 &8864871435929723196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8566,6 +8540,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TransitionStateInfoList: []
   m_Animator: {fileID: 563652933418609130}
+--- !u!114 &260395854276201034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368000783781150676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c663ab946bb05b544aaf79378e1491fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 8864871435929723196}
+  isAlive: 1
+  isReported: 0
+  waitTime: 2
+  inBuyPoint: 0
+  served: 0
+  inQueue: 0
+  waitTimeBuyPoint: 30
+  doorExitPoint: {fileID: 0}
+  audioSource: []
+  appearanceDescription: 
+  orderDescription: 
+  gun: {fileID: 7513281148552467141}
+  player: {fileID: 0}
 --- !u!1 &4579275148434877387
 GameObject:
   m_ObjectHideFlags: 0

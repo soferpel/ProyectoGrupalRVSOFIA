@@ -1201,7 +1201,6 @@ GameObject:
   - component: {fileID: 8481315138817633285}
   - component: {fileID: -8096046043111856033}
   - component: {fileID: 2434851932175102050}
-  - component: {fileID: 1128047073529535267}
   - component: {fileID: 8694950492944798281}
   - component: {fileID: 2693957462350037603}
   - component: {fileID: 6769101871758133847}
@@ -1219,6 +1218,7 @@ GameObject:
   - component: {fileID: -1008547911719538122}
   - component: {fileID: -3892039119857250998}
   - component: {fileID: 4732366943926469504}
+  - component: {fileID: -185458890943511359}
   m_Layer: 0
   m_Name: Client
   m_TagString: Untagged
@@ -1278,7 +1278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1395785002
+  GlobalObjectIdHash: 69235781
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1612,88 +1612,6 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 6269eb3a8378a8242b1a4afb004778d2, type: 3}
   - {fileID: 2800000, guid: 4a35a1bacc4f6ce43ba1e205018b24c2, type: 3}
   show_run: 1
---- !u!114 &1128047073529535267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 957468581163429957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aa671b4c2b23d5439e56844af177556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slider: {fileID: 6776835126546240778}
-  isAlive: 1
-  isReported: 0
-  waitTime: 2
-  inBuyPoint: 0
-  served: 0
-  inQueue: 0
-  waitTimeBuyPoint: 30
-  doorExitPoint: {fileID: 0}
-  audioSource: []
-  appearanceDescription: 
-  distanceThreshold: 1
-  hasBeenAttacked: 0
-  deadRigidbodies:
-  - {fileID: 1244215893255851910}
-  - {fileID: 4623826659678133242}
-  - {fileID: 5926611274392955914}
-  - {fileID: 5042890478811680511}
-  - {fileID: 867945267569210099}
-  - {fileID: 5144779795094924071}
-  - {fileID: 7810421820122535898}
-  - {fileID: 2010575076186470363}
-  - {fileID: 6844807235398970769}
-  - {fileID: 2190234982051595564}
-  - {fileID: 2185845507628552944}
-  - {fileID: 7735998104484088173}
-  - {fileID: 6621924459115794555}
-  - {fileID: 6220838678669465047}
-  - {fileID: 1931889215651322263}
-  deadColliders:
-  - {fileID: 563269497021602012}
-  - {fileID: 4377670259236274369}
-  - {fileID: 7325723846474773108}
-  - {fileID: 624008498700802757}
-  - {fileID: 8387695231250867339}
-  - {fileID: 5399156007824226522}
-  - {fileID: 2307224065391221281}
-  - {fileID: 7833149447917070732}
-  - {fileID: 4962987287521513762}
-  - {fileID: 6120227818039373095}
-  - {fileID: 8908946630429461719}
-  - {fileID: 6450960930269793050}
-  - {fileID: 305782505038850190}
-  - {fileID: 7952043735335391235}
-  - {fileID: 6749705423934753548}
-  countBodyParts: 5
-  body: {fileID: 2657607169892166147}
-  sliceableParts:
-  - {fileID: 8475894061863575647}
-  - {fileID: 2399345166619767827}
-  - {fileID: 1563047095040040065}
-  - {fileID: 4968215964275325811}
-  - {fileID: 2872825006229257540}
-  reportDirection: {x: 0, y: 0, z: 0}
-  joints: []
-  isFemale: 0
-  clothesMaterials:
-  - {fileID: 1374402990933640826}
-  - {fileID: 1891292298942098422}
-  - {fileID: 1659501795070416519}
-  - {fileID: 4444995955132078365}
-  - {fileID: 6646681574483141889}
-  - {fileID: 5515267265772145266}
-  - {fileID: 389068636324409304}
-  - {fileID: 6934717381192317007}
-  - {fileID: 6125755254756121833}
-  - {fileID: 4080550322382321948}
-  - {fileID: 6319169490741046133}
-  - {fileID: 3952656116878647076}
-  skinMaterial: {fileID: 8529312728670101084}
 --- !u!136 &8694950492944798281
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2430,6 +2348,88 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TransitionStateInfoList: []
   m_Animator: {fileID: 8481315138817633285}
+--- !u!114 &-185458890943511359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957468581163429957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0901d01ff93dd9c48aaa76501b7b2e82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 6776835126546240778}
+  isAlive: 1
+  isReported: 0
+  waitTime: 2
+  inBuyPoint: 0
+  served: 0
+  inQueue: 0
+  waitTimeBuyPoint: 30
+  doorExitPoint: {fileID: 0}
+  audioSource: []
+  appearanceDescription: 
+  distanceThreshold: 1
+  hasBeenAttacked: 0
+  deadRigidbodies:
+  - {fileID: 1244215893255851910}
+  - {fileID: 4623826659678133242}
+  - {fileID: 5926611274392955914}
+  - {fileID: 5042890478811680511}
+  - {fileID: 867945267569210099}
+  - {fileID: 5144779795094924071}
+  - {fileID: 7810421820122535898}
+  - {fileID: 2010575076186470363}
+  - {fileID: 6844807235398970769}
+  - {fileID: 2190234982051595564}
+  - {fileID: 2185845507628552944}
+  - {fileID: 7735998104484088173}
+  - {fileID: 6621924459115794555}
+  - {fileID: 6220838678669465047}
+  - {fileID: 1931889215651322263}
+  deadColliders:
+  - {fileID: 563269497021602012}
+  - {fileID: 4377670259236274369}
+  - {fileID: 7325723846474773108}
+  - {fileID: 624008498700802757}
+  - {fileID: 8387695231250867339}
+  - {fileID: 5399156007824226522}
+  - {fileID: 2307224065391221281}
+  - {fileID: 7833149447917070732}
+  - {fileID: 4962987287521513762}
+  - {fileID: 6120227818039373095}
+  - {fileID: 8908946630429461719}
+  - {fileID: 6450960930269793050}
+  - {fileID: 305782505038850190}
+  - {fileID: 7952043735335391235}
+  - {fileID: 6749705423934753548}
+  countBodyParts: 5
+  body: {fileID: 2657607169892166147}
+  sliceableParts:
+  - {fileID: 8475894061863575647}
+  - {fileID: 2399345166619767827}
+  - {fileID: 1563047095040040065}
+  - {fileID: 4968215964275325811}
+  - {fileID: 2872825006229257540}
+  reportDirection: {x: 0, y: 0, z: 0}
+  joints: []
+  isFemale: 0
+  clothesMaterials:
+  - {fileID: 1374402990933640826}
+  - {fileID: 1891292298942098422}
+  - {fileID: 1659501795070416519}
+  - {fileID: 4444995955132078365}
+  - {fileID: 6646681574483141889}
+  - {fileID: 5515267265772145266}
+  - {fileID: 389068636324409304}
+  - {fileID: 6934717381192317007}
+  - {fileID: 6125755254756121833}
+  - {fileID: 4080550322382321948}
+  - {fileID: 6319169490741046133}
+  - {fileID: 3952656116878647076}
+  skinMaterial: {fileID: 8529312728670101084}
 --- !u!1 &963339885799123903
 GameObject:
   m_ObjectHideFlags: 0
@@ -2920,6 +2920,8 @@ GameObject:
   - component: {fileID: 6220838678669465047}
   - component: {fileID: 3123261649429514700}
   - component: {fileID: 5954343740337133499}
+  - component: {fileID: 4446971084127728227}
+  - component: {fileID: 1559539717222047123}
   m_Layer: 0
   m_Name: Bone.004
   m_TagString: Untagged
@@ -2969,7 +2971,7 @@ MonoBehaviour:
   - {fileID: 7952043735335391235}
   - {fileID: 6749705423934753548}
   gameObjectTag: Cabeza
-  client: {fileID: 1128047073529535267}
+  client: {fileID: 0}
   boneNames:
   - Bone.002
   - Bone.004
@@ -3221,6 +3223,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &4446971084127728227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563047095040040065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &1559539717222047123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563047095040040065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1610848551441169465
 GameObject:
   m_ObjectHideFlags: 0
@@ -4019,6 +4064,8 @@ GameObject:
   - component: {fileID: 5042890478811680511}
   - component: {fileID: 4738148305501329096}
   - component: {fileID: 2951678712780826929}
+  - component: {fileID: 2315664801958434284}
+  - component: {fileID: 7753721026960639041}
   m_Layer: 0
   m_Name: Bone.009
   m_TagString: Untagged
@@ -4069,7 +4116,7 @@ MonoBehaviour:
   - {fileID: 8387695231250867339}
   - {fileID: 5399156007824226522}
   gameObjectTag: Pierna
-  client: {fileID: 1128047073529535267}
+  client: {fileID: 0}
   boneNames:
   - Bone.009
   - Bone.013
@@ -4322,6 +4369,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &2315664801958434284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2399345166619767827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &7753721026960639041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2399345166619767827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2518320098304568032
 GameObject:
   m_ObjectHideFlags: 0
@@ -4566,6 +4656,8 @@ GameObject:
   - component: {fileID: 305782505038850190}
   - component: {fileID: 191217366476279177}
   - component: {fileID: 42288452680406681}
+  - component: {fileID: 5644825058756551972}
+  - component: {fileID: 1652594269694299765}
   m_Layer: 0
   m_Name: Bone
   m_TagString: Untagged
@@ -4806,6 +4898,49 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   part: {fileID: 957468581163429957}
+--- !u!114 &5644825058756551972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657607169892166147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &1652594269694299765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657607169892166147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2678582717162039792
 GameObject:
   m_ObjectHideFlags: 0
@@ -5115,6 +5250,8 @@ GameObject:
   - component: {fileID: 2190234982051595564}
   - component: {fileID: 3514836628372241440}
   - component: {fileID: 3549212737461030287}
+  - component: {fileID: 6691163119601009797}
+  - component: {fileID: 2439554982548191140}
   m_Layer: 0
   m_Name: Bone.008
   m_TagString: Untagged
@@ -5165,7 +5302,7 @@ MonoBehaviour:
   - {fileID: 8908946630429461719}
   - {fileID: 6450960930269793050}
   gameObjectTag: Brazo
-  client: {fileID: 1128047073529535267}
+  client: {fileID: 0}
   boneNames:
   - Bone.008
   - Bone.012
@@ -5417,6 +5554,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &6691163119601009797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2872825006229257540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &2439554982548191140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2872825006229257540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2961468504726303263
 GameObject:
   m_ObjectHideFlags: 0
@@ -5602,6 +5782,8 @@ GameObject:
   - component: {fileID: 2185845507628552944}
   - component: {fileID: 1451705886238922600}
   - component: {fileID: 5804162578445552942}
+  - component: {fileID: 7797350090566919838}
+  - component: {fileID: 5331147307045674441}
   m_Layer: 0
   m_Name: Bone.012
   m_TagString: Untagged
@@ -5873,6 +6055,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &7797350090566919838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3011784131618402576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &5331147307045674441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3011784131618402576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3038070931873539897
 GameObject:
   m_ObjectHideFlags: 0
@@ -6462,6 +6687,8 @@ GameObject:
   - component: {fileID: 5144779795094924071}
   - component: {fileID: 128735010165256836}
   - component: {fileID: 3453176552563738446}
+  - component: {fileID: 3317638546050238946}
+  - component: {fileID: 4195600518364606700}
   m_Layer: 0
   m_Name: Bone.018
   m_TagString: Untagged
@@ -6733,6 +6960,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &3317638546050238946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738829186962647812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &4195600518364606700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738829186962647812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3952656116878647076
 GameObject:
   m_ObjectHideFlags: 0
@@ -7361,6 +7631,8 @@ GameObject:
   - component: {fileID: 7735998104484088173}
   - component: {fileID: 1361323615977718400}
   - component: {fileID: 1087413830244249712}
+  - component: {fileID: 1048405021036748497}
+  - component: {fileID: 1276214607255254111}
   m_Layer: 0
   m_Name: Bone.016
   m_TagString: Untagged
@@ -7635,6 +7907,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &1048405021036748497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445080030977932917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &1276214607255254111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445080030977932917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4456713494003766351
 GameObject:
   m_ObjectHideFlags: 0
@@ -7979,6 +8294,8 @@ GameObject:
   - component: {fileID: 7810421820122535898}
   - component: {fileID: 1269497676477450281}
   - component: {fileID: 7835290767322100474}
+  - component: {fileID: 3413326618697733633}
+  - component: {fileID: 3273145498447320539}
   m_Layer: 0
   m_Name: Bone.007
   m_TagString: Untagged
@@ -8028,7 +8345,7 @@ MonoBehaviour:
   - {fileID: 7833149447917070732}
   - {fileID: 4962987287521513762}
   gameObjectTag: Brazo
-  client: {fileID: 1128047073529535267}
+  client: {fileID: 0}
   boneNames:
   - Bone.007
   - Bone.011
@@ -8280,6 +8597,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &3413326618697733633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4968215964275325811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &3273145498447320539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4968215964275325811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4985149757561774577
 GameObject:
   m_ObjectHideFlags: 0
@@ -8293,6 +8653,8 @@ GameObject:
   - component: {fileID: 867945267569210099}
   - component: {fileID: 105996214726113318}
   - component: {fileID: 3922111939962502675}
+  - component: {fileID: 6804588971937895276}
+  - component: {fileID: 176037912175898391}
   m_Layer: 0
   m_Name: Bone.013
   m_TagString: Untagged
@@ -8564,6 +8926,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &6804588971937895276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4985149757561774577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &176037912175898391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4985149757561774577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5093521601480547614
 GameObject:
   m_ObjectHideFlags: 0
@@ -8824,6 +9229,8 @@ GameObject:
   - component: {fileID: 5926611274392955914}
   - component: {fileID: 646027550877417}
   - component: {fileID: 3193844695711194472}
+  - component: {fileID: 9105683033343684237}
+  - component: {fileID: 3713890794621871535}
   m_Layer: 0
   m_Name: Bone.014
   m_TagString: Untagged
@@ -9095,6 +9502,50 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &9105683033343684237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5220794131162229086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97616b67982a4be48d957d421e422433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 0
+  SlerpPosition: 0
+  StaleDataHandling: 1
+--- !u!114 &3713890794621871535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5220794131162229086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5388605065002996055
 GameObject:
   m_ObjectHideFlags: 0
@@ -9918,6 +10369,8 @@ GameObject:
   - component: {fileID: 6844807235398970769}
   - component: {fileID: 669879353015453042}
   - component: {fileID: 6704674229180522917}
+  - component: {fileID: 5243363895289650786}
+  - component: {fileID: 4219942292987315531}
   m_Layer: 0
   m_Name: Bone.015
   m_TagString: Untagged
@@ -10190,6 +10643,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &5243363895289650786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6439157258366091523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &4219942292987315531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6439157258366091523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6646681574483141889
 GameObject:
   m_ObjectHideFlags: 0
@@ -11576,6 +12072,8 @@ GameObject:
   - component: {fileID: 68628632372527975}
   - component: {fileID: 4377670259236274369}
   - component: {fileID: 3996008172892726960}
+  - component: {fileID: 4265594063375071862}
+  - component: {fileID: 9187953873891774549}
   m_Layer: 0
   m_Name: Bone.010
   m_TagString: Untagged
@@ -11847,6 +12345,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &4265594063375071862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7704193103651348662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &9187953873891774549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7704193103651348662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7704622298927232459
 GameObject:
   m_ObjectHideFlags: 0
@@ -12727,6 +13268,8 @@ GameObject:
   - component: {fileID: 2010575076186470363}
   - component: {fileID: 5897825231214289906}
   - component: {fileID: 1255623448749200582}
+  - component: {fileID: 2864589714323346630}
+  - component: {fileID: 1091763139741368465}
   m_Layer: 0
   m_Name: Bone.011
   m_TagString: Untagged
@@ -12998,6 +13541,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &2864589714323346630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8220217994611115229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &1091763139741368465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8220217994611115229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8251120159447838500
 GameObject:
   m_ObjectHideFlags: 0
@@ -13011,6 +13597,8 @@ GameObject:
   - component: {fileID: 1931889215651322263}
   - component: {fileID: 1138526808429057543}
   - component: {fileID: 9086691233197475197}
+  - component: {fileID: 8322961610608754992}
+  - component: {fileID: 7855892543701800513}
   m_Layer: 0
   m_Name: Bone.006
   m_TagString: Untagged
@@ -13282,6 +13870,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &8322961610608754992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8251120159447838500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &7855892543701800513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8251120159447838500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8403383686802668421
 GameObject:
   m_ObjectHideFlags: 0
@@ -13511,6 +14142,8 @@ GameObject:
   - component: {fileID: 9078251719939887488}
   - component: {fileID: 563269497021602012}
   - component: {fileID: 1496688796725528846}
+  - component: {fileID: 4670248044594614338}
+  - component: {fileID: 5457242856581912076}
   m_Layer: 0
   m_Name: Bone.005
   m_TagString: Untagged
@@ -13561,7 +14194,7 @@ MonoBehaviour:
   - {fileID: 4377670259236274369}
   - {fileID: 7325723846474773108}
   gameObjectTag: Pierna
-  client: {fileID: 1128047073529535267}
+  client: {fileID: 0}
   boneNames:
   - Bone.005
   - Bone.010
@@ -13814,6 +14447,49 @@ MonoBehaviour:
   m_StartingSingleGrabTransformers: []
   m_StartingMultipleGrabTransformers: []
   m_AddDefaultGrabTransformers: 1
+--- !u!114 &4670248044594614338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8475894061863575647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+--- !u!114 &5457242856581912076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8475894061863575647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8529312728670101084
 GameObject:
   m_ObjectHideFlags: 0
