@@ -123,4 +123,25 @@ public class FullGameManager : NetworkBehaviour
            // playerGO.GetComponent<NetworkObject>().SpawnAsPlayerObject(playerData.clientId, true);
         }
     }
+
+
+    public void TriggerGameOver()
+    {
+        if (IsServer)
+        {
+            StartCoroutine(LoadGameOverScene());
+        }
+    }
+
+    private IEnumerator LoadGameOverScene()
+    {
+        yield return new WaitForSeconds(1.5f);
+        GoToGameOverClientRpc();
+    }
+
+    [ClientRpc]
+    private void GoToGameOverClientRpc()
+    {
+        NetworkManager.Singleton.SceneManager.LoadScene(GAME_STATES.GameOverScene.ToString(), LoadSceneMode.Single);
+    }
 }

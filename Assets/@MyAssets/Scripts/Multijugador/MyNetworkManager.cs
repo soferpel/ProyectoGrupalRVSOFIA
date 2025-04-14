@@ -43,7 +43,6 @@ public class MyNetworkManager : MonoBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnectedCallBack;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.StartClient();
-        FullGameManager.Instance.GoToGame();
 
     }
 
