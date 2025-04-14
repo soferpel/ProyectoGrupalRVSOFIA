@@ -27,6 +27,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Build with vinted Maven
+      run: mvn -B package --file vintedServer/pom.xml
+
+    - name: Build with client Maven
+      run: mvn -B package --file client/pom.xml
 
