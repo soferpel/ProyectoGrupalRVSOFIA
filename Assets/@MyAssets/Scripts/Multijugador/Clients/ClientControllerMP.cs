@@ -90,9 +90,18 @@ public class ClientControllerMP : PersonControllerMP
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Cliente atacado por un cuchillo." + other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon1) + "      "+ weapon1.isGrabbed.Value);
+        if (other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon1))
+        {
+            // Si el componente WeaponControllerMP fue encontrado, ahora puedes acceder a sus propiedades
+            Debug.Log("Cliente atacado por un cuchillo. isGrabbed: " + weapon1.isGrabbed.Value);
+        }
+        else
+        {
+            // Si no se encontró el componente WeaponControllerMP
+            Debug.Log("El objeto no tiene un WeaponControllerMP.");
+        }
 
-        if (other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon) && weapon.isGrabbed.Value)
+        if (other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon))// && weapon.isGrabbed.Value)
         {
             Debug.Log("Cliente atacado por un cuchillo.");
             audioSource[4].Stop();
@@ -107,6 +116,17 @@ public class ClientControllerMP : PersonControllerMP
     private void DieClientRpc()
     {
         animator.enabled = false;
+        if (gameObject.TryGetComponent<Collider>(out Collider col)) Destroy(col);
+        foreach (Collider partcol in deadColliders)
+        {
+            partcol.enabled = true;
+            partcol.gameObject.AddComponent<DetectableTarget>();
+            partcol.gameObject.layer = LayerMask.NameToLayer("BodyParts");
+        }
+        foreach (GameObject part in sliceableParts)
+        {
+            part.layer = LayerMask.NameToLayer("Sliceable");
+        }
 
     }
     protected virtual IEnumerator Die(Collider other)

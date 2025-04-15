@@ -29,6 +29,26 @@ public static class YourMeshUtility
             return m.ToMesh();
         }
     }
+    public static byte[] SerializeSkinnedMesh(Mesh mesh)
+    {
+        SkinnedMeshDataSerializable data = SkinnedMeshDataSerializable.FromMesh(mesh);
+        BinaryFormatter bf = new BinaryFormatter();
 
+        using (MemoryStream ms = new())
+        {
+            bf.Serialize(ms, data);
+            return ms.ToArray();
+        }
+    }
+
+    public static Mesh DeserializeSkinnedMesh(byte[] data)
+    {
+        BinaryFormatter bf = new();
+        using (MemoryStream ms = new(data))
+        {
+            SkinnedMeshDataSerializable m = (SkinnedMeshDataSerializable)bf.Deserialize(ms);
+            return m.ToMesh();
+        }
+    }
 
 }

@@ -1612,6 +1612,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 6269eb3a8378a8242b1a4afb004778d2, type: 3}
   - {fileID: 2800000, guid: 4a35a1bacc4f6ce43ba1e205018b24c2, type: 3}
   show_run: 1
+  characterParts: []
 --- !u!136 &8694950492944798281
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2972,6 +2973,7 @@ MonoBehaviour:
   - {fileID: 6749705423934753548}
   gameObjectTag: Cabeza
   client: {fileID: 0}
+  clientMP: {fileID: -185458890943511359}
   boneNames:
   - Bone.002
   - Bone.004
@@ -4117,6 +4119,7 @@ MonoBehaviour:
   - {fileID: 5399156007824226522}
   gameObjectTag: Pierna
   client: {fileID: 0}
+  clientMP: {fileID: -185458890943511359}
   boneNames:
   - Bone.009
   - Bone.013
@@ -5303,6 +5306,7 @@ MonoBehaviour:
   - {fileID: 6450960930269793050}
   gameObjectTag: Brazo
   client: {fileID: 0}
+  clientMP: {fileID: -185458890943511359}
   boneNames:
   - Bone.008
   - Bone.012
@@ -8346,6 +8350,7 @@ MonoBehaviour:
   - {fileID: 4962987287521513762}
   gameObjectTag: Brazo
   client: {fileID: 0}
+  clientMP: {fileID: -185458890943511359}
   boneNames:
   - Bone.007
   - Bone.011
@@ -14195,6 +14200,7 @@ MonoBehaviour:
   - {fileID: 7325723846474773108}
   gameObjectTag: Pierna
   client: {fileID: 0}
+  clientMP: {fileID: -185458890943511359}
   boneNames:
   - Bone.005
   - Bone.010

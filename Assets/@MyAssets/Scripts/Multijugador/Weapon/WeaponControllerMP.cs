@@ -44,15 +44,35 @@ public class WeaponControllerMP : NetworkBehaviour
     }
     public void setColliderTrigger(bool isTrigger)
     {
+        if (!IsOwner) return;
         weaponCollider.isTrigger = isTrigger;
-        SetGrabbedServerRpc(isTrigger);
+
+        if (IsServer)
+        {
+            isGrabbed.Value = isTrigger;
+        }
+        else
+        {
+            SetGrabbedServerRpc(isTrigger);
+        }
+    }
+    public void SetGrabbed(bool grabbed)
+    {
+        SetGrabbedServerRpc(grabbed);
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void SetGrabbedServerRpc(bool isTrigger)
+    {
+        isGrabbed.Value = isTrigger;
+        GetComponent<Collider>().isTrigger = isTrigger;
+        SetGrabbedClientRpc(isTrigger);
+    }
+    [ClientRpc]
+    public void SetGrabbedClientRpc(bool isTrigger)
+    {
+        GetComponent<Collider>().isTrigger = isTrigger;
     }
 
-    [ServerRpc]
-    public void SetGrabbedServerRpc(bool grabbed)
-    {
-        isGrabbed.Value = grabbed;
-    }
 
     public void RepairKnife()
     {

@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 2949228798345819130}
   - component: {fileID: 8813231252025495256}
   - component: {fileID: 8257846217878578588}
+  - component: {fileID: 9076667037138036105}
+  - component: {fileID: 3957098313302007993}
   m_Layer: 0
   m_Name: DynamicContainer
   m_TagString: Untagged
@@ -50,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1372551501
+  GlobalObjectIdHash: 755136923
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -71,6 +73,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b07071d81adbb44aaf66828bf423cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  part: {fileID: 0}
+  bloodMaterial: {fileID: 0}
 --- !u!54 &7387407599821178185
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -159,7 +163,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 1
+    m_Bits: 17
   m_DistanceCalculationMode: 1
   m_SelectMode: 0
   m_FocusMode: 1
@@ -303,5 +307,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2bd32299bc443384f8723bd261cd550a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9076667037138036105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8780882121640730652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84027bf595259ce46a9329777d8a697f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3957098313302007993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8780882121640730652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c2969d81190e504c9e1a4bd4386def5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

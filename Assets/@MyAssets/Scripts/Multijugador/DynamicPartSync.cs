@@ -7,17 +7,17 @@ public class DynamicPartSync : NetworkBehaviour
 {
     public GameObject part;
     public Material bloodMaterial;
-    public void setPart(GameObject part)
+    public void setPart(GameObject part, string tag)
     {
         this.part = part;
         NetworkObjectReference containerRef = gameObject.GetComponent<NetworkObject>();
         byte[] meshData = YourMeshUtility.SerializeMesh(part.GetComponent<MeshFilter>().sharedMesh);
         MaterialData matData = MaterialData.FromMaterial(part.GetComponent<Renderer>().sharedMaterial);
-        SpawnCutPieceClientRpc(containerRef, meshData, matData, part.transform.localPosition, part.transform.localRotation);
+        SpawnCutPieceClientRpc(containerRef, meshData, matData, part.transform.localPosition, part.transform.localRotation,tag);
     }
 
     [ClientRpc]
-    private void SpawnCutPieceClientRpc(NetworkObjectReference containerRef, byte[] meshData, MaterialData matData, Vector3 partPosition, Quaternion partRotation)
+    private void SpawnCutPieceClientRpc(NetworkObjectReference containerRef, byte[] meshData, MaterialData matData, Vector3 partPosition, Quaternion partRotation,string tag)
     {
         if (containerRef.TryGet(out NetworkObject containerNetObj))
         {
@@ -35,7 +35,7 @@ public class DynamicPartSync : NetworkBehaviour
             part.transform.localPosition = partPosition;
             part.transform.localRotation = partRotation;
             part.transform.localScale = Vector3.one;
-
+            part.tag = tag;
             // Le ponés componentes
             var filter = part.AddComponent<MeshFilter>();
             filter.sharedMesh = mesh;
@@ -45,7 +45,16 @@ public class DynamicPartSync : NetworkBehaviour
             collider.convex = true;
 
             var renderer = part.AddComponent<MeshRenderer>();
-            renderer.material = mat;
+            if (mesh.subMeshCount > 1)
+            {
+                renderer.materials = new Material[] { mat, bloodMaterial };
+            }
+            else
+            {
+                renderer.material = mat;
+            }
+
+            container.layer = LayerMask.NameToLayer("BodyParts");
 
             XRGrabInteractable grabInteractable = container.GetComponent<XRGrabInteractable>();
             if (grabInteractable == null)
@@ -57,6 +66,7 @@ public class DynamicPartSync : NetworkBehaviour
             grabInteractable.colliders.Add(collider);
             grabInteractable.enabled = true;
 
+            if (part == null) return;
             foreach (Transform child in this.part.transform)
             {
                 bool needsCollider = false;
@@ -71,12 +81,12 @@ public class DynamicPartSync : NetworkBehaviour
 
                 MaterialData childMatData = MaterialData.FromMaterial(child.GetComponent<Renderer>().sharedMaterial);
 
-                SpawnCutPieceClothesClientRpc(containerRef, childMeshData, childMatData, needsCollider, childPosition, childRotation);
+                SpawnCutPieceClothesClientRpc(containerRef, childMeshData, childMatData, needsCollider, childPosition, childRotation,tag);
             }
         }
     }
     [ClientRpc]
-    private void SpawnCutPieceClothesClientRpc(NetworkObjectReference containerRef, byte[] meshData, MaterialData matData, bool needsCollider, Vector3 position, Quaternion rotation)
+    private void SpawnCutPieceClothesClientRpc(NetworkObjectReference containerRef, byte[] meshData, MaterialData matData, bool needsCollider, Vector3 position, Quaternion rotation, string tag)
     {
         Debug.Log("LLAMA");
         if (containerRef.TryGet(out NetworkObject containerNetObj))
@@ -96,7 +106,8 @@ public class DynamicPartSync : NetworkBehaviour
             part.transform.localPosition = position;
             part.transform.localRotation = rotation;
             part.transform.localScale = Vector3.one;
-
+            part.tag = tag;
+            container.layer = LayerMask.NameToLayer("BodyParts");
             // Le ponés componentes
             var filter = part.AddComponent<MeshFilter>();
             filter.sharedMesh = mesh;

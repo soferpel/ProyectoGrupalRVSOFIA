@@ -8,6 +8,7 @@ using Unity.Netcode;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System;
+using Unity.Netcode.Components;
 
 public class SliceObjectMP : NetworkBehaviour
 {
@@ -33,23 +34,78 @@ public class SliceObjectMP : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("On trigger enter");
         if (enabled)
         {
+            Debug.Log("On trigger enter enabled");
+
             collisionCut = other.gameObject;
+
             if (other.gameObject.layer == LayerMask.NameToLayer("Sliceable"))
             {
-                Debug.Log("trigger enter");
-                Debug.Log("ha cortado" + collisionCut.name);
+                Debug.Log("On trigger enter enabled slice");
                 if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
                 {
-                    collisionCutComponents = partController;
-                    Slice(partController.target, partController);
+                    Debug.Log("On trigger enter enabled slice collision cut");
+
+                    NetworkObject rootNetObj = GetRootNetworkObject(collisionCut);
+                    if (rootNetObj != null)
+                    {
+                        Debug.Log("On trigger enter enabled slice collision cut null");
+
+                        string relativePath = GetRelativePath(rootNetObj.transform, collisionCut.transform);
+                        Debug.Log("On trigger enter enabled slice collision cut null" + relativePath);
+
+                        SliceClientRpc(rootNetObj.NetworkObjectId, relativePath);
+                    }
+                    
                 }
-                collisionCutComponents = null;
-                collisionCut = null;
+                
 
             }
         }
+    }
+    [ClientRpc(RequireOwnership = false)]
+    public void SliceClientRpc(ulong rootId, string childPath)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
+        {
+            Debug.Log("!!!On trigger enter enabled slice collision cut null");
+
+            Transform collisionCut = FindChildByPath(netObj.transform, childPath);
+            if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
+            {
+                Debug.Log("!!!On trigger enter enabled slice collision cut null aaaaa");
+
+                collisionCutComponents = partController;
+                Slice(partController.target, partController);
+            }
+        }
+    }
+
+    private NetworkObject GetRootNetworkObject(GameObject obj)
+    {
+        Transform current = obj.transform;
+        while (current != null)
+        {
+            NetworkObject netObj = current.GetComponent<NetworkObject>();
+            if (netObj != null)
+                return netObj;
+
+            current = current.parent;
+        }
+        return null;
+    }
+    private string GetRelativePath(Transform parent, Transform target)
+    {
+        string path = target.name;
+        while (target.parent != null && target.parent != parent)
+        {
+            Debug.Log("Bucle");
+            target = target.parent;
+            path = target.name + "/" + path;
+        }
+        return path;
     }
 
     public void Slice(GameObject target, SliceablePartController partController)
@@ -88,150 +144,224 @@ public class SliceObjectMP : NetworkBehaviour
             tempMeshRenderer.materials = target.GetComponent<MeshRenderer>().materials;
         }
 
-        GameObject outBoundPart = GetSkinnedSubMesh(tempMeshFilter.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), skinnedMeshRenderer, false, tempMeshFilter, partController.boneNames);
 
-        GameObject inBoundMesh = GetSkinnedSubMesh(tempMeshFilter.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), skinnedMeshRenderer, true, tempMeshFilter, partController.boneNames);
+            GameObject inBoundMesh = GetSkinnedSubMesh(tempMeshFilter.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), skinnedMeshRenderer, true, tempMeshFilter, partController.boneNames);
 
-        if (inBoundMesh == null)
-        {
-            return;
-        }
+            GameObject outBoundPart = GetSkinnedSubMesh(tempMeshFilter.sharedMesh, collisionCutComponents.ConvertCollidersToBounds(), skinnedMeshRenderer, false, tempMeshFilter, partController.boneNames);
 
-        if (outBoundPart != null)
-        {
-            SkinnedMeshRenderer outBoundSkinnedMeshRenderer = outBoundPart.GetComponent<SkinnedMeshRenderer>();
-            if (outBoundSkinnedMeshRenderer != null && skinnedMeshRenderer != null)
+            if (outBoundPart != null)
             {
-                skinnedMeshRenderer.sharedMesh = outBoundSkinnedMeshRenderer.sharedMesh;
-                skinnedMeshRenderer.sharedMaterials = outBoundSkinnedMeshRenderer.sharedMaterials;
-            }
-        }
-
-        if (outBoundPart != null)
-        {
-            Destroy(outBoundPart);
-        }
-
-        SkinnedMeshRenderer skinnedMeshRenderer2 = inBoundMesh.GetComponent<SkinnedMeshRenderer>();
-        GameObject tempObject2 = new GameObject("TempSlicingObject2");
-        tempObject2.transform.position = inBoundMesh.transform.position;
-        tempObject2.transform.rotation = inBoundMesh.transform.rotation;
-        tempObject2.transform.localScale = new Vector3(1, 1, 1);
-
-        MeshFilter tempMeshFilter2 = tempObject2.AddComponent<MeshFilter>();
-        MeshRenderer tempMeshRenderer2 = tempObject2.AddComponent<MeshRenderer>();
-        Mesh bakedMesh2 = new Mesh();
-
-        skinnedMeshRenderer2.BakeMesh(bakedMesh2);
-        tempMeshFilter2.mesh = bakedMesh2;
-        tempMeshRenderer2.materials = skinnedMeshRenderer2.sharedMaterials;
-
-        SlicedHull hull = tempObject2.Slice(gameObject.transform.position, gameObject.transform.right.normalized);
-        if (hull != null)
-        {
-            GameObject upperHull = hull.CreateUpperHull(tempObject2, bloodMaterial);
-            GameObject lowerHull = hull.CreateLowerHull(tempObject2, bloodMaterial);
-            if (upperHull != null && lowerHull != null)
-            {
-
-                float upperDistance = CalculateAverageDistance(upperHull, collisionCutComponents.attachPoint.transform.position);
-                float lowerDistance = CalculateAverageDistance(lowerHull, collisionCutComponents.attachPoint.transform.position);
-
-                GameObject detachPart = (upperDistance < lowerDistance) ? lowerHull : upperHull;
-                SetupSlicedComponent(detachPart);
-
-                foreach (GameObject clothes in collisionCutComponents.clothes)
+                SkinnedMeshRenderer outBoundSkinnedMeshRenderer = outBoundPart.GetComponent<SkinnedMeshRenderer>();
+                if (outBoundSkinnedMeshRenderer != null && skinnedMeshRenderer != null)
                 {
-                    foreach (Transform child in clothes.transform)
+                    skinnedMeshRenderer.sharedMesh = outBoundSkinnedMeshRenderer.sharedMesh;
+                    skinnedMeshRenderer.sharedMaterials = outBoundSkinnedMeshRenderer.sharedMaterials;
+
+                    //AQUI
+                    byte[] meshData = YourMeshUtility.SerializeSkinnedMesh(outBoundSkinnedMeshRenderer.sharedMesh);
+                    MaterialData matData = MaterialData.FromMaterial(outBoundSkinnedMeshRenderer.sharedMaterial);
+                    NetworkObject rootNetObj = GetRootNetworkObject(target);
+                    if (rootNetObj != null)
                     {
-                        if (child.gameObject.activeSelf)
-                        {
-                            SliceClothes(child.gameObject, planeNormal, detachPart);
-                        }
-                    }
-                }
-                foreach (GameObject clothes in collisionCutComponents.clothesChild)
-                {
-                    foreach (Transform child in clothes.transform)
-                    {
-                        if (child.gameObject.activeSelf)
-                        {
-                            SkinnedMeshRenderer skinnedMeshRenderer3 = child.GetComponent<SkinnedMeshRenderer>();
-                            GameObject tempObject3 = new GameObject("meshCloth");
-                            tempObject3.layer = LayerMask.NameToLayer("BodyParts");
-
-                            tempObject3.transform.position = child.transform.position;
-                            tempObject3.transform.rotation = child.transform.rotation;
-                            tempObject3.transform.localScale = new Vector3(1, 1, 1);
-
-                            MeshFilter tempMeshFilter3 = tempObject3.AddComponent<MeshFilter>();
-                            MeshRenderer tempMeshRenderer3 = tempObject3.AddComponent<MeshRenderer>();
-                            Mesh bakedMesh3 = new Mesh();
-
-                            skinnedMeshRenderer3.BakeMesh(bakedMesh3);
-                            tempMeshFilter3.mesh = bakedMesh3;
-                            tempMeshRenderer3.materials = skinnedMeshRenderer3.sharedMaterials;
-                            Destroy(child.gameObject);
-                            tempObject3.transform.SetParent(detachPart.transform);
-                            MeshCollider collider = tempObject3.AddComponent<MeshCollider>();
-                            collider.convex = true;
-                            /*XRGrabInteractable grabInteractable = detachPart.transform.parent.GetComponent<XRGrabInteractable>();
-                            grabInteractable.trackScale = false;
-                            grabInteractable.enabled = false;
-                            grabInteractable.colliders.Add(collider);
-                            grabInteractable.enabled = true;*/
-                        }
-                    }
-                }
-                DetachPart(detachPart);
-
-                GameObject connectedPart = (detachPart == lowerHull) ? upperHull : lowerHull;
-                AttachToBody(connectedPart);
-
-
-                foreach (Collider collider in collisionCutComponents.boundsColliders)
-                {
-                    if (!collider.Equals(collisionCutComponents.gameObject.GetComponent<Collider>()))
-                    {
-                        collider.gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        Destroy(collider.gameObject.GetComponent<XRGrabInteractable>());
-                        Destroy(collider.gameObject.GetComponent<CharacterJoint>());
-
-                        Destroy(collider.attachedRigidbody);
-                        Destroy(collider);
+                        string relativePath = GetRelativePath(rootNetObj.transform, target.transform);
+                        //SetBodyClientRpc(rootNetObj.NetworkObjectId, meshData, matData, relativePath);
                     }
                 }
             }
-            Destroy(tempObject2);
-            Destroy(inBoundMesh);
-        }
-        else
+
+            if (outBoundPart != null)
+            {
+                Destroy(outBoundPart);
+            }
+        if (true)
         {
-            SetupSlicedComponent(tempObject2);
-            DetachPart(tempObject2);
-            Destroy(inBoundMesh);
+            Debug.Log("ENTRA EN SERVER");
+
+            if (inBoundMesh == null)
+            {
+                    Debug.Log("es null");
+                return;
+            }
+
+            SkinnedMeshRenderer skinnedMeshRenderer2 = inBoundMesh.GetComponent<SkinnedMeshRenderer>();
+            byte[] meshData = YourMeshUtility.SerializeSkinnedMesh(skinnedMeshRenderer2.sharedMesh);
+            
+                Debug.Log("Mesh array : " + meshData);
+            
+            GameObject tempObject2 = new GameObject("TempSlicingObject2");
+            tempObject2.transform.position = inBoundMesh.transform.position;
+            tempObject2.transform.rotation = inBoundMesh.transform.rotation;
+            tempObject2.transform.localScale = new Vector3(1, 1, 1);
+
+            MeshFilter tempMeshFilter2 = tempObject2.AddComponent<MeshFilter>();
+            MeshRenderer tempMeshRenderer2 = tempObject2.AddComponent<MeshRenderer>();
+            Mesh bakedMesh2 = new Mesh();
+
+            skinnedMeshRenderer2.BakeMesh(bakedMesh2);
+            tempMeshFilter2.mesh = bakedMesh2;
+            tempMeshRenderer2.materials = skinnedMeshRenderer2.sharedMaterials;
+
+            SlicedHull hull = tempObject2.Slice(gameObject.transform.position, gameObject.transform.right.normalized);
+            if (hull != null)
+            {
+                GameObject upperHull = hull.CreateUpperHull(tempObject2, bloodMaterial);
+                GameObject lowerHull = hull.CreateLowerHull(tempObject2, bloodMaterial);
+                if (upperHull != null && lowerHull != null)
+                {
+
+                    float upperDistance = CalculateAverageDistance(upperHull, collisionCutComponents.attachPoint.transform.position);
+                    float lowerDistance = CalculateAverageDistance(lowerHull, collisionCutComponents.attachPoint.transform.position);
+
+                    GameObject detachPart = (upperDistance < lowerDistance) ? lowerHull : upperHull;
+                    SetupSlicedComponent(detachPart);
+
+                    foreach (GameObject clothes in collisionCutComponents.clothes)
+                    {
+                        foreach (Transform child in clothes.transform)
+                        {
+                            if (child.gameObject.activeSelf)
+                            {
+                                SliceClothes(child.gameObject, planeNormal, detachPart);
+                            }
+                        }
+                    }
+                    foreach (GameObject clothes in collisionCutComponents.clothesChild)
+                    {
+                        foreach (Transform child in clothes.transform)
+                        {
+                            if (child.gameObject.activeSelf)
+                            {
+                                SkinnedMeshRenderer skinnedMeshRenderer3 = child.GetComponent<SkinnedMeshRenderer>();
+                                GameObject tempObject3 = new GameObject("meshCloth");
+                                tempObject3.layer = LayerMask.NameToLayer("BodyParts");
+
+                                tempObject3.transform.position = child.transform.position;
+                                tempObject3.transform.rotation = child.transform.rotation;
+                                tempObject3.transform.localScale = new Vector3(1, 1, 1);
+
+                                MeshFilter tempMeshFilter3 = tempObject3.AddComponent<MeshFilter>();
+                                MeshRenderer tempMeshRenderer3 = tempObject3.AddComponent<MeshRenderer>();
+                                Mesh bakedMesh3 = new Mesh();
+
+                                skinnedMeshRenderer3.BakeMesh(bakedMesh3);
+                                tempMeshFilter3.mesh = bakedMesh3;
+                                tempMeshRenderer3.materials = skinnedMeshRenderer3.sharedMaterials;
+                                Destroy(child.gameObject);
+                                tempObject3.transform.SetParent(detachPart.transform);
+                                MeshCollider collider = tempObject3.AddComponent<MeshCollider>();
+                                collider.convex = true;
+                                /*XRGrabInteractable grabInteractable = detachPart.transform.parent.GetComponent<XRGrabInteractable>();
+                                grabInteractable.trackScale = false;
+                                grabInteractable.enabled = false;
+                                grabInteractable.colliders.Add(collider);
+                                grabInteractable.enabled = true;*/
+                            }
+                        }
+                    }
+
+                    if (IsServer)
+                    DetachPart(detachPart);
+
+                    GameObject connectedPart = (detachPart == lowerHull) ? upperHull : lowerHull;
+                    AttachToBody(connectedPart);
+
+                    if (IsClient)
+                    {
+                        Destroy(detachPart);
+                        Destroy(connectedPart);
+
+                    }
+
+                    foreach (Collider collider in collisionCutComponents.boundsColliders)
+                    {
+                        if (!collider.Equals(collisionCutComponents.gameObject.GetComponent<Collider>()))
+                        {
+                            collider.gameObject.SetActive(false);
+                        }
+                        else
+                        {
+                            //if (collider.gameObject.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netrig)) Destroy(netrig);
+                            //return;
+                            Destroy(collider.gameObject.GetComponent<XRGrabInteractable>());
+                            Destroy(collider.gameObject.GetComponent<CharacterJoint>());
+                            collider.attachedRigidbody.isKinematic = true;
+                            //Destroy(collider.attachedRigidbody);
+                            Destroy(collider);
+                        }
+                    }
+                }
+                Destroy(tempObject2);
+            }
+            else
+            {
+                SetupSlicedComponent(tempObject2);
+                DetachPart(tempObject2);
+            }
+
+            collisionCutComponents.clientMP.countBodyParts--;
+            if (collisionCutComponents.clientMP.countBodyParts <= 0)
+            {
+                collisionCutComponents.clientMP.body.tag = "Torso";
+
+
+                DetachBody(collisionCutComponents.clientMP.body);
+
+            }
+            Destroy(partController);
         }
+        Destroy(inBoundMesh);
 
         Destroy(tempObject);
-        collisionCutComponents.client.countBodyParts--;
-        if (collisionCutComponents.client.countBodyParts <= 0)
-        {
-            collisionCutComponents.client.body.tag = "Torso";
-
-
-            DetachBody(collisionCutComponents.client.body);
-
-        }
-        Destroy(partController);
-
+        
         Debug.Log("Se ha cortado parte del cuerpo");
         hasCut = true;
-        OnCutMade?.Invoke();
-    }
 
+        //OnCutMade?.Invoke();
+        collisionCutComponents = null;
+        collisionCut = null;
+    }
+    [ClientRpc]
+    private void SetCalculateBodyClientRpc(ulong rootId, byte[] meshData, MaterialData matData, string childPath)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
+        {
+            Transform target = FindChildByPath(netObj.transform, childPath);
+            Mesh mesh = YourMeshUtility.DeserializeSkinnedMesh(meshData);
+            Material mat = matData.ToMaterial();
+            SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer.sharedMesh = mesh;
+            if (mesh.subMeshCount > 1)
+            {
+                skinnedMeshRenderer.sharedMaterials = new Material[] { mat, bloodMaterial };
+            }
+            else
+            {
+                skinnedMeshRenderer.sharedMaterial = mat;
+            }
+        }
+
+    }
+    [ClientRpc]
+    private void SetBodyClientRpc(ulong rootId,byte[] meshData, MaterialData matData, string childPath)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
+        {
+            Transform target = FindChildByPath(netObj.transform, childPath);
+            Mesh mesh = YourMeshUtility.DeserializeSkinnedMesh(meshData);
+            Material mat = matData.ToMaterial();
+            SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
+            skinnedMeshRenderer.sharedMesh = mesh;
+            if (mesh.subMeshCount > 1)
+            {
+                skinnedMeshRenderer.sharedMaterials = new Material[] { mat, bloodMaterial };
+            }
+            else
+            {
+                skinnedMeshRenderer.sharedMaterial = mat;
+            }
+        }
+
+    }
     private void DetachBody(GameObject part)
     {
         XRGrabInteractable partGrab = (part.GetComponent<XRGrabInteractable>());
@@ -247,7 +377,7 @@ public class SliceObjectMP : NetworkBehaviour
             return;
         }
         GameObject container = new GameObject($"{part.name}_Centered");
-        if (collisionCutComponents.client.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
+        if (collisionCutComponents.clientMP.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
         {
             BodyPartController bodypartController = container.AddComponent<BodyPartController>();
             bodypartController.decayTime = clientbpc.decayTimer;
@@ -294,6 +424,8 @@ public class SliceObjectMP : NetworkBehaviour
 
         if (partRb != null)
         {
+            Debug.Log("PART " + part.name + " eliminando rigid");
+            if (part.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netrig)) Destroy(netrig);
             Destroy(partRb);
         }
 
@@ -345,6 +477,15 @@ public class SliceObjectMP : NetworkBehaviour
             {
                 skinnedMeshRenderer.sharedMesh = outBoundSkinnedMeshRenderer.sharedMesh;
                 skinnedMeshRenderer.sharedMaterials = outBoundSkinnedMeshRenderer.sharedMaterials;
+                
+                byte[] meshData = YourMeshUtility.SerializeSkinnedMesh(outBoundSkinnedMeshRenderer.sharedMesh);
+                MaterialData matData = MaterialData.FromMaterial(outBoundSkinnedMeshRenderer.sharedMaterial);
+                NetworkObject rootNetObj = GetRootNetworkObject(target);
+                if (rootNetObj != null)
+                {
+                    string relativePath = GetRelativePath(rootNetObj.transform, target.transform);
+                    //SetBodyClientRpc(rootNetObj.NetworkObjectId, meshData, matData, relativePath);
+                }
             }
         }
 
@@ -353,45 +494,48 @@ public class SliceObjectMP : NetworkBehaviour
             Destroy(outBoundPart);
         }
 
-        SkinnedMeshRenderer skinnedMeshRenderer2 = inBoundMesh.GetComponent<SkinnedMeshRenderer>();
-        GameObject tempObject2 = new GameObject("TempSlicingObject2");
-        tempObject2.transform.position = inBoundMesh.transform.position;
-        tempObject2.transform.rotation = inBoundMesh.transform.rotation;
-        tempObject2.transform.localScale = new Vector3(1, 1, 1);
-
-        MeshFilter tempMeshFilter2 = tempObject2.AddComponent<MeshFilter>();
-        MeshRenderer tempMeshRenderer2 = tempObject2.AddComponent<MeshRenderer>();
-        Mesh bakedMesh2 = new Mesh();
-
-        skinnedMeshRenderer2.BakeMesh(bakedMesh2);
-        tempMeshFilter2.mesh = bakedMesh2;
-        tempMeshRenderer2.materials = skinnedMeshRenderer2.sharedMaterials;
-
-        SlicedHull hull = tempObject2.Slice(endSlicePoint.position, planeNormal);
-        if (hull != null)
+        if (IsServer)
         {
-            GameObject upperHull = hull.CreateUpperHull(tempObject2, bloodMaterial);
-            GameObject lowerHull = hull.CreateLowerHull(tempObject2, bloodMaterial);
+            SkinnedMeshRenderer skinnedMeshRenderer2 = inBoundMesh.GetComponent<SkinnedMeshRenderer>();
+            GameObject tempObject2 = new GameObject("TempSlicingObject2");
+            tempObject2.transform.position = inBoundMesh.transform.position;
+            tempObject2.transform.rotation = inBoundMesh.transform.rotation;
+            tempObject2.transform.localScale = new Vector3(1, 1, 1);
 
-            if (upperHull != null && lowerHull != null)
+            MeshFilter tempMeshFilter2 = tempObject2.AddComponent<MeshFilter>();
+            MeshRenderer tempMeshRenderer2 = tempObject2.AddComponent<MeshRenderer>();
+            Mesh bakedMesh2 = new Mesh();
+
+            skinnedMeshRenderer2.BakeMesh(bakedMesh2);
+            tempMeshFilter2.mesh = bakedMesh2;
+            tempMeshRenderer2.materials = skinnedMeshRenderer2.sharedMaterials;
+
+            SlicedHull hull = tempObject2.Slice(endSlicePoint.position, planeNormal);
+            if (hull != null)
             {
+                GameObject upperHull = hull.CreateUpperHull(tempObject2, bloodMaterial);
+                GameObject lowerHull = hull.CreateLowerHull(tempObject2, bloodMaterial);
 
-                float upperDistance = CalculateAverageDistance(upperHull, collisionCutComponents.attachPoint.transform.position);
-                float lowerDistance = CalculateAverageDistance(lowerHull, collisionCutComponents.attachPoint.transform.position);
+                if (upperHull != null && lowerHull != null)
+                {
 
-                GameObject detachPart = (upperDistance < lowerDistance) ? lowerHull : upperHull;
-                detachPart.transform.SetParent(hullParent.transform);
+                    float upperDistance = CalculateAverageDistance(upperHull, collisionCutComponents.attachPoint.transform.position);
+                    float lowerDistance = CalculateAverageDistance(lowerHull, collisionCutComponents.attachPoint.transform.position);
 
-                GameObject connectedPart = (detachPart == lowerHull) ? upperHull : lowerHull;
-                AttachToBody(connectedPart);
+                    GameObject detachPart = (upperDistance < lowerDistance) ? lowerHull : upperHull;
+                    detachPart.transform.SetParent(hullParent.transform);
+
+                    GameObject connectedPart = (detachPart == lowerHull) ? upperHull : lowerHull;
+                    AttachToBody(connectedPart);
+
+                }
+                Destroy(tempObject2);
 
             }
-            Destroy(tempObject2);
-
-        }
-        else
-        {
-            tempObject2.transform.SetParent(hullParent.transform);
+            else
+            {
+                tempObject2.transform.SetParent(hullParent.transform);
+            }
         }
         Destroy(inBoundMesh);
         Destroy(tempObject);
@@ -418,8 +562,51 @@ public class SliceObjectMP : NetworkBehaviour
     private void AttachToBody(GameObject part)
     {
         part.transform.SetParent(collisionCut.transform);
+        byte[] meshData = YourMeshUtility.SerializeMesh(part.GetComponent<MeshFilter>().sharedMesh);
+        MaterialData matData = MaterialData.FromMaterial(part.GetComponent<Renderer>().sharedMaterial);
+        NetworkObject rootNetObj = GetRootNetworkObject(collisionCut);
+        if (rootNetObj != null)
+        {
+            string relativePath = GetRelativePath(rootNetObj.transform, collisionCut.transform);
+
+            SetAttachedPartClientRpc(rootNetObj.NetworkObjectId, meshData, matData, part.transform.localPosition, part.transform.localRotation, part.transform.localScale, relativePath);
+        }
     }
-    
+
+    private Transform FindChildByPath(Transform root, string path)
+    {
+        return root.Find(path);
+    }
+    [ClientRpc]
+    private void SetAttachedPartClientRpc(ulong rootId, byte[] meshData, MaterialData matData, Vector3 partPosition, Quaternion partRotation, Vector3 partScale,string childPath)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
+        {
+            Transform targetParent = FindChildByPath(netObj.transform, childPath);
+            Mesh mesh = YourMeshUtility.DeserializeMesh(meshData);
+            Material mat = matData.ToMaterial();
+
+            GameObject part = new GameObject("AttachPart");
+            part.transform.SetParent(targetParent);
+            part.transform.localPosition = partPosition;
+            part.transform.localRotation = partRotation;
+            part.transform.localScale = partScale;
+
+            var filter = part.AddComponent<MeshFilter>();
+            filter.sharedMesh = mesh;
+
+            var renderer = part.AddComponent<MeshRenderer>();
+            if (mesh.subMeshCount > 1)
+            {
+                renderer.materials = new Material[] { mat, bloodMaterial };
+            }
+            else
+            {
+                renderer.material = mat;
+            }
+        }
+        
+    }
 
 
     [SerializeField] private GameObject runtimePartContainerPrefab;
@@ -486,11 +673,12 @@ public class SliceObjectMP : NetworkBehaviour
         
         if (partRb != null)
         {
+            if (part.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netrig)) Destroy(netrig);
             Destroy(partRb);
         }
         
-
-        if (collisionCutComponents.client.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
+        
+        if (collisionCutComponents.clientMP.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
         {
             BodyPartController bodypartController = container.AddComponent<BodyPartController>();
             bodypartController.decayTime = clientbpc.decayTimer;
@@ -557,8 +745,9 @@ public class SliceObjectMP : NetworkBehaviour
         bool[] needsColliderArray = needsCollider.ToArray();
         Vector3[] positionsArray = positions.ToArray();
         Quaternion[] rotationArray = rotations.ToArray();
-
-        SpawnCutPieceServerRpc(containerPosition, containerRotation,/* meshDataArray, materialDataArray, needsColliderArray, positionsArray,rotationArray,*/ partPosition, partRotation);
+        Debug.Log("?");
+        SpawnCutPieceServerRpc(containerPosition, containerRotation,/* meshDataArray, materialDataArray, needsColliderArray, positionsArray,rotationArray,*/ partPosition, partRotation, part.tag);
+        //Destroy(container);
         /*foreach (Transform child in part.transform)
         {
             meshData = YourMeshUtility.SerializeMesh(child.gameObject.GetComponent<MeshFilter>().sharedMesh);
@@ -583,13 +772,15 @@ public class SliceObjectMP : NetworkBehaviour
     private GameObject sendPart;
     [SerializeField] private GameObject dynamicContainerPrefab;
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnCutPieceServerRpc(Vector3 position, Quaternion rotation, /*byte[][] meshData, MaterialData[] matData, bool[] needsCollider,Vector3[] positions, Quaternion[] rotations,*/Vector3 partPosition, Quaternion partRotation)
+    public void SpawnCutPieceServerRpc(Vector3 position, Quaternion rotation, /*byte[][] meshData, MaterialData[] matData, bool[] needsCollider,Vector3[] positions, Quaternion[] rotations,*/Vector3 partPosition, Quaternion partRotation, string tag)
     {
         //for (int i = 0; i < meshData.Length; i++)
         //{
         //    Debug.Log("Mesh server " + i + ": " + meshData[i]);
         //}
         // Instanciás el contenedor registrado
+        Debug.Log("??");
+
         GameObject container = Instantiate(dynamicContainerPrefab, position, rotation);
 
         Rigidbody rb = container.GetComponent<Rigidbody>();
@@ -601,16 +792,26 @@ public class SliceObjectMP : NetworkBehaviour
         NetworkObject netObj = container.GetComponent<NetworkObject>();
         netObj.Spawn(true); // Spawn en la red
         // Preparás los datos dinámicos
-
-
+        container.tag = tag;
         container.GetComponent<DynamicPartSync>().bloodMaterial = bloodMaterial;
-        container.GetComponent<DynamicPartSync>().setPart(sendPart);
-
-
         NetworkObjectReference containerRef = container.GetComponent<NetworkObject>();
-        //SpawnCutPieceClientRpc(containerRef, meshData, matData,needsCollider,positions, rotations, partPosition, partRotation);
+        Debug.Log("???");
+
+        SetBloodMaterialClientRpc(containerRef);
+        container.GetComponent<DynamicPartSync>().setPart(sendPart,tag);
+
+
         // Le mandás al cliente la orden de construir su parte local
         //container.GetComponent<DynamicPartSync>().InitServer(meshData, materialId);
+    }
+    [ClientRpc]
+    private void SetBloodMaterialClientRpc(NetworkObjectReference containerRef)
+    {
+        if (containerRef.TryGet(out NetworkObject containerNetObj))
+        {
+            GameObject container = containerNetObj.gameObject;
+            container.GetComponent<DynamicPartSync>().bloodMaterial = bloodMaterial;
+        }
     }
     [ClientRpc]
     private void SpawnCutPieceClientRpc(NetworkObjectReference containerRef, byte[][] meshData, MaterialData[] matData,bool[] needsCollider,Vector3[] positions,Quaternion[] rotations, Vector3 partPosition, Quaternion partRotation)
