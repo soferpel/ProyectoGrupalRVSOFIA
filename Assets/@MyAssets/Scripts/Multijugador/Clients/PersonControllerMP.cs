@@ -234,7 +234,7 @@ public abstract class PersonControllerMP : NetworkBehaviour
 
         if (this is ClientControllerMP client && client.isReported)
         {
-            HandleGameOverClientRpc();
+            FullGameManager.Instance.GoToGameOver();
         }
 
         while (Vector3.Distance(transform.position, finalExitPoint.position) > 0.1f)
@@ -254,12 +254,6 @@ public abstract class PersonControllerMP : NetworkBehaviour
         Destroy(gameObject);
     }
 
-    [ClientRpc]
-    public void HandleGameOverClientRpc()
-    {
-        FullGameManager.Instance.TriggerGameOver();
-        Debug.Log("Juego terminado. ¡Game Over!");
-    }
 
     protected void StartWaitTimer()
     {

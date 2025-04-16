@@ -124,24 +124,19 @@ public class FullGameManager : NetworkBehaviour
         }
     }
 
-
-    public void TriggerGameOver()
+    public void GoToGameOver()
     {
-        if (IsServer)
-        {
-            StartCoroutine(LoadGameOverScene());
-        }
+        GoToGameOverRpc();
     }
 
-    private IEnumerator LoadGameOverScene()
+    [Rpc(SendTo.Server)]
+    private void GoToGameOverRpc()
     {
-        yield return new WaitForSeconds(1.5f);
-        GoToGameOverClientRpc();
-    }
-
-    [ClientRpc]
-    private void GoToGameOverClientRpc()
-    {
+        NetworkManager.Singleton.SceneManager.OnLoadComplete += GameOverSceneLoaded;
         NetworkManager.Singleton.SceneManager.LoadScene(GAME_STATES.GameOverScene.ToString(), LoadSceneMode.Single);
+    }
+    private void GameOverSceneLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        gameState = GAME_STATES.GameOverScene;
     }
 }

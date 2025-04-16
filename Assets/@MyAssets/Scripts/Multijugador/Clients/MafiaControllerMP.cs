@@ -101,9 +101,7 @@ public class MafiaControllerMP : PersonControllerMP
         }
 
         yield return new WaitForSeconds(2f);
-
-
-        HandleGameOverClientRpc();
+        FullGameManager.Instance.GoToGameOver();
     }
 
     public string AppearanceDescription
