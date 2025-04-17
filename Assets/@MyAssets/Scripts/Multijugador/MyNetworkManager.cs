@@ -10,55 +10,58 @@ public class MyNetworkManager : MonoBehaviour
 {
     private const int MAX_PLAYER_AMOUNT = 2;
     public UnityEvent OnFailedJoin = new UnityEvent();
+    public UnityEvent OnSuccessfulJoin = new UnityEvent();
 
-    //private IEnumerator Start()
-    //{
-    //    yield return new WaitForSeconds(1);
-    //    StartHost();
-    //}
     public void StartHost()
     {
-        //NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallBack;
-        Debug.Log("StartHost1");
+        NetworkManager.Singleton.ConnectionApprovalCallback += ConnectionApprovalCallBack;
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.StartHost();
-        Debug.Log("StartHost2");
 
-        FullGameManager.Instance.GoToGame();
-        Debug.Log("StartHost3");
-
-        //FullGameManager.Instance.gameState = FullGameManager.GAME_STATES.GameMultiplayer;
-        //NetworkManager.Singleton.SceneManager.LoadScene(FullGameManager.Instance.gameState.ToString(), LoadSceneMode.Single);
     }
 
-    private void ConnectionApprovalCallBack(NetworkManager.ConnectionApprovalRequest rquest, NetworkManager.ConnectionApprovalResponse response)
+    private void ConnectionApprovalCallBack(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        if (SceneManager.GetActiveScene().name == FullGameManager.GAME_STATES.GameMultiplayer.ToString() || NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT)
-            response.Approved = false;
+        string currentScene = SceneManager.GetActiveScene().name;
+        bool isLobbyScene = currentScene == FullGameManager.GAME_STATES.LobbyScene.ToString();
+        bool isFull = NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT;
+
+        response.Approved = isLobbyScene && !isFull;
+
+        if (response.Approved)
+        {
+            response.CreatePlayerObject = true;
+        }
         else
-            response.Approved = true;
+        {
+            OnFailedJoin.Invoke();
+            response.CreatePlayerObject = false;
+        }
     }
 
     public void StartClient()
     {
-        NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnectedCallBack;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.StartClient();
-
-    }
-
-    private void OnClientConnected(ulong clientId)
-    {
-        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
-        FullGameManager.Instance.GoToGame();
-    }
-    private void ClientDisconnectedCallBack(ulong obj)
-    {
-        OnFailedJoin.Invoke();
     }
 
     public void GoBack()
     {
         FullGameManager.Instance.gameState = FullGameManager.GAME_STATES.StartMenuGame;
         SceneManager.LoadScene(FullGameManager.Instance.gameState.ToString());
+    }
+    private void OnClientConnected(ulong clientId)
+    {
+        if (clientId == NetworkManager.Singleton.LocalClientId)
+        {
+            OnSuccessfulJoin.Invoke();
+        }
+    }
+    private void OnDisable()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.ConnectionApprovalCallback -= ConnectionApprovalCallBack;
+        }
     }
 }
