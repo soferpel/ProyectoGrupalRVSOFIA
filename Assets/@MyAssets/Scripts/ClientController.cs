@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -104,6 +105,10 @@ public class ClientController : PersonController
             if(Clothing.existingClientDescriptions.Contains(appearanceDescription)) Clothing.existingClientDescriptions.Remove(appearanceDescription);
             slider.SetActive(false);
             Destroy(gameObject.GetComponent<Collider>());
+            if(gameObject.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netRig))
+            {
+                Destroy(netRig);
+            }
             Destroy(gameObject.GetComponent<Rigidbody>());
             Destroy(gameObject.GetComponent<VisionSensor>());
             isAlive = false;

@@ -20,6 +20,11 @@ public class StartMenuUI : MonoBehaviour
         Debug.Log("Tutorial button pressed");
         SceneManager.LoadScene("tutorial", LoadSceneMode.Single);
     }
+    public void OnMultiplayerButtonPressed()
+    {
+        Debug.Log("Multiplayer button pressed");
+        SceneManager.LoadScene("LobbyScene", LoadSceneMode.Single);
+    }
 
     public void OnControlsButtonPressed()
     {

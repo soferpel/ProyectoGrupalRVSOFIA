@@ -11,6 +11,7 @@ public class SliceablePartController : MonoBehaviour
     public Collider[] boundsColliders;
     public string gameObjectTag;
     public ClientController client;
+    public ClientControllerMP clientMP;
     public List<string> boneNames;
     public Bounds[] ConvertCollidersToBounds()
     {

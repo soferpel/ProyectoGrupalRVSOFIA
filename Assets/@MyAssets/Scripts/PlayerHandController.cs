@@ -37,7 +37,7 @@ public class PlayerHandController : MonoBehaviour
     {
         leftHandItem = args.interactableObject.transform.gameObject;
         Debug.Log("Left hand grabbed: " + leftHandItem.name);
-        if (rightHandItem.TryGetComponent<WeaponController>(out _))
+        if (rightHandItem.TryGetComponent < WeaponController > (out _))
         {
             WeaponController.isGrabbed = true;
         }
@@ -57,7 +57,7 @@ public class PlayerHandController : MonoBehaviour
     {
         rightHandItem = args.interactableObject.transform.gameObject;
         Debug.Log("Right hand grabbed: " + rightHandItem.name);
-        if(rightHandItem.TryGetComponent<WeaponController>(out _ ))
+        if(rightHandItem.TryGetComponent<WeaponController>(out _))
         {
             WeaponController.isGrabbed = true;
         }
