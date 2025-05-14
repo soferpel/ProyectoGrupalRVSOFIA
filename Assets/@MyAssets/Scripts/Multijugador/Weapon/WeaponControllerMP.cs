@@ -2,88 +2,112 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class WeaponControllerMP : NetworkBehaviour
 {
-    private Collider weaponCollider;
-    private SliceObject sliceObject;
-    private OrderController orderController;
-    public NetworkVariable<bool> isGrabbed = new NetworkVariable<bool>(false);
-    private Dictionary<ClientController, bool> clientStates = new Dictionary<ClientController, bool>();
-
+    [Header("Weapon Settings")]
     public int durability = 10;
     public int maxDurability = 10;
     public int repairCost = 50;
-    public int currentDurability;
-    public bool hasCut;
-
     public Material knifeMaterial;
+
+    [Header("Spawn Settings")]
+    public bool isSpawnedWeapon = false;
+
+    private Collider weaponCollider;
+    private SliceObject sliceObject;
+    private OrderController orderController;
+
+    public NetworkVariable<bool> isGrabbed = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> currentDurability = new NetworkVariable<int>(10);
+
+    private Dictionary<ClientController, bool> clientStates = new Dictionary<ClientController, bool>();
+
+    // Colors for durability indication
     private Color maxDurabilityColor = Color.white;
     private Color minDurabilityColor = new Color(217f / 255f, 173f / 255f, 155f / 255f);
 
     void Start()
     {
-        currentDurability = durability;
         weaponCollider = GetComponent<Collider>();
         sliceObject = GetComponent<SliceObject>();
         orderController = FindObjectOfType<OrderController>();
+
+        if (IsServer)
+        {
+            currentDurability.Value = durability;
+            isGrabbed.Value = false;
+        }
 
         if (sliceObject != null)
         {
             sliceObject.OnCutMade.AddListener(OnCutDetected);
         }
+
+        currentDurability.OnValueChanged += OnDurabilityChanged;
         UpdateKnifeColor();
     }
+
+    void OnDurabilityChanged(int previousValue, int newValue)
+    {
+        UpdateKnifeColor();
+    }
+
     void UpdateKnifeColor()
     {
         if (knifeMaterial != null)
         {
-            float t = (float)currentDurability / maxDurability;
+            float t = (float)currentDurability.Value / maxDurability;
             knifeMaterial.color = Color.Lerp(minDurabilityColor, maxDurabilityColor, t);
         }
     }
-    public void setColliderTrigger(bool isTrigger)
-    {
-        if (!IsOwner) return;
-        weaponCollider.isTrigger = isTrigger;
 
-        if (IsServer)
-        {
-            isGrabbed.Value = isTrigger;
-        }
-        else
-        {
-            SetGrabbedServerRpc(isTrigger);
-        }
-    }
     public void SetGrabbed(bool grabbed)
     {
+        if (!IsOwner) return;
+
         SetGrabbedServerRpc(grabbed);
-    }
-    [ServerRpc(RequireOwnership = false)]
-    public void SetGrabbedServerRpc(bool isTrigger)
-    {
-        isGrabbed.Value = isTrigger;
-        GetComponent<Collider>().isTrigger = isTrigger;
-        SetGrabbedClientRpc(isTrigger);
-    }
-    [ClientRpc]
-    public void SetGrabbedClientRpc(bool isTrigger)
-    {
-        GetComponent<Collider>().isTrigger = isTrigger;
+        SetColliderTrigger(grabbed);
     }
 
+    private void SetColliderTrigger(bool isTrigger)
+    {
+        if (weaponCollider != null)
+        {
+            weaponCollider.isTrigger = isTrigger;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetGrabbedServerRpc(bool grabbed)
+    {
+        isGrabbed.Value = grabbed;
+        SetGrabbedClientRpc(grabbed);
+    }
+
+    [ClientRpc]
+    public void SetGrabbedClientRpc(bool grabbed)
+    {
+        SetColliderTrigger(grabbed);
+    }
 
     public void RepairKnife()
     {
-        if (currentDurability <= 0)
+        if (!IsServer) return;
+
+        if (currentDurability.Value <= 0)
         {
-            if (orderController.cash >= repairCost)
+            if (orderController != null && orderController.cash >= repairCost)
             {
                 orderController.cash -= repairCost;
-                currentDurability = maxDurability;
-                sliceObject.enabled = true;
-                UpdateKnifeColor();
+                currentDurability.Value = maxDurability;
+
+                if (sliceObject != null)
+                {
+                    sliceObject.enabled = true;
+                }
+
                 Debug.Log("El cuchillo ha sido reparado");
             }
             else
@@ -92,6 +116,7 @@ public class WeaponControllerMP : NetworkBehaviour
             }
         }
     }
+
     private void DisableKnife()
     {
         if (sliceObject != null)
@@ -103,6 +128,8 @@ public class WeaponControllerMP : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!IsServer) return;
+
         if (isGrabbed.Value)
         {
             ClientController client = other.GetComponent<ClientController>();
@@ -110,7 +137,6 @@ public class WeaponControllerMP : NetworkBehaviour
             {
                 ProcessClient(client);
             }
-
         }
     }
 
@@ -121,14 +147,13 @@ public class WeaponControllerMP : NetworkBehaviour
             clientStates[client] = false;
         }
 
-        if (currentDurability > 0 && !clientStates[client])
+        if (currentDurability.Value > 0 && !clientStates[client])
         {
-            currentDurability--;
-            Debug.Log($"Cuchillo usado en cliente {client.name}. Durabilidad actual: {currentDurability}");
-            UpdateKnifeColor();
+            currentDurability.Value--;
+            Debug.Log($"Cuchillo usado en cliente {client.name}. Durabilidad actual: {currentDurability.Value}");
             clientStates[client] = true;
 
-            if (currentDurability <= 0)
+            if (currentDurability.Value <= 0)
             {
                 Debug.Log("El cuchillo se ha roto.");
                 DisableKnife();
@@ -142,16 +167,22 @@ public class WeaponControllerMP : NetworkBehaviour
 
     private void OnCutDetected()
     {
-        if (currentDurability > 0)
-        {
-            currentDurability--;
-            UpdateKnifeColor();
-            Debug.Log("Corte detectado. Durabilidad actual: " + currentDurability);
+        if (!IsServer) return;
 
-            if (currentDurability <= 0)
+        if (currentDurability.Value > 0)
+        {
+            currentDurability.Value--;
+            Debug.Log("Corte detectado. Durabilidad actual: " + currentDurability.Value);
+
+            if (currentDurability.Value <= 0)
             {
                 DisableKnife();
             }
         }
+    }
+
+    public void InitializeAsSpawnedWeapon()
+    {
+        isSpawnedWeapon = true;
     }
 }
