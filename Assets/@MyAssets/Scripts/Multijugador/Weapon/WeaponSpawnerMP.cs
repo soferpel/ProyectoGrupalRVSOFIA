@@ -60,7 +60,7 @@ public class WeaponSpawnerMP : NetworkBehaviour
             return;
         }
 
-        // Determinar el índice de spawn (0 para server host, 1 para client)
+        //(0 para server host, 1 para client)
         int spawnIndex = NetworkManager.Singleton.IsServer && clientId == NetworkManager.Singleton.LocalClientId ? 0 : 1;
 
         if (spawnIndex >= spawnPoints.Length)
@@ -100,7 +100,6 @@ public class WeaponSpawnerMP : NetworkBehaviour
         }
     }
 
-    // Corregido: Cambio de nombre de método
     [ServerRpc(RequireOwnership = false)]
     private void AssignWeaponToPlayerServerRpc(ulong weaponNetworkId, ulong playerId)
     {

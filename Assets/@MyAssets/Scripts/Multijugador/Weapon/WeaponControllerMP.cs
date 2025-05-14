@@ -24,7 +24,6 @@ public class WeaponControllerMP : NetworkBehaviour
 
     private Dictionary<ClientController, bool> clientStates = new Dictionary<ClientController, bool>();
 
-    // Colors for durability indication
     private Color maxDurabilityColor = Color.white;
     private Color minDurabilityColor = new Color(217f / 255f, 173f / 255f, 155f / 255f);
 
