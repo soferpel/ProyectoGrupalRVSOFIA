@@ -7,7 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class FullGameManager : NetworkBehaviour
 {
+    public static FullGameManager Instance { get; private set; }
 
+    public GAME_STATES gameState;
     public enum GAME_STATES
     {
         StartMenuGame = 0,
@@ -16,21 +18,30 @@ public class FullGameManager : NetworkBehaviour
         GameOverScene = 3
     }
 
-    [SerializeField] private GameObject playerPrefab;
-    public NetworkList<PlayerData> playerDataList ;
+    public GameObject playerPrefab;
+    public NetworkList<PlayerData> playerDataList;
     public struct PlayerData : INetworkSerializable, IEquatable<PlayerData>
     {
         public ulong clientId;
+        public int skinIndex;
+        public int hairStyleIndex;
+        public int hairColorIndex;
         public bool isReady;
-        public PlayerData(ulong id, bool ready)
+        public PlayerData(ulong id, int skinIndex, int hairStyleIndex, int hairColorIndex, bool ready)
         {
             clientId = id;
+            this.skinIndex = skinIndex;
+            this.hairStyleIndex = hairStyleIndex;
+            this.hairColorIndex = hairColorIndex;
             isReady = ready;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref clientId);
+            serializer.SerializeValue(ref skinIndex);
+            serializer.SerializeValue(ref hairStyleIndex);
+            serializer.SerializeValue(ref hairColorIndex);
             serializer.SerializeValue(ref isReady);
         }
 
@@ -46,11 +57,9 @@ public class FullGameManager : NetworkBehaviour
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(clientId, isReady);
+            return HashCode.Combine(clientId, skinIndex, hairStyleIndex, hairColorIndex, isReady);
         }
     }
-    public GAME_STATES gameState;
-    public static FullGameManager Instance { get; private set; }
 
     public void Awake()
     {
@@ -64,48 +73,35 @@ public class FullGameManager : NetworkBehaviour
     public void GoToGame()
     {
         ulong localClientId = NetworkManager.Singleton.LocalClientId;
-        Debug.Log("GoToGame "+ localClientId);
         GoToGameRpc(localClientId);
     }
+
     [Rpc(SendTo.Server)]
     public void GoToGameRpc(ulong clientId)
     {
-        Debug.Log("GoToGameRPC");
-        bool playerInList = false;
         for (int i = 0; i < playerDataList.Count; i++)
         {
             if (playerDataList[i].clientId == clientId)
             {
-                playerInList = true;
-                playerDataList[i] = new PlayerData(clientId, true);
-                Debug.Log("Jugador en la lista");
+                PlayerData newPlayerData = new PlayerData(playerDataList[i].clientId, playerDataList[i].skinIndex, playerDataList[i].hairStyleIndex, playerDataList[i].hairColorIndex, true);
+                playerDataList[i] = newPlayerData;
                 break;
             }
         }
-        if (!playerInList)
-        {
-            playerDataList.Add(new PlayerData(clientId, true));
-            Debug.Log("Jugador añadido");
-        }
-        Debug.Log("1: "+ NetworkManager.ConnectedClientsList.Count+ "   2:"+ playerDataList.Count);
+
         if (NetworkManager.ConnectedClientsList.Count > 1 && playerDataList.Count > 1)
         {
-            Debug.Log("Todos conectados");
             bool allReady = true;
             for (int i = 0; i < playerDataList.Count; i++)
             {
                 if (!playerDataList[i].isReady)
                 {
-                    Debug.Log("uno no esta ready");
-
                     allReady = false;
                     break;
                 }
             }
             if (allReady)
             {
-                Debug.Log("todos listos");
-
                 NetworkManager.Singleton.SceneManager.OnLoadComplete += GameSceneLoaded;
                 NetworkManager.Singleton.SceneManager.LoadScene(GAME_STATES.GameMultiplayer.ToString(), LoadSceneMode.Single);
             }
@@ -114,13 +110,18 @@ public class FullGameManager : NetworkBehaviour
 
     private void GameSceneLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
-        Debug.Log("escena cargada");
-
         gameState = GAME_STATES.GameMultiplayer;
         foreach (PlayerData playerData in playerDataList)
         {
-           // GameObject playerGO = Instantiate(playerPrefabs[playerData.playerType]);
-           // playerGO.GetComponent<NetworkObject>().SpawnAsPlayerObject(playerData.clientId, true);
+            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(playerData.clientId, out var client))
+            {
+                var playerGO = client.PlayerObject.gameObject;
+                playerGO.GetComponent<NetworkPlayer>().UpdateCharacterClientRpc(
+                    playerData.skinIndex,
+                    playerData.hairStyleIndex,
+                    playerData.hairColorIndex
+                );
+            }
         }
     }
 
@@ -138,5 +139,85 @@ public class FullGameManager : NetworkBehaviour
     private void GameOverSceneLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
         gameState = GAME_STATES.GameOverScene;
+    }
+
+    public void SelectPlayer(int skinIndex, int hairStyleIndex, int hairColorIndex)
+    {
+        ulong localClientId = NetworkManager.Singleton.LocalClientId;
+        SelectPlayerRpc(localClientId, skinIndex, hairStyleIndex, hairColorIndex);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SelectPlayerRpc(ulong clientId, int skinIndex, int hairStyleIndex, int hairColorIndex)
+    {
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
+        {
+            var playerGO = client.PlayerObject.gameObject;
+            playerGO.GetComponent<NetworkPlayer>().UpdateCharacterClientRpc(
+                skinIndex,
+                hairStyleIndex,
+                hairColorIndex
+            );
+        }
+        for (int i = 0; i < playerDataList.Count; i++)
+        {
+            if (playerDataList[i].clientId == clientId)
+            {
+                playerDataList[i] = new PlayerData(clientId, skinIndex, hairStyleIndex, hairColorIndex, false);
+                return;
+            }
+        }
+        playerDataList.Add(new PlayerData(clientId, skinIndex, hairStyleIndex, hairColorIndex, false));
+    }
+    private void OnEnable()
+    {
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+    }
+
+    private void OnDisable()
+    {
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        if (!IsServer) return;
+        if (NetworkManager.Singleton.ConnectedClients.Count == 2)
+        {
+            EnableStartButtonsClientRpc();
+        }
+        bool exists = false;
+        foreach (var player in playerDataList)
+        {
+            if (player.clientId == clientId)
+            {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists)
+        {
+            playerDataList.Add(new PlayerData(clientId, 0, 0, 0, false));
+        }
+        foreach (var playerData in playerDataList)
+        {
+            if (NetworkManager.Singleton.ConnectedClients.TryGetValue(playerData.clientId, out var client))
+            {
+                var playerGO = client.PlayerObject.gameObject;
+                playerGO.GetComponent<NetworkPlayer>().UpdateCharacterClientRpc(
+                    playerData.skinIndex,
+                    playerData.hairStyleIndex,
+                    playerData.hairColorIndex
+                );
+            }
+        }
+    }
+    [ClientRpc]
+    public void EnableStartButtonsClientRpc()
+    {
+        CustomizePlayerMP ui = FindObjectOfType<CustomizePlayerMP>();
+        if (ui != null)
+            ui.EnableStartButton();
     }
 }

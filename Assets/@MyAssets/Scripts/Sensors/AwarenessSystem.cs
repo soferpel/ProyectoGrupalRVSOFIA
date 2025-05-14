@@ -99,8 +99,12 @@ public class AwarenessSystem : MonoBehaviour
 
         if (Targets[targetGO].UpdateAwareness(target, position, awareness, minAwareness))
         {
+            Debug.Log("VEO 4: update awareness 1");
             if (Targets[targetGO].Awareness >= 0f)
+            {
+                Debug.Log("VEO 5: update awareness 2");
                 LinkedAI.OnDetected(targetGO);
+            }
         }
     }
 
@@ -112,6 +116,7 @@ public class AwarenessSystem : MonoBehaviour
 
 
         var awareness = VisionSensitivity.Evaluate(dotProduct) * VisionAwarenessBuildRate * Time.deltaTime;
+        Debug.Log("VEO 3: report can see awareness");
 
         UpdateAwareness(seen.gameObject, seen, seen.transform.position, awareness, VisionMinimumAwareness);
     }

@@ -38,6 +38,7 @@ public class ClientAI : MonoBehaviour
 
     public void ReportCanSee(DetectableTarget seen)
     {
+        Debug.Log("VEO 2: report can see client ai");
         Awareness.ReportCanSee(seen);
     }
 
@@ -45,7 +46,39 @@ public class ClientAI : MonoBehaviour
     public void OnDetected(GameObject target)
     {
         ClientController clientController = GetComponent<ClientController>();
-        Debug.Log("detectado "+target.name);
+        if (clientController == null)
+        {
+            ClientControllerMP clientControllerMP = GetComponent<ClientControllerMP>();
+            if (clientControllerMP != null)
+            {
+                Debug.Log("VEO 6: clientcontrollermp");
+                if (!clientControllerMP.isAlive)
+                {
+                    Debug.Log("VEO 7: is dead " + target.name);
+                    clientControllerMP.ReportDeath();
+                }
+                if (target.gameObject.layer == LayerMask.NameToLayer("BodyParts"))
+                {
+                    Debug.Log("VEO 7: is  bodypart" + target.name);
+                    clientControllerMP.ReportDeath();
+                }
+                if (target.CompareTag("Player"))
+                {
+                    Debug.Log("VEO 8: PLAYER");
+                    if (target.TryGetComponent<PlayerHandController>(out PlayerHandController player))
+                    {
+                        Debug.Log("VEO 8: PLAYER IF 1");
+
+                        if (player.HasBodyPart())
+                        {
+                            Debug.Log("VEO 8: PLAYER IF 2");
+
+                            clientControllerMP.ReportDeath();
+                        }
+                    }
+                }
+            }
+        }
         if (clientController != null)
         {
             if (!clientController.isAlive)
@@ -57,14 +90,10 @@ public class ClientAI : MonoBehaviour
                 clientController.ReportDeath();
             }if(target.CompareTag("Player"))
             {
-                Debug.Log("PLAYER");
                 if(target.TryGetComponent<PlayerHandController>(out PlayerHandController player))
                 {
-                    Debug.Log("PLAYER IF 1");
 
                     if (player.HasBodyPart()) {
-                        Debug.Log("PLAYER IF 2");
-
                         clientController.ReportDeath();
                     }
                 }

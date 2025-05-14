@@ -46,7 +46,11 @@ public class VisionSensor : MonoBehaviour
             {
                 Debug.DrawRay(LinkedAI.EyeLocation, vectorToTarget, Color.red, 1f);
                 if (hitResult.collider.GetComponentInParent<DetectableTarget>() == candidateTarget)
+                {
+
+                    Debug.Log("VEO 1:Dentro del if");
                     LinkedAI.ReportCanSee(candidateTarget);
+                }
             }
         }
     }
