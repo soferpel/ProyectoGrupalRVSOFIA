@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3378723689
+  GlobalObjectIdHash: 1907749414
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -527,6 +527,9 @@ MonoBehaviour:
   - {r: 0.9215687, g: 0.83921576, b: 0.74509805, a: 0}
   - {r: 0.6392157, g: 0.49411768, b: 0.4039216, a: 0}
   - {r: 0.43921572, g: 0.33333334, b: 0.28235295, a: 0}
+  skinIndex: 0
+  hairStyleIndex: 0
+  hairColorIndex: 0
 --- !u!114 &6492597720135040849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -548,7 +551,7 @@ MonoBehaviour:
   SyncRotAngleZ: 1
   SyncScaleX: 0
   SyncScaleY: 0
-  SyncScaleZ: 1
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
