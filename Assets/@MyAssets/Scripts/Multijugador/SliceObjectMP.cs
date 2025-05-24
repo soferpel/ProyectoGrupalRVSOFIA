@@ -34,28 +34,19 @@ public class SliceObjectMP : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("On trigger enter");
         if (enabled)
         {
-            Debug.Log("On trigger enter enabled");
-
             collisionCut = other.gameObject;
 
             if (other.gameObject.layer == LayerMask.NameToLayer("Sliceable"))
             {
-                Debug.Log("On trigger enter enabled slice");
                 if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
                 {
-                    Debug.Log("On trigger enter enabled slice collision cut");
-
                     NetworkObject rootNetObj = GetRootNetworkObject(collisionCut);
                     if (rootNetObj != null)
                     {
-                        Debug.Log("On trigger enter enabled slice collision cut null");
 
                         string relativePath = GetRelativePath(rootNetObj.transform, collisionCut.transform);
-                        Debug.Log("On trigger enter enabled slice collision cut null" + relativePath);
-
                         SliceClientRpc(rootNetObj.NetworkObjectId, relativePath);
                     }
                     
@@ -70,15 +61,11 @@ public class SliceObjectMP : NetworkBehaviour
     {
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
         {
-            Debug.Log("!!!On trigger enter enabled slice collision cut null");
-
             Transform collisionCut = FindChildByPath(netObj.transform, childPath);
             if (collisionCut.TryGetComponent(out SliceablePartController partController) && partController.target != null)
             {
-                Debug.Log("!!!On trigger enter enabled slice collision cut null aaaaa");
-
                 collisionCutComponents = partController;
-                Slice(partController.target, partController);
+                Slice(partController.target, partController);/*AQUIERR*/
             }
         }
     }
@@ -156,16 +143,6 @@ public class SliceObjectMP : NetworkBehaviour
                 {
                     skinnedMeshRenderer.sharedMesh = outBoundSkinnedMeshRenderer.sharedMesh;
                     skinnedMeshRenderer.sharedMaterials = outBoundSkinnedMeshRenderer.sharedMaterials;
-
-                    //AQUI
-                    byte[] meshData = YourMeshUtility.SerializeSkinnedMesh(outBoundSkinnedMeshRenderer.sharedMesh);
-                    MaterialData matData = MaterialData.FromMaterial(outBoundSkinnedMeshRenderer.sharedMaterial);
-                    NetworkObject rootNetObj = GetRootNetworkObject(target);
-                    if (rootNetObj != null)
-                    {
-                        string relativePath = GetRelativePath(rootNetObj.transform, target.transform);
-                        //SetBodyClientRpc(rootNetObj.NetworkObjectId, meshData, matData, relativePath);
-                    }
                 }
             }
 
@@ -250,11 +227,6 @@ public class SliceObjectMP : NetworkBehaviour
                                 tempObject3.transform.SetParent(detachPart.transform);
                                 MeshCollider collider = tempObject3.AddComponent<MeshCollider>();
                                 collider.convex = true;
-                                /*XRGrabInteractable grabInteractable = detachPart.transform.parent.GetComponent<XRGrabInteractable>();
-                                grabInteractable.trackScale = false;
-                                grabInteractable.enabled = false;
-                                grabInteractable.colliders.Add(collider);
-                                grabInteractable.enabled = true;*/
                             }
                         }
                     }
@@ -274,18 +246,20 @@ public class SliceObjectMP : NetworkBehaviour
 
                     foreach (Collider collider in collisionCutComponents.boundsColliders)
                     {
+                        if (collider.gameObject.TryGetComponent<BoneTracker>(out var tracker) && tracker.follower != null)
+                        {
+                            if (IsServer && tracker.follower.gameObject.TryGetComponent(out NetworkObject netObj)) netObj.Despawn(true);
+                        }
                         if (!collider.Equals(collisionCutComponents.gameObject.GetComponent<Collider>()))
                         {
                             collider.gameObject.SetActive(false);
+
                         }
                         else
                         {
-                            //if (collider.gameObject.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netrig)) Destroy(netrig);
-                            //return;
                             Destroy(collider.gameObject.GetComponent<XRGrabInteractable>());
                             Destroy(collider.gameObject.GetComponent<CharacterJoint>());
                             collider.attachedRigidbody.isKinematic = true;
-                            //Destroy(collider.attachedRigidbody);
                             Destroy(collider);
                         }
                     }
@@ -303,7 +277,6 @@ public class SliceObjectMP : NetworkBehaviour
             {
                 collisionCutComponents.clientMP.body.tag = "Torso";
 
-
                 DetachBody(collisionCutComponents.clientMP.body);
 
             }
@@ -316,67 +289,19 @@ public class SliceObjectMP : NetworkBehaviour
         Debug.Log("Se ha cortado parte del cuerpo");
         hasCut = true;
 
-        //OnCutMade?.Invoke();
         collisionCutComponents = null;
         collisionCut = null;
     }
-    [ClientRpc]
-    private void SetCalculateBodyClientRpc(ulong rootId, byte[] meshData, MaterialData matData, string childPath)
-    {
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
-        {
-            Transform target = FindChildByPath(netObj.transform, childPath);
-            Mesh mesh = YourMeshUtility.DeserializeSkinnedMesh(meshData);
-            Material mat = matData.ToMaterial();
-            SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
-            skinnedMeshRenderer.sharedMesh = mesh;
-            if (mesh.subMeshCount > 1)
-            {
-                skinnedMeshRenderer.sharedMaterials = new Material[] { mat, bloodMaterial };
-            }
-            else
-            {
-                skinnedMeshRenderer.sharedMaterial = mat;
-            }
-        }
 
-    }
-    [ClientRpc]
-    private void SetBodyClientRpc(ulong rootId,byte[] meshData, MaterialData matData, string childPath)
-    {
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(rootId, out var netObj))
-        {
-            Transform target = FindChildByPath(netObj.transform, childPath);
-            Mesh mesh = YourMeshUtility.DeserializeSkinnedMesh(meshData);
-            Material mat = matData.ToMaterial();
-            SkinnedMeshRenderer skinnedMeshRenderer = target.GetComponent<SkinnedMeshRenderer>();
-            skinnedMeshRenderer.sharedMesh = mesh;
-            if (mesh.subMeshCount > 1)
-            {
-                skinnedMeshRenderer.sharedMaterials = new Material[] { mat, bloodMaterial };
-            }
-            else
-            {
-                skinnedMeshRenderer.sharedMaterial = mat;
-            }
-        }
-
-    }
     private void DetachBody(GameObject part)
     {
-        XRGrabInteractable partGrab = (part.GetComponent<XRGrabInteractable>());
-        partGrab.trackScale = false;
-        partGrab.enabled = false;
-        partGrab.colliders.Clear();
-
-        partGrab.enabled = true;
-        Destroy(partGrab);
+        
         if (part == null)
         {
             Debug.LogError("El objeto 'part' es nulo. No se puede proceder con DetachPart.");
             return;
         }
-        GameObject container = new GameObject($"{part.name}_Centered");
+        GameObject container = new GameObject($"{part.name}_BODY_Centered");
         if (collisionCutComponents.clientMP.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
         {
             BodyPartController bodypartController = container.AddComponent<BodyPartController>();
@@ -396,9 +321,12 @@ public class SliceObjectMP : NetworkBehaviour
             Debug.LogWarning($"El objeto {part.name} y sus hijos no tienen Collider. Usando la posición original del objeto.");
         }
         container.transform.position = containerPosition;
+        Quaternion containerRotation = part.transform.rotation;
         container.transform.rotation = part.transform.rotation;
 
         Vector3 offset = part.transform.position - containerPosition;
+        Vector3 partPosition = offset;
+        Quaternion partRotation = Quaternion.identity;
         GameObject oldParent = part.transform.parent.parent.gameObject;
         part.transform.SetParent(container.transform);
         oldParent.transform.GetChild(0).SetParent(part.transform);
@@ -413,11 +341,6 @@ public class SliceObjectMP : NetworkBehaviour
             partRb.isKinematic = true;
         }
         container.AddComponent<DetectableTarget>();
-        XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
-        grabInteractable.colliders.Add(partCollider);
-        grabInteractable.trackScale = false;
-        grabInteractable.useDynamicAttach = true;
-        grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
         container.layer = LayerMask.NameToLayer("BodyParts");
         container.AddComponent<BodyPartScaler>();
 
@@ -428,7 +351,52 @@ public class SliceObjectMP : NetworkBehaviour
             if (part.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netrig)) Destroy(netrig);
             Destroy(partRb);
         }
+        if (part.TryGetComponent<BoneTracker>(out var tracker) && tracker.follower != null)
+        {
+            if (IsServer && tracker.follower.gameObject.TryGetComponent(out NetworkObject netObj)) netObj.Despawn(true);
+        }
+        sendPart = part;
+        if(IsServer)
+        SpawnCut1PieceServerRpc(containerPosition, containerRotation, partPosition, partRotation, part.tag);
 
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnCut1PieceServerRpc(Vector3 position, Quaternion rotation, Vector3 partPosition, Quaternion partRotation, string tag)
+    {
+        GameObject container = Instantiate(dynamicContainerPrefab, position, rotation);
+        container.layer = LayerMask.NameToLayer("BodyParts");
+        sendPart.transform.SetParent(container.transform);
+        Rigidbody rb = container.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = container.AddComponent<Rigidbody>();
+        }
+        NetworkObject netObj = container.GetComponent<NetworkObject>();
+        netObj.Spawn(true); 
+        container.tag = tag;
+        NetworkObjectReference containerRef = container.GetComponent<NetworkObject>();
+        SetPartClientRpc(containerRef);
+    }
+    [ClientRpc]
+    private void SetPartClientRpc(NetworkObjectReference containerRef)
+    {
+        if (containerRef.TryGet(out NetworkObject containerNetObj))
+        {
+            GameObject container = containerNetObj.gameObject;
+            sendPart.transform.SetParent(container.transform);
+            sendPart.transform.localPosition = Vector3.zero;
+            sendPart.transform.localRotation = Quaternion.identity;
+
+            XRGrabInteractable grabInteractable = container.GetComponent<XRGrabInteractable>();
+            if (grabInteractable == null)
+            {
+                return;
+            }
+
+            grabInteractable.enabled = false;
+            grabInteractable.colliders.Add(sendPart.GetComponent<Collider>());
+            grabInteractable.enabled = true;
+        }
     }
     public void SetupSlicedComponent(GameObject slicedObject)
     {
@@ -477,15 +445,6 @@ public class SliceObjectMP : NetworkBehaviour
             {
                 skinnedMeshRenderer.sharedMesh = outBoundSkinnedMeshRenderer.sharedMesh;
                 skinnedMeshRenderer.sharedMaterials = outBoundSkinnedMeshRenderer.sharedMaterials;
-                
-                byte[] meshData = YourMeshUtility.SerializeSkinnedMesh(outBoundSkinnedMeshRenderer.sharedMesh);
-                MaterialData matData = MaterialData.FromMaterial(outBoundSkinnedMeshRenderer.sharedMaterial);
-                NetworkObject rootNetObj = GetRootNetworkObject(target);
-                if (rootNetObj != null)
-                {
-                    string relativePath = GetRelativePath(rootNetObj.transform, target.transform);
-                    //SetBodyClientRpc(rootNetObj.NetworkObjectId, meshData, matData, relativePath);
-                }
             }
         }
 
@@ -561,7 +520,7 @@ public class SliceObjectMP : NetworkBehaviour
 
     private void AttachToBody(GameObject part)
     {
-        part.transform.SetParent(collisionCut.transform);
+        part.transform.SetParent(collisionCut.transform);/*AQUIERR*/
         byte[] meshData = YourMeshUtility.SerializeMesh(part.GetComponent<MeshFilter>().sharedMesh);
         MaterialData matData = MaterialData.FromMaterial(part.GetComponent<Renderer>().sharedMaterial);
         NetworkObject rootNetObj = GetRootNetworkObject(collisionCut);
@@ -608,10 +567,6 @@ public class SliceObjectMP : NetworkBehaviour
         
     }
 
-
-    [SerializeField] private GameObject runtimePartContainerPrefab;
-    [SerializeField] private GameObject partPrefab;
-
     private void DetachPart(GameObject part)
     {
         Debug.Log("DENTRO METODO DETACH");
@@ -623,7 +578,7 @@ public class SliceObjectMP : NetworkBehaviour
         part.tag = collisionCutComponents.gameObjectTag;
         part.layer = LayerMask.NameToLayer("BodyParts");
 
-        GameObject container = new GameObject($"{part.name}_Centered");
+        GameObject container = new GameObject($"{part.name}_PART_Centered");
 
         container.tag = part.tag;
         Vector3 containerPosition = part.transform.position;
@@ -677,132 +632,29 @@ public class SliceObjectMP : NetworkBehaviour
             Destroy(partRb);
         }
         
-        
-        if (collisionCutComponents.clientMP.TryGetComponent<BodyPartController>(out BodyPartController clientbpc))
-        {
-            BodyPartController bodypartController = container.AddComponent<BodyPartController>();
-            bodypartController.decayTime = clientbpc.decayTimer;
-            bodypartController.materials = clientbpc.materials;
-        }
-        //NetworkObject no = container.AddComponent<NetworkObject>();
-        //no.Spawn();
-        //NetworkObjectReference nor = new NetworkObjectReference(no);
-        //SpawnPartRpc(nor, new RpcParams());
-
         sendPart = part;
 
-
-        List<byte[]> meshDatas = new List<byte[]>();
-        List<MaterialData> materialDatas = new List<MaterialData>();
-        List<bool> needsCollider = new List<bool>();
-        List<Vector3> positions = new List<Vector3>();
-        List<Quaternion> rotations = new List<Quaternion>();
-        // Primero, el mesh del padre
-        MeshFilter parentFilter = part.GetComponent<MeshFilter>();
-        if (parentFilter != null && parentFilter.sharedMesh != null)
-        {
-            meshDatas.Add(YourMeshUtility.SerializeMesh(parentFilter.sharedMesh));
-        }
-        materialDatas.Add(MaterialData.FromMaterial(part.GetComponent<Renderer>().sharedMaterial));
-        needsCollider.Add(false);
-        positions.Add(part.transform.localPosition);
-        rotations.Add(part.transform.localRotation);
-        // Ahora recorremos los hijos
-        foreach (Transform child in part.transform)
-        {
-            if (child.name.Equals("meshCloth"))
-            {
-                needsCollider.Add(true);
-                positions.Add(child.transform.localPosition);
-                rotations.Add(child.transform.localRotation);
-            }
-            else {
-                needsCollider.Add(false);
-                positions.Add(child.transform.localPosition);
-                rotations.Add(child.transform.localRotation);
-            }
-            MeshFilter childFilter = child.GetComponent<MeshFilter>();
-            if (childFilter != null && childFilter.sharedMesh != null)
-            {
-                Debug.Log("añade mesh");
-                meshDatas.Add(YourMeshUtility.SerializeMesh(childFilter.sharedMesh));
-            }
-            materialDatas.Add(MaterialData.FromMaterial(child.GetComponent<Renderer>().sharedMaterial));
-        }
-        for (int i = 0; i < meshDatas.Count; i++)
-        {
-            Debug.Log("Mesh array " + i + ": " + meshDatas[i]);
-        }
-        byte[] meshData = YourMeshUtility.SerializeMesh(part.GetComponent<MeshFilter>().sharedMesh);
-        MaterialData matData = MaterialData.FromMaterial(part.GetComponent<Renderer>().sharedMaterial);
-        
-        byte[][] meshDataArray = meshDatas.ToArray();
-        for(int i = 0; i < meshDataArray.Length; i++)
-        {
-            Debug.Log("Mesh array " + i + ": " + meshDataArray[i]);
-        }
-        MaterialData[] materialDataArray = materialDatas.ToArray();
-        bool[] needsColliderArray = needsCollider.ToArray();
-        Vector3[] positionsArray = positions.ToArray();
-        Quaternion[] rotationArray = rotations.ToArray();
-        Debug.Log("?");
-        SpawnCutPieceServerRpc(containerPosition, containerRotation,/* meshDataArray, materialDataArray, needsColliderArray, positionsArray,rotationArray,*/ partPosition, partRotation, part.tag);
-        //Destroy(container);
-        /*foreach (Transform child in part.transform)
-        {
-            meshData = YourMeshUtility.SerializeMesh(child.gameObject.GetComponent<MeshFilter>().sharedMesh);
-            matData = MaterialData.FromMaterial(child.gameObject.GetComponent<Renderer>().sharedMaterial);
-            SpawnCutPieceClothesClientRpc(containerRef, meshData, matData);
-        }*/
-        ////////
-        ///
-        /*
-        MeshFilter meshFilter = part.GetComponent<MeshFilter>();
-        Material material = part.GetComponent<Renderer>().sharedMaterial;
-        if (meshFilter != null)
-        {
-            // Registramos el Mesh (esto te da un ID único)
-            int meshId = RegisterMesh(meshFilter.sharedMesh);
-            int materialId = RegisterMaterial(material);
-            // Enviamos el RPC con los datos al servidor
-            SpawnRpc(partCollider.bounds.center, part.transform.rotation, SerializeMesh(meshFilter.sharedMesh), materialId, part.transform.position, new RpcParams());
-        }*/
-
+        SpawnCutPieceServerRpc(containerPosition, containerRotation, partPosition, partRotation, part.tag);
+        Destroy(container);
     }
+
     private GameObject sendPart;
     [SerializeField] private GameObject dynamicContainerPrefab;
-    [ServerRpc(RequireOwnership = false)]
-    public void SpawnCutPieceServerRpc(Vector3 position, Quaternion rotation, /*byte[][] meshData, MaterialData[] matData, bool[] needsCollider,Vector3[] positions, Quaternion[] rotations,*/Vector3 partPosition, Quaternion partRotation, string tag)
-    {
-        //for (int i = 0; i < meshData.Length; i++)
-        //{
-        //    Debug.Log("Mesh server " + i + ": " + meshData[i]);
-        //}
-        // Instanciás el contenedor registrado
-        Debug.Log("??");
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnCutPieceServerRpc(Vector3 position, Quaternion rotation, Vector3 partPosition, Quaternion partRotation, string tag)
+    {
         GameObject container = Instantiate(dynamicContainerPrefab, position, rotation);
 
-        Rigidbody rb = container.GetComponent<Rigidbody>();
-        if (rb == null)
-        {
-            rb = container.AddComponent<Rigidbody>();
-        }
-        //rb.isKinematic = true;
         NetworkObject netObj = container.GetComponent<NetworkObject>();
-        netObj.Spawn(true); // Spawn en la red
-        // Preparás los datos dinámicos
+        netObj.Spawn(true);
         container.tag = tag;
         container.GetComponent<DynamicPartSync>().bloodMaterial = bloodMaterial;
         NetworkObjectReference containerRef = container.GetComponent<NetworkObject>();
-        Debug.Log("???");
 
         SetBloodMaterialClientRpc(containerRef);
         container.GetComponent<DynamicPartSync>().setPart(sendPart,tag);
 
-
-        // Le mandás al cliente la orden de construir su parte local
-        //container.GetComponent<DynamicPartSync>().InitServer(meshData, materialId);
     }
     [ClientRpc]
     private void SetBloodMaterialClientRpc(NetworkObjectReference containerRef)
@@ -813,405 +665,7 @@ public class SliceObjectMP : NetworkBehaviour
             container.GetComponent<DynamicPartSync>().bloodMaterial = bloodMaterial;
         }
     }
-    [ClientRpc]
-    private void SpawnCutPieceClientRpc(NetworkObjectReference containerRef, byte[][] meshData, MaterialData[] matData,bool[] needsCollider,Vector3[] positions,Quaternion[] rotations, Vector3 partPosition, Quaternion partRotation)
-    {
-        if (containerRef.TryGet(out NetworkObject containerNetObj))
-        {
-            GameObject container = containerNetObj.gameObject;
-
-            // Deserializás el mesh
-            Mesh mesh = YourMeshUtility.DeserializeMesh(meshData[0]);
-
-            // Buscás el material (asegurate de tenerlo cargado en los clientes)
-            Material mat = matData[0].ToMaterial();
-
-            // Ahora creás la pieza dinámica
-            GameObject part = new GameObject("Part");
-            part.transform.SetParent(container.transform);
-            part.transform.localPosition = partPosition;
-            part.transform.localRotation = partRotation;
-            part.transform.localScale = Vector3.one;
-
-            // Le ponés componentes
-            var filter = part.AddComponent<MeshFilter>();
-            filter.sharedMesh = mesh;
-
-            var collider = part.AddComponent<MeshCollider>();
-            collider.sharedMesh = mesh;
-            collider.convex = true;
-
-            var renderer = part.AddComponent<MeshRenderer>();
-            renderer.material = mat;
-
-            XRGrabInteractable grabInteractable = container.GetComponent<XRGrabInteractable>();
-            if (grabInteractable == null)
-            {
-                Debug.Log("Added XRGrabInteractable component.");
-            }
-
-            grabInteractable.enabled = false;
-            grabInteractable.colliders.Add(collider);
-            grabInteractable.enabled = true;
-
-            Debug.Log("COUNT: "+ meshData.Length + " " + matData.Length + " " + needsCollider.Length + " " + positions.Length + " " + rotations.Length + " ");
-
-            for (int i = 0; i< meshData.Length; i++)
-            {
-                Debug.Log("MESH " + i + " : " + meshData[i]);
-                if (i == 0) continue;
-                SpawnCutPieceClothesClientRpc(containerRef, meshData[i], matData[i],needsCollider[i],positions[i],rotations[i]);
-            }
-            //NotifyObjectCreatedServerRpc(containerRef, NetworkManager.Singleton.LocalClientId);
-        }
-    }
-    [ClientRpc]
-    private void SpawnCutPieceClothesClientRpc(NetworkObjectReference containerRef, byte[] meshData, MaterialData matData, bool needsCollider,Vector3 position,Quaternion rotation)
-    {
-        Debug.Log("LLAMA");
-        if (containerRef.TryGet(out NetworkObject containerNetObj))
-        {
-
-            GameObject container = containerNetObj.gameObject.transform.GetChild(0).gameObject;
-
-            // Deserializás el mesh
-            Mesh mesh = YourMeshUtility.DeserializeMesh(meshData);
-
-            // Buscás el material (asegurate de tenerlo cargado en los clientes)
-            Material mat = matData.ToMaterial();
-
-            // Ahora creás la pieza dinámica
-            GameObject part = new GameObject("Clothes");
-            part.transform.SetParent(container.transform);
-            part.transform.localPosition = position;
-            part.transform.localRotation = rotation;
-            part.transform.localScale = Vector3.one;
-
-            // Le ponés componentes
-            var filter = part.AddComponent<MeshFilter>();
-            filter.sharedMesh = mesh;
-
-            var renderer = part.AddComponent<MeshRenderer>();
-            if (mesh.subMeshCount > 1)
-            {
-                renderer.materials = new Material[] { mat, bloodMaterial };
-            }else
-            {
-                renderer.material = mat;
-            }
-            if (needsCollider)
-            {
-                var collider = part.AddComponent<MeshCollider>();
-                collider.sharedMesh = mesh;
-                collider.convex = true;
-
-                XRGrabInteractable grabInteractable = containerNetObj.gameObject.GetComponent<XRGrabInteractable>();
-                grabInteractable.enabled = false;
-                grabInteractable.colliders.Add(collider);
-                grabInteractable.enabled = true;
-            }
-        }
-    }
-
-    /*
-    // Este método se llama después de que el cliente haya creado su objeto
-    [ServerRpc(RequireOwnership = false)]
-    public void NotifyObjectCreatedServerRpc(NetworkObjectReference containerRef, ulong clientId)
-    {
-        Debug.Log("METODO NotifyObjectCreatedServerRpc");
-        // El servidor guarda el estado de que este cliente ha creado su objeto
-        bool updated = false;
-
-        // Buscamos si el cliente ya está en la lista
-        for (int i = 0; i < clientsThatSpawnedObjectsList.Count; i++)
-        {
-            if (clientsThatSpawnedObjectsList[i].clientId == clientId)
-            {
-                // Si el cliente ya está en la lista, actualizamos el estado
-                clientsThatSpawnedObjectsList[i] = new ClientSpawnStatus(clientId, true);
-                updated = true;
-                break;
-            }
-        }
-
-        // Si no encontramos el cliente, lo agregamos
-        if (!updated)
-        {
-            clientsThatSpawnedObjectsList.Add(new ClientSpawnStatus(clientId, true));
-        }
-
-        // Verifica si todos los clientes han creado su objeto
-        CheckIfAllClientsHaveSpawned(containerRef);
-
-    }
-
-    private void CheckIfAllClientsHaveSpawned(NetworkObjectReference containerRef)
-    {
-        Debug.Log("METODO CheckIfAllClientsHaveSpawned");
-        foreach (var clientStatus in clientsThatSpawnedObjectsList)
-        {
-            Debug.Log($"ClientId: {clientStatus.clientId}, HasSpawned: {clientStatus.hasSpawned}");
-        }
-
-        if (clientsThatSpawnedObjectsList.Count == NetworkManager.Singleton.ConnectedClientsList.Count)
-        {
-            // Comprobar si todos los clientes han spawnado su objeto
-            bool allSpawned = true;
-
-            foreach (var clientStatus in clientsThatSpawnedObjectsList)
-            {
-                if (!clientStatus.hasSpawned)
-                {
-                    allSpawned = false;
-                    break;
-                }
-            }
-
-            if (allSpawned)
-            {
-                // Si todos los clientes han spawnado su objeto, entonces procedemos
-                ActivateGravityForAllClients(containerRef);
-            }
-        }
-    }
-
-    private void ActivateGravityForAllClients(NetworkObjectReference containerRef)
-    {
-        Debug.Log("METODO ActivateGravityForAllClients");
-        // Aquí activamos la gravedad para todos los clientes
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
-        {
-            ActivateGravityClientRpc(client.ClientId, containerRef);
-        }
-    }
-
-    [ClientRpc]
-    private void ActivateGravityClientRpc(ulong clientId, NetworkObjectReference containerRef)
-    {
-        Debug.Log("METODO ActivateGravityClientRpc");
-
-        if (NetworkManager.Singleton.LocalClientId == clientId)
-        {
-            if (containerRef.TryGet(out NetworkObject containerNetObj))
-            {
-                GameObject container = containerNetObj.gameObject;
-
-                Debug.Log($"Activating gravity for container: {container.name}");
-
-                // Asegúrate de que el Rigidbody esté presente
-                Rigidbody rb = container.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    Debug.Log("Rigidbody found. Activating gravity.");
-                    rb.isKinematic = false; // Desactivar cinemática
-                }
-                else
-                {
-                    Debug.LogWarning("Rigidbody not found on container!");
-                }
-
-                // Comprobar si ya existen los componentes antes de añadirlos
-               
-            }
-            else
-            {
-                Debug.LogWarning("Container not found in containerRef.");
-            }
-        }
-    }
-
-    [System.Serializable]
-    public struct ClientSpawnStatus: INetworkSerializable, IEquatable<ClientSpawnStatus>
-    {
-        public ulong clientId;
-        public bool hasSpawned;
-
-        public ClientSpawnStatus(ulong clientId, bool hasSpawned)
-        {
-            this.clientId = clientId;
-            this.hasSpawned = hasSpawned;
-        }
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref clientId);
-            serializer.SerializeValue(ref hasSpawned);
-        }
-        public bool Equals(ClientSpawnStatus other)
-        {
-            return clientId == other.clientId && hasSpawned == other.hasSpawned;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is ClientSpawnStatus other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(clientId, hasSpawned);
-        }
-    }
-    private NetworkList<ClientSpawnStatus> clientsThatSpawnedObjectsList = new NetworkList<ClientSpawnStatus>();
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    [Rpc(SendTo.Everyone)]
-    private void SpawnPartRpc(NetworkObjectReference objref, RpcParams rpcParams)
-    {
-        if(objref.TryGet(out NetworkObject netobj))
-            {
-            GameObject go = netobj.gameObject;
-            NetworkManager.Singleton.AddNetworkPrefab(go);
-            var prefabsList = NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs;
-            foreach (var prefab in prefabsList)
-            {
-                if (prefab.Prefab != null)
-                {
-                    Debug.Log($"{NetworkManager.Singleton.LocalClientId}  Prefab: {prefab.Prefab.name}");
-                }
-                else
-                {
-                    Debug.LogWarning("Hay un prefab nulo en la lista.");
-                }
-            }
-            
-        }
-    }
-
-        public static byte[] SerializeMesh(Mesh mesh)
-    {
-        MeshDataSerializable data = MeshDataSerializable.FromMesh(mesh);
-        BinaryFormatter bf = new BinaryFormatter();
-        using (MemoryStream ms = new MemoryStream())
-        {
-            bf.Serialize(ms, data);
-            return ms.ToArray();
-        }
-    }
-
-    public static Mesh DeserializeMesh(byte[] data)
-    {
-        BinaryFormatter bf = new BinaryFormatter();
-        using (MemoryStream ms = new MemoryStream(data))
-        {
-            MeshDataSerializable m = (MeshDataSerializable)bf.Deserialize(ms);
-            return m.ToMesh();
-        }
-    }
-
-    private static Dictionary<int, Mesh> meshRegistry = new Dictionary<int, Mesh>();
-    private static Dictionary<int, Material> materialRegistry = new Dictionary<int, Material>();
-
-    private static int nextMeshId = 0;
-
-    // Registrar un Mesh
-    public static int RegisterMesh(Mesh mesh)
-    {
-        foreach (var item in meshRegistry)
-        {
-            if (item.Value == mesh) return item.Key;
-        }
-
-        int meshId = nextMeshId++;
-        meshRegistry.Add(meshId, mesh);
-        return meshId;
-    }
-    public static int RegisterMaterial(Material material)
-    {
-        foreach (var item in materialRegistry)
-        {
-            if (item.Value == material) return item.Key;
-        }
-
-        int materialId = nextMeshId++;
-        materialRegistry.Add(materialId, material);
-        return materialId;
-    }
-    private Mesh GetMeshFromRegistry(int meshId)
-    {
-        if (meshRegistry.TryGetValue(meshId, out Mesh mesh))
-        {
-            return mesh;
-        }
-        Debug.LogWarning("No se encontró el Mesh con ID: " + meshId);
-        return null;
-    }
-    private Material GetMaterialFromRegistry(int materialId)
-    {
-        if (materialRegistry.TryGetValue(materialId, out Material material))
-        {
-            return material;
-        }
-        Debug.LogWarning("No se encontró el Material con ID: " + materialId);
-        return null;
-    }
-    [Rpc(SendTo.Server)]
-    private void SpawnRpc(Vector3 position, Quaternion rotation, byte[] meshData, int materialId, Vector3 partPosition, RpcParams rpcParams)
-    {
-        // Instanciamos el contenedor del objeto cortado
-        GameObject container = Instantiate(runtimePartContainerPrefab, position, rotation);
-        Mesh mesh = DeserializeMesh(meshData); // Deserializamos el Mesh
-        GameObject part = Instantiate(partPrefab, position, rotation);
-        container.GetComponent<Rigidbody>().isKinematic = true;
-        // Vinculamos la parte al contenedor
-        
-
-        // Añadimos componentes de MeshFilter y MeshCollider
-        MeshFilter meshFilter = part.GetComponent<MeshFilter>();
-        meshFilter.sharedMesh = mesh;
-
-        MeshCollider meshCollider = part.GetComponent<MeshCollider>();
-        meshCollider.sharedMesh = mesh;
-        meshCollider.convex = true;
-
-        // Asignamos el material
-        Material material = GetMaterialFromRegistry(materialId);
-        MeshRenderer meshRenderer = part.GetComponent<MeshRenderer>();
-        meshRenderer.material = material;
-
-        // Añadimos componentes extras
-        container.AddComponent<DetectableTarget>();
-        XRGrabInteractable grabInteractable = container.AddComponent<XRGrabInteractable>();
-        grabInteractable.trackScale = false;
-        grabInteractable.useDynamicAttach = true;
-        grabInteractable.interactionLayers = InteractionLayerMask.GetMask("Default", "BodyParts");
-        container.layer = LayerMask.NameToLayer("BodyParts");
-        container.AddComponent<BodyPartScaler>();
-
-        // Inicializamos la sincronización
-        var sync = container.GetComponent<CutPieceNetworkSync>();
-        sync.Init(meshData, materialId);
-
-        // Aquí añadimos el NetworkObject al `part` y lo spawneamos en la red
-        NetworkObject networkObject = part.GetComponent<NetworkObject>(); // Asegúrate de que `part` tiene un `NetworkObject`
-        networkObject.Spawn(true);  // Spawn para que Netcode lo gestione en todos los clientes
-
-        // Spawneamos el contenedor en la red también
-        container.GetComponent<NetworkObject>().Spawn(true);
-        container.GetComponent<Rigidbody>().isKinematic = true;
-
-        part.transform.SetParent(container.transform);
-        Vector3 offset = partPosition - position;
-        part.transform.localPosition = offset;
-        part.transform.localRotation = Quaternion.identity;
-        part.transform.localScale = Vector3.one;
-    }
-
-
+    
     public GameObject GetSkinnedSubMesh(Mesh originalMesh, Bounds[] bounds, SkinnedMeshRenderer originalSkinnedRenderer, bool inBound, MeshFilter originalMeshFilter, List<string> boneNames)
     {
         if (bounds == null || bounds.Length == 0)

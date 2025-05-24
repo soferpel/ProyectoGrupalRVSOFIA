@@ -31,14 +31,15 @@ public class NetworkedGrab : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void RequestOwnershipRpc(ulong clientID)
     {
-        Debug.Log("changing ownership");
-        networkObject.ChangeOwnership(clientID);
+        if (networkObject.OwnerClientId != clientID)
+        {
+            networkObject.ChangeOwnership(clientID);
+        }
     }
 
     [Rpc(SendTo.Server)]
     private void ReleaseOwnershipRpc()
     {
-        Debug.Log("releasing ownership");
         networkObject.RemoveOwnership();
     }
 

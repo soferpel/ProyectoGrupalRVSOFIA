@@ -684,12 +684,14 @@ public class ClothingMP : NetworkBehaviour
                 SetPartActiveClientRpc(i, false, matData, textureName);
             }
         }
-
-        string clientDescription = GenerateAppearanceDescription();
-        clientController.appearanceDescription = clientDescription;
-        OnClientAppearanceGenerated?.Invoke(clientDescription);
-        clientController.isFemale = (male_female == 1) ? true : false;
-        existingClientDescriptions.Add(clientDescription);
+        if (clientController != null)
+        {
+            string clientDescription = GenerateAppearanceDescription();
+            clientController.appearanceDescription = clientDescription;
+            OnClientAppearanceGenerated?.Invoke(clientDescription);
+            clientController.isFemale = (male_female == 1) ? true : false;
+            existingClientDescriptions.Add(clientDescription);
+        }
     }
 
     private void EnsureUniqueAppearanceForMafia()
@@ -794,7 +796,6 @@ public class ClothingMP : NetworkBehaviour
                 string textureName = (renderer != null && renderer.material.mainTexture != null)
                     ? renderer.material.mainTexture.name
                     : "No Texture";
-                Debug.Log("Textura: "+textureName);
                 if (item.name == "traje de banquero")
                 {
                     description += $"{item.name} {textureName} \n ";
