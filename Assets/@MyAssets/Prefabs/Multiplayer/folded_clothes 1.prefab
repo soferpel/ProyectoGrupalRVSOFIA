@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 5123130900152604624}
   - component: {fileID: -7066699237712504321}
   - component: {fileID: 5109901051829789088}
-  - component: {fileID: 6581836283066869496}
   m_Layer: 12
   m_Name: folded_clothes 1
   m_TagString: Clothes
@@ -231,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 4126926494
+  GlobalObjectIdHash: 1502956189
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -293,18 +292,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6581836283066869496
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 490510264552688603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08d94ead00325eb4e97a3273e8d38971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &2372753296697601288

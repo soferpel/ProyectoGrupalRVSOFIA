@@ -90,18 +90,7 @@ public class ClientControllerMP : PersonControllerMP
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon1))
-        {
-            // Si el componente WeaponControllerMP fue encontrado, ahora puedes acceder a sus propiedades
-            Debug.Log("Cliente atacado por un cuchillo. isGrabbed: " + weapon1.isGrabbed.Value);
-        }
-        else
-        {
-            // Si no se encontró el componente WeaponControllerMP
-            Debug.Log("El objeto no tiene un WeaponControllerMP.");
-        }
-
-        if (other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon))// && weapon.isGrabbed.Value)
+        if (other.gameObject.TryGetComponent<WeaponControllerMP>(out WeaponControllerMP weapon) && weapon.isGrabbed.Value)
         {
             Debug.Log("Cliente atacado por un cuchillo.");
             audioSource[4].Stop();
@@ -136,12 +125,8 @@ public class ClientControllerMP : PersonControllerMP
             if (Clothing.existingClientDescriptions.Contains(appearanceDescription)) Clothing.existingClientDescriptions.Remove(appearanceDescription);
             slider.SetActive(false);
             Destroy(gameObject.GetComponent<Collider>());
-            if (gameObject.TryGetComponent<NetworkRigidbody>(out NetworkRigidbody netRig))
-            {
-                Destroy(netRig);
-            }
-            Destroy(gameObject.GetComponent<Rigidbody>());
             Destroy(gameObject.GetComponent<VisionSensor>());
+            GetComponent<Rigidbody>().isKinematic = true;
             isAlive = false;
             if (inBuyPoint)
             {
@@ -160,6 +145,7 @@ public class ClientControllerMP : PersonControllerMP
             }
             DieClientRpc();
             //animator.enabled = false;
+            this.GetComponent<RagdollNetworkManager>().SpawnFollowerBones();
             foreach (Rigidbody rb in deadRigidbodies)
             {
                 rb.isKinematic = false;

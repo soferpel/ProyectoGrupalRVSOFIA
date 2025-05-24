@@ -41,7 +41,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/@MyAssets/Scene/Multiplayer/GameMultiplayer.unity
     guid: a050b693aff1424499d7d8d900b67546
-  - enabled: 1
+  - enabled: 0
     path: Assets/@MyAssets/Scene/Multiplayer/GameOverScene.unity
     guid: f7bfd77a070bcd248852ca72adfa4992
   m_configObjects:
